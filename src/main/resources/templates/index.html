@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/profile.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Social Media</title>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <div class="left">
+        <a href="/" style="text-decoration: none">
+          <span>Social</span>
+        </a>
+        <a href="/"><i class="fa-solid fa-house"></i></a>
+
+        <i class="fa-regular fa-moon"></i>
+        <i class="fa-solid fa-table-cells-large"></i>
+        
+        <div class="dropdown">
+          <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class="search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+          </div>
+          <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger">
+            <div class="recently">Recently</div>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+              
+                <div class="user-search">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    John Doe
+
+                    <span class="location-search">Sai Gon</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>
+          </ul>
+      </div>
+      </div>
+      <div class="right">
+        <a href="../friends.html">
+          <i class="fa-regular fa-user">
+            <div class="notice-addfr">4</div>
+          </i>
+        </a>
+     
+      <a href="../chat.html">
+        <i class="fa-regular fa-envelope">
+          <div class="notice-message">2</div>
+        </i>
+      </a>
+     
+      
+      <div class="dropdown">
+        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
+          <i class="fa-regular fa-bell">
+            <div class="notice-notifi">2</div>
+          </i>
+        </div>
+        <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
+          <div class="recently">Notification</div>
+            <li><a class="dropdown-item" href="#">
+            
+              <i class="user">
+                <img
+                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                  alt=""
+                />
+               <span class="detail-noti">  <strong>
+
+                John Doe
+              </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+               
+                </i>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            
+                <i class="user">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt=""
+                  />
+                 <span class="detail-noti">  <strong>
+  
+                  John Doe
+                </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+                 
+                  </i>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+            
+                  <i class="user">
+                    <img
+                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                      alt=""
+                    />
+                   <span class="detail-noti">  <strong>
+    
+                    John Doe
+                  </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+                   
+                    </i>
+                  </a></li>
+                  <li><a class="dropdown-item" href="#">
+            
+                    <i class="user">
+                      <img
+                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                        alt=""
+                      />
+                     <span class="detail-noti">  <strong>
+      
+                      John Doe
+                    </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+                     
+                      </i>
+                    </a></li>
+         
+           
+        </ul>
+   
+   
+   
+   
+   
+      </div>
+      <div class="dropdown">
+        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class="user">
+            <img
+              src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+              alt=""
+            />
+            
+          </div>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
+            <li><a class="dropdown-item" href="#">
+            
+              <i class="user">
+                <img
+                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                  alt=""
+                />
+                John Doe
+                </i>
+              </a></li>
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Setting</a></li>
+            <hr>
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
+        </ul>
+   
+   
+   
+   
+   
+      </div>
+      
+    </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container-content">
+      <!-- LEFT BAR -->
+      <div class="leftBar">
+        <div class="container">
+          <div class="menu">
+            <a class="user" href="/profile.html">
+              <img
+                src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                alt=""
+              />
+              <span>John Doe</span>
+            </a>
+            <div class="item">
+              <a href="./friends.html">
+                <img src="./assets/1.png" alt="" />
+                <span>Friends</span>
+              </a>
+            </div>
+            <div class="item">
+              <img src="./assets/2.png" alt="" />
+              <span>Groups</span>
+            </div>
+            <div class="item">
+              <img src="./assets/3.png" alt="" />
+              <span>Marketplace</span>
+            </div>
+            <div class="item">
+              <img src="./assets/4.png" alt="" />
+              <span>Watch</span>
+            </div>
+            <div class="item">
+              <img src="./assets/5.png" alt="" />
+              <span>Memories</span>
+            </div>
+          </div>
+          <hr />
+          <div class="menu">
+            <span class="shortcuts">Your shortcuts</span>
+            <div class="item">
+              <img src="./assets/6.png" alt="" />
+              <span>Events</span>
+            </div>
+            <div class="item">
+              <img src="./assets/7.png" alt="" />
+              <span>Gaming</span>
+            </div>
+            <div class="item">
+              <img src="./assets/8.png" alt="" />
+              <span>Gallery</span>
+            </div>
+            <div class="item">
+              <img src="./assets/9.png" alt="" />
+              <span>Videos</span>
+            </div>
+            <div class="item">
+              <img src="./assets/10.png" alt="" />
+              <span>Messages</span>
+            </div>
+          </div>
+          <hr />
+          <div class="menu">
+            <span class="others">Others</span>
+            <div class="item">
+              <img src="./assets/11.png" alt="" />
+              <span>Fundraiser</span>
+            </div>
+            <div class="item">
+              <img src="./assets/12.png" alt="" />
+              <span>Tutorials</span>
+            </div>
+            <div class="item">
+              <img src="./assets/13.png" alt="" />
+              <span>Courses</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- OUTLET -->
+      <div class="outlet">
+        <!-- HOME -->
+        <div id="home">
+          <div class="stories" id="stories-container">
+            <div class="story">
+              <img
+                src="https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                alt="CurrentUserProfilePic"
+              />
+              <span>John Doe</span>
+              <button>+</button>
+            </div>
+          </div>
+        </div>
+        <div id="up-post">
+          <div
+            class="modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Create New Post
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="info-post">
+                    <div class="userInfo">
+                      <img
+                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                        alt="User Profile Pic"
+                      />
+
+                      <span class="name-user">John Deap</span>
+
+                      <select class="form-select" id="postVisibility">
+                        <option selected>Public</option>
+                        <option value="friends">Friends</option>
+                        <option value="only-me">Only Me</option>
+                      </select>
+                    </div>
+                    <div class="input-post">
+                      <textarea
+                        name=""
+                        id=""
+                        cols="52"
+                        rows="10"
+                        placeholder="Enter your message here..."
+                      ></textarea>
+                    </div>
+                    <div class="other-chose">
+                      <div>
+                        <i class="fa-solid fa-video"></i>
+                        <span>Stream</span>
+                      </div>
+                      <div id="upload-image">
+                        <i class="fa-regular fa-image"></i>
+                        <span>Image</span>
+                        <!-- Hidden file input -->
+                        <input
+                          type="file"
+                          id="file-input"
+                          style="display: none"
+                          accept="image/*"
+                          onchange="handleFileUpload(this)"
+                        />
+                      </div>
+                      <div>
+                        <i class="fa-regular fa-face-smile"></i>
+                        <span>Icon</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary">Post</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="post">
+            <div class="container">
+              <div class="user">
+                <div class="userInfo">
+                  <img
+                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    alt="User Profile Pic"
+                  />
+                </div>
+                <div class="input-uppost">
+                  <input
+                    type="text"
+                    placeholder="Up post"
+                    id="openModalInput"
+                  />
+                </div>
+              </div>
+              <hr class="line" />
+              <div class="other-chose">
+                <div>
+                  <i class="fa-solid fa-video"></i>
+                  <span>Stream</span>
+                </div>
+                <div>
+                  <i class="fa-regular fa-image"></i>
+                  <span>Image</span>
+                </div>
+                <div>
+                  <i class="fa-regular fa-face-smile"></i>
+                  <span>Icon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="post-container"></div>
+        <!-- Include Posts content here -->
+      </div>
+
+      <!-- RIGHT BAR -->
+      <div class="rightBar">
+        <div class="container">
+          <div class="item">
+            <span>Suggestions For You</span>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <span>Jane Doe</span>
+              </div>
+              <div class="buttons">
+                <button>follow</button>
+                <button>dismiss</button>
+              </div>
+            </div>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <span>Jane Doe</span>
+              </div>
+              <div class="buttons">
+                <button>follow</button>
+                <button>dismiss</button>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <span>Latest Activities</span>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <p><span>Jane Doe</span> changed their cover picture</p>
+              </div>
+              <span>1 min ago</span>
+            </div>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <p><span>Jane Doe</span> changed their cover picture</p>
+              </div>
+              <span>1 min ago</span>
+            </div>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <p><span>Jane Doe</span> changed their cover picture</p>
+              </div>
+              <span>1 min ago</span>
+            </div>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <p><span>Jane Doe</span> changed their cover picture</p>
+              </div>
+              <span>1 min ago</span>
+            </div>
+          </div>
+          <div class="item">
+            <span>Online Friends</span>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <div class="online"></div>
+                <span>Jane Doe</span>
+              </div>
+            </div>
+            <div class="user">
+              <div class="userInfo">
+                <img
+                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                  alt=""
+                />
+                <div class="online"></div>
+                <span>Jane Doe</span>
+              </div>
+            </div>
+            <!-- Repeat the above user elements for additional online friends -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./js/main.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+</html>

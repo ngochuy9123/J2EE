@@ -1,0 +1,286 @@
+.profile {
+  /* Include themify here with appropriate values for $themes */
+
+  background-color: var(--light-bg);
+}
+
+.profile .images {
+  width: 100%;
+  height: 300px;
+  position: relative;
+}
+
+.profile .images .cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile .images .profilePic {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 200px;
+}
+
+.profile .profileContainer {
+  padding: 20px 0px;
+}
+.profile .profileContainer.profileFriend {
+  padding: 0px;
+}
+
+.profile .profileContainer.mobile {
+  padding: 10px;
+}
+
+.profile .profileContainer.tablet {
+  padding: 20px;
+}
+
+.profile .profileContainer .uInfo {
+  /* height: 180px; */
+  -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+  border-radius: 20px;
+  background-color: themed("bg");
+  color: themed("textColor");
+  padding: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin: 0 auto;
+}
+.profile .profileContainer .uInfo.uInfoFriend {
+  margin-top: 0px;
+  padding-top: 30px;
+}
+.profile .profileContainer.mobile .uInfo {
+  flex-direction: column;
+  height: 30vh;
+  padding: 20px;
+  margin-top: 100px;
+}
+
+.profile .profileContainer .uInfo .left {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.profile .profileContainer.tablet .uInfo .left {
+  flex-wrap: wrap;
+}
+
+.profile .profileContainer .uInfo .left a {
+  color: var(--light-textColor);
+}
+
+.profile .profileContainer .uInfo .center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.profile .profileContainer .uInfo .center span {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.profile .profileContainer .uInfo .center .info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.profile .profileContainer .uInfo .center .info .item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--light-textColorSoft);
+}
+
+.profile .profileContainer .uInfo .center .info .item span {
+  font-size: 12px;
+}
+
+.profile .profileContainer .uInfo .center button {
+  border: none;
+  background-color: #5271ff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.profile .profileContainer .uInfo .right {
+  flex: 1;
+
+  justify-content: flex-end;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}
+.fa-house,
+.fa-moon,
+.fa-table-cells-large,
+.fa-user,
+.fa-envelope,
+.fa-bell {
+  font-size: 20px;
+  color: var(--light-textColor);
+  cursor: pointer;
+}
+.fa-facebook,
+.fa-instagram,
+.fa-twitter,
+.fa-github,
+.fa-linkedin {
+  font-size: 20px;
+  /* margin-right: 10px; */
+}
+.uInfoFriend span {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.search-friend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 30%;
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
+  padding: 8px;
+}
+
+/* Style the input inside the search bar */
+.search-friend input {
+  border: none;
+  width: 500px;
+  background-color: transparent;
+  color: var(--light-textColor);
+}
+.search-friend input:focus {
+  outline: none;
+}
+.infor-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.profile .profileContainer .uInfoFriend {
+  display: block;
+}
+.info-friend,
+.name-friend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 90%;
+}
+.name-friend {
+  flex-direction: column;
+  align-items: start;
+}
+.container-Friends {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  margin-bottom: 20px;
+  /* border: solid #ccc 1px; */
+  /* margin-right: 20px; */
+  border-radius: 10px;
+  box-shadow: #ccc 0px 0px 2px 0px;
+}
+.container-Friends.col-5 {
+  width: 49%;
+}
+.info-friend img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: solid #ccc 1px;
+}
+.info-friend .username {
+  font-size: 18px;
+}
+.info-friend .username:hover {
+  text-decoration: underline;
+}
+.info-friend .mutual-friend {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--light-textColorSoft);
+}
+.more-icon {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer;
+}
+.more-icon:hover {
+  background-color: #e4e6eb;
+}
+.group-friends {
+  display: flex;
+  justify-content: space-between;
+}
+/* Add your custom tooltip styling here */
+#customTooltip {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+.dropdown-menu .dropdown-item i {
+  marginprofile-right: 10px;
+}
+.dropdown-menu .dropdown-item {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px !important;
+}
+.dropdown-menu {
+  padding: 10px !important;
+  width: 300px !important;
+}
+/* Custom styling for active nav-link */
+.nav-pills .nav-link.active {
+  text-decoration: underline;
+  color: #5271ff !important;
+  background: transparent !important;
+}
+.nav-item {
+  width: auto !important;
+}
+.nav-item .nav-link {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--light-textColor) !important;
+  /* background: transparent; */
+  line-height: 24px;
+  text-align: start;
+}
+.nav-item button {
+  width: 100%;
+}
