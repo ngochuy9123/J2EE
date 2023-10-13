@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,39 +18,20 @@
             consequatur.
           </p>
           <span>Don't you have an account?</span>
-          <a href="/register/index.html">
+          <a th:href="@{http://localhost:8080/register}">
             <button>Register</button>
           </a>
         </div>
         <div class="right">
           <h1>Login</h1>
-          <form id="loginForm">
-            <input type="text" placeholder="Username" id="username" />
-            <input type="password" placeholder="Password" id="password" />
+          <form id="loginForm" th:action="@{/userLogin}" method="post">
+            <input type="text" placeholder="Username" id="username" name="username" />
+            <input type="password" placeholder="Password" id="password" name="password" />
             <button id="loginButton">Login</button>
           </form>
         </div>
       </div>
     </div>
   </body>
-  <script src="../context/authContext.js"></script>
-  <script>
-    function handleLogin(event) {
-      event.preventDefault();
-      var username = document.getElementById("username").value;
-      var password = document.getElementById("password").value;
 
-      var isLoggedIn = login(username, password);
-
-      if (isLoggedIn) {
-        alert("Đăng nhập thành công!");
-      } else {
-        alert(
-          "Đăng nhập thất bại. Vui lòng kiểm tra tên người dùng và mật khẩu."
-        );
-      }
-    }
-    var loginForm = document.getElementById("loginForm");
-    loginForm.addEventListener("submit", handleLogin);
-  </script>
 </html>
