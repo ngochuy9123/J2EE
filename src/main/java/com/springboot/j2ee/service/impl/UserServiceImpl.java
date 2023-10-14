@@ -16,10 +16,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-    private BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @Override
     public User save(UserDTO userDTO) {
