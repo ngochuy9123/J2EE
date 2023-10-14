@@ -30,6 +30,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public User getInfo(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 
     @Override
     public Boolean checkEmail(String email) {

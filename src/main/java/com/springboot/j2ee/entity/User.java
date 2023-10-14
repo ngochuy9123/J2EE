@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Set;
 
 
 @Data
@@ -31,6 +33,10 @@ public class User {
     private Timestamp createdAt;
     @Column(name="updated_at")
     private Timestamp updatedAt;
+
+    @OneToMany(mappedBy = "user")
+    private ArrayList<Post> posts;
+
 
     public User(String firstName, String lastName, String email, String password, String phone, String role,Timestamp createdAt,Timestamp updatedAt) {
         this.firstName = firstName;
