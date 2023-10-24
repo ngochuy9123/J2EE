@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -34,6 +36,8 @@ public class User {
 
     private String phone;
 
+    private String avatar;
+
     private String role;
 
     @Column(name = "created_at")
@@ -42,8 +46,13 @@ public class User {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-//    @OneToMany(mappedBy = "user")
-//    private ArrayList<Post> posts;
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Post> posts = new ArrayList<>();
 
 
     public User(String firstName, String lastName, String email, String password, String phone, String role,Timestamp createdAt,Timestamp updatedAt) {
@@ -56,4 +65,17 @@ public class User {
         this.createdAt=createdAt;
         this.updatedAt=updatedAt;
     }
+
+    public Post createPost(Post post){
+        this.posts.add(post);
+        post.setUser(this);
+        return post;
+    }
+
+    public void removePost(Post post){
+        this.posts.add(post);
+        post.setUser(null);
+    }
+
+
 }

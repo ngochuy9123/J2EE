@@ -1,0 +1,11 @@
+version: '3.8'
+name: j2ee
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: huy123
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql

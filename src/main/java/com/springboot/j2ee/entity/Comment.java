@@ -10,15 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "post_video")
-public class Post_Video {
+@Table(name = "comment")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private String content;
+
 
     @ManyToOne
-    @JoinColumn(name="pv_id", nullable=false)
     private Post post;
-
-    private String url;
 }

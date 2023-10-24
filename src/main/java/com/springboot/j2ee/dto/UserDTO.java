@@ -27,4 +27,5 @@ public class UserDTO {
 
     @NotEmpty(message = "Phone should not be empty")
     private String phone;
+    private String avatar;
 }

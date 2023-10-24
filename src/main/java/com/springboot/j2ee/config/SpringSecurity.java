@@ -27,9 +27,9 @@ public class SpringSecurity {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginProcessingUrl("/userLogin")
                         .loginPage("/signin")
                         .defaultSuccessUrl("/home", true)
+                        .loginProcessingUrl("/userLogin")
                         .permitAll()
                 ).logout(
                         logout->logout
