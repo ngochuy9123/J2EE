@@ -181,6 +181,10 @@ function addComment(postId) {
     commentInput.value = "";
   }
 }
+
+
+
+
 function toggleLike(postId) {
   // Find the heart icon element based on postId
   const heartIcon = document.querySelector(`#item-${postId} .like-icon i`);
@@ -264,9 +268,62 @@ document.getElementById("upload-image").addEventListener("click", function () {
 
 // Function to handle the file upload
 function handleFileUpload(input) {
-  const selectedFile = input.files[0];
-  if (selectedFile) {
-    // You can perform further actions with the selected file here
-    console.log("Selected file:", selectedFile.name);
+  const files = input.files;
+  const imageContainer = document.getElementById('image-container');
+
+  for (let i = 0; i < files.length; i++) {
+    const selectedFile = files[i];
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const image = new Image();
+        image.onload = function() {
+          // Chỉnh kích thước của hình ảnh thành 50x50 pixels
+          image.width = 120;
+          image.height = 150;
+          imageContainer.appendChild(image);
+        }
+        image.src = e.target.result;
+      }
+
+      reader.readAsDataURL(selectedFile);
+    }
   }
 }
+
+async function testCmt(button) {
+
+
+  var postId = button.getAttribute("data-post-id");
+  const commentInput = document.getElementById(postId);
+  const commentText = commentInput.value.trim();
+  console.log(commentText)
+  // Lấy giá trị từ các trường input
+
+  // Dữ liệu cần gửi
+  var data = {
+    id: postId,
+    content: commentText
+  };
+
+
+  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`)
+  const status = resp.status;
+      // $.ajax({
+      //   url: "/createComment",
+      //   method: "GET",
+      //   data: JSON.stringify(data), // Chuyển dữ liệu thành chuỗi JSON
+      //   contentType: "application/json; charset=utf-8",
+      //   dataType: "json",
+      //   success: function (response) {
+      //     // Xử lý dữ liệu từ máy chủ nếu cần
+      //     // console.log(response)
+      //   },
+      //   error: function (error) {
+      //     // Xử lý lỗi nếu có
+      //     console.error("An error occurred:", error);
+      //   }
+
+}
+
