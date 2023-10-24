@@ -35,6 +35,14 @@ public class UserController {
         return "index";
     }
 
+    @GetMapping("chat")
+    public String chat(Principal principal, Model model){
+        String userName = principal.getName();
+        System.out.println("Current Logged in User is: " + userName);
+        model.addAttribute("user",userService.getInfo(userName));
+        return "chat";
+    }
+
     @PostMapping("createPost")
     public String createPost(Principal principal, Authentication auth,Model model){
         String userName = principal.getName();
