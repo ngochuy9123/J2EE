@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
         User user = new User(userDTO.getFirstName(),userDTO.getLastName()
                 ,userDTO.getEmail(),passwordEncoder.encode( userDTO.getPassword()),userDTO.getPhone(),"User",timestamp,timestamp);
         user.setAvatar(userDTO.getAvatar());
+        user.setBackground(userDTO.getBackground());
         return userRepository.save(user);
     }
 

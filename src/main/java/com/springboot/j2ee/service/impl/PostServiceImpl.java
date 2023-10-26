@@ -1,12 +1,8 @@
 package com.springboot.j2ee.service.impl;
 
-import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.entity.User;
-import com.springboot.j2ee.enums.EPostVisibility;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -22,6 +18,11 @@ public class PostServiceImpl implements PostService {
         this.postRepository = postRepository;
     }
 
+
+    @Override
+    public Post getInfoPost(Long id) {
+        return postRepository.findById(id).get();
+    }
 
     @Override
     public List<Post> getAllPost() {
