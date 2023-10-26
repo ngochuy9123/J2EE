@@ -26,3 +26,23 @@ function handleFileUpload(input) {
     console.log("Selected file:", selectedFile.name);
   }
 }
+
+document.getElementById('edit_avatar').addEventListener('click', function() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function(event) {
+    var file = event.target.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function() {
+      var imgElement = document.querySelector('.avt-img');
+      imgElement.src = reader.result;
+    };
+    var fileName = file.name;
+    console.log('Tên tệp tin đã chọn: ' + fileName);
+    reader.readAsDataURL(file);
+  };
+
+  input.click();
+});

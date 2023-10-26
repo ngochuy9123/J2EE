@@ -307,23 +307,21 @@ async function testCmt(button) {
     content: commentText
   };
 
+  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
 
-  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`)
+
+  // const resp = await fetch(`/createComment`,{
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     // 'Content-Type': 'application/x-www-form-urlencoded',
+  //   },
+  //   body: JSON.stringify(data)
+  // })
   const status = resp.status;
-      // $.ajax({
-      //   url: "/createComment",
-      //   method: "GET",
-      //   data: JSON.stringify(data), // Chuyển dữ liệu thành chuỗi JSON
-      //   contentType: "application/json; charset=utf-8",
-      //   dataType: "json",
-      //   success: function (response) {
-      //     // Xử lý dữ liệu từ máy chủ nếu cần
-      //     // console.log(response)
-      //   },
-      //   error: function (error) {
-      //     // Xử lý lỗi nếu có
-      //     console.error("An error occurred:", error);
-      //   }
+  console.log(status)
+  const data1 = await resp.text();
+  console.log(data1)
 
 }
 

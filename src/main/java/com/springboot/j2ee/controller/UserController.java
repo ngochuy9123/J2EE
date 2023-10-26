@@ -34,9 +34,11 @@ public class UserController {
     private final EmailService emailService;
     private final PostService postService;
 
-    private String email_md ;
+    public static String email_md ;
+    public static User user_pub;
     private Path p = Path.of("src/main/resources/static/uploads") ;
     public static String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
+    public static String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
     public static String pathImg = "/uploads/";
     public UserController(UserService userService, EmailService emailService, PostService postService) {
         this.userService = userService;
@@ -44,16 +46,24 @@ public class UserController {
         this.postService = postService;
     }
 
+
+
     @GetMapping("home")
     public String showHome(Principal principal, Authentication auth, Model model){
         String userName = principal.getName();
-        this.email_md = userName;
-        User user_t = userService.getInfo(userName);
+        email_md = userName;
+        user_pub = userService.getInfo(userName);
+
         model.addAttribute("posts",postService.getAllPost());
-        model.addAttribute("user",userService.getInfo(userName));
+        model.addAttribute("user",user_pub);
         return "index";
     }
 
+    @GetMapping("profile")
+    public String showProfile(Model model){
+        model.addAttribute("user",user_pub);
+        return "profile";
+    }
 
     @GetMapping("signin")
     public String showSignInForm(){
@@ -78,6 +88,7 @@ public class UserController {
         else{
 
             registrationDTO.setAvatar("https://cdn.alongwalk.info/vn/wp-content/uploads/2022/10/14054104/image-100-y-tuong-avatar-cute-doc-dao-an-tuong-nhat-cho-ban-166567566414594.jpg");
+            registrationDTO.setBackground("https://c4.wallpaperflare.com/wallpaper/321/512/923/tom-and-jerry-heroes-cartoons-desktop-hd-wallpaper-for-mobile-phones-tablet-and-pc-1920%C3%971200-wallpaper-thumb.jpg");
             User u = userService.save(registrationDTO);
             if (u==null){
                 session.setAttribute("msgReg","DANG KI THAT BAI");
@@ -91,35 +102,49 @@ public class UserController {
     }
 
     @PostMapping("create_post")
-    public String createPost(@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam("image") MultipartFile file)throws IOException {
-        StringBuilder fileNames = new StringBuilder();
-        UPLOAD_DIRECTORY = UPLOAD_DIRECTORY.concat(email_md);
-        System.out.println(Path.of(UPLOAD_DIRECTORY));
-        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))) {
+    public String createPost(@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
 
-                Files.createDirectories(Path.of(UPLOAD_DIRECTORY));
+        if ( !file.isEmpty()){
+            String pathTemp = pathImg.concat(email_md);
+            pathTemp = pathTemp.concat("/");
+            pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
+            saveImage(UPLOAD_DIRECTORY,file);
+            saveImage(UPLOAD_DERECTORY_TARGET,file);
+
+            postDTO.setImageUrl(pathTemp);
         }
-        String pathTemp = pathImg.concat(email_md);
-        pathTemp = pathTemp.concat("/");
-        pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
+//        else{
+//
+//            postDTO.setImageUrl("");
+//        }
 
-        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))){
-
-        }
-        System.out.println(UPLOAD_DIRECTORY);
-        Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, file.getOriginalFilename());
-        fileNames.append(file.getOriginalFilename());
-        Files.write(fileNameAndPath, file.getBytes());
-
-        String t = UPLOAD_DIRECTORY.concat("/");
-
-
-        postDTO.setImageUrl(pathTemp);
         userService.createPost(postDTO,this.email_md);
         UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
+        UPLOAD_DERECTORY_TARGET="./target/classes/static/uploads/";
+
         return "redirect:/home";
     }
+
+    public void saveImage(String url,MultipartFile file) throws IOException {
+        StringBuilder fileNames = new StringBuilder();
+
+        UPLOAD_DIRECTORY = UPLOAD_DIRECTORY.concat(email_md);
+        UPLOAD_DERECTORY_TARGET = UPLOAD_DERECTORY_TARGET.concat(email_md);
+
+        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))) {
+            Files.createDirectories(Path.of(UPLOAD_DIRECTORY));
+        }
+        if (!Files.exists(Path.of(UPLOAD_DERECTORY_TARGET))) {
+            Files.createDirectories(Path.of(UPLOAD_DERECTORY_TARGET));
+        }
+
+        Path fileNameAndPath = Paths.get(url, file.getOriginalFilename());
+        fileNames.append(file.getOriginalFilename());
+        Files.write(fileNameAndPath, file.getBytes());
+    }
+
+
 
 
 

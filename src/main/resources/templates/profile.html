@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html >
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
@@ -53,7 +53,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -72,7 +72,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -90,7 +90,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -108,7 +108,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -126,7 +126,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -144,7 +144,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -162,7 +162,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -180,7 +180,7 @@
               
                 <div class="user-search">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   >
                   <div class="name-search">
@@ -233,7 +233,7 @@
               <li><a class="dropdown-item" href="#">
                 <i class="user">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   />
                  <span class="detail-noti">  <strong>
@@ -256,7 +256,7 @@
                 <li><a class="dropdown-item" href="#">
                   <i class="user">
                     <img
-                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+  th:src="${user.getAvatar()}"
                       alt=""
                     />
                    <span class="detail-noti">  <strong>
@@ -279,7 +279,7 @@
                   <li><a class="dropdown-item" href="#">
                     <i class="user">
                       <img
-                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+    th:src="${user.getAvatar()}"
                         alt=""
                       />
                      <span class="detail-noti">  <strong>
@@ -302,7 +302,7 @@
                     <li><a class="dropdown-item" href="#">
                       <i class="user">
                         <img
-                          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+      th:src="${user.getAvatar()}"
                           alt=""
                         />
                        <span class="detail-noti">  <strong>
@@ -359,7 +359,7 @@
             
                 <i class="user">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt=""
                   />
                  <span class="detail-noti">  <strong>
@@ -373,7 +373,7 @@
             
                   <i class="user">
                     <img
-                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+  th:src="${user.getAvatar()}"
                       alt=""
                     />
                    <span class="detail-noti">  <strong>
@@ -387,7 +387,7 @@
             
                     <i class="user">
                       <img
-                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+    th:src="${user.getAvatar()}"
                         alt=""
                       />
                      <span class="detail-noti">  <strong>
@@ -520,12 +520,12 @@
         <div class="profile">
           <div class="images">
             <img
-              src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                    th:src="${user.getBackground()}"
               alt=""
               class="cover"
             />
             <img
-              src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                    th:src="${user.getAvatar()}"
               alt=""
               class="profilePic"
             />
@@ -550,7 +550,7 @@
                 ></a>
               </div>
               <div class="center">
-                <span>Jane Doe</span>
+                <span th:text="${user.getEmail()}"></span>
                 <div class="info">
                   <div class="item">
                     <i class="material-icons">place</i>
@@ -586,9 +586,9 @@
               <div class="container-avt">
                 <div class="title-edit">Avatar</div>
                 
-                <a href="#" class="textEdit">Edit</a>
+                <a id="edit_avatar" href="#" class="textEdit">Edit</a>
               </div>
-              <img src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load" alt="" class="avt-img">
+              <img th:src="${user.getAvatar()}" alt="" class="avt-img">
             </div>
             <div class="coverimg-editprofile ">
               <div class="container-coverimg">
@@ -596,7 +596,7 @@
                 
                 <a href="#" class="textEdit">Edit</a>
               </div>
-              <img src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" class="cover-img">
+              <img th:src="${user.getBackground()}" alt="" class="cover-img">
             </div>
             <div class="information-editprofile ">
               <div class="container-information">
@@ -715,7 +715,7 @@
               <div class="user">
                 <div class="userInfo">
                   <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+th:src="${user.getAvatar()}"
                     alt="User Profile Pic"
                   />
                 </div>

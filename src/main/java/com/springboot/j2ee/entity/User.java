@@ -31,6 +31,7 @@ public class User {
     private String password;
     private String phone;
     private String avatar;
+    private String background;
     private String role;
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -45,6 +46,13 @@ public class User {
     )
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Comment> comments = new ArrayList<>();
 
     public User(String firstName, String lastName, String email, String password, String phone, String role,Timestamp createdAt,Timestamp updatedAt) {
         this.firstName = firstName;
