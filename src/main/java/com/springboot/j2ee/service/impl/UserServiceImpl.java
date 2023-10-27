@@ -1,5 +1,6 @@
 package com.springboot.j2ee.service.impl;
 
+import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.Post;
@@ -58,6 +59,22 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User editAvatar(String image) {
+        UserController.user_pub.setAvatar(image);
+
+        return userRepository.save(UserController.user_pub);
+    }
+
+    @Override
+    public User editBackground(String image) {
+        return null;
+    }
 
 
 }

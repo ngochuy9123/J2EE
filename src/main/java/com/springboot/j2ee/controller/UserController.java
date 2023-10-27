@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,10 +37,10 @@ public class UserController {
 
     public static String email_md ;
     public static User user_pub;
-    private Path p = Path.of("src/main/resources/static/uploads") ;
-    public static String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
-    public static String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
-    public static String pathImg = "/uploads/";
+
+    public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
+    public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
+    public static final String pathImg = "/uploads/";
     public UserController(UserService userService, EmailService emailService, PostService postService) {
         this.userService = userService;
         this.emailService = emailService;
@@ -109,39 +110,37 @@ public class UserController {
             pathTemp = pathTemp.concat("/");
             pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            saveImage(UPLOAD_DIRECTORY,file);
-            saveImage(UPLOAD_DERECTORY_TARGET,file);
+            saveImage(file);
+            saveImage(file);
 
             postDTO.setImageUrl(pathTemp);
         }
-//        else{
-//
-//            postDTO.setImageUrl("");
-//        }
 
         userService.createPost(postDTO,this.email_md);
-        UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
-        UPLOAD_DERECTORY_TARGET="./target/classes/static/uploads/";
 
         return "redirect:/home";
     }
 
-    public void saveImage(String url,MultipartFile file) throws IOException {
+    public void saveImage(MultipartFile file) throws IOException {
         StringBuilder fileNames = new StringBuilder();
 
-        UPLOAD_DIRECTORY = UPLOAD_DIRECTORY.concat(email_md);
-        UPLOAD_DERECTORY_TARGET = UPLOAD_DERECTORY_TARGET.concat(email_md);
+        String uploadDirectory = UPLOAD_DIRECTORY.concat(email_md);
+        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email_md);
 
-        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))) {
-            Files.createDirectories(Path.of(UPLOAD_DIRECTORY));
+        if (!Files.exists(Path.of(uploadDirectory))) {
+            Files.createDirectories(Path.of(uploadDirectory));
         }
-        if (!Files.exists(Path.of(UPLOAD_DERECTORY_TARGET))) {
-            Files.createDirectories(Path.of(UPLOAD_DERECTORY_TARGET));
+        if (!Files.exists(Path.of(uploadDirectoryTarget))) {
+            Files.createDirectories(Path.of(uploadDirectoryTarget));
         }
 
-        Path fileNameAndPath = Paths.get(url, file.getOriginalFilename());
+        Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
+        Path fileNameAndPathTarget = Paths.get(uploadDirectory, file.getOriginalFilename());
         fileNames.append(file.getOriginalFilename());
         Files.write(fileNameAndPath, file.getBytes());
+        Files.write(fileNameAndPathTarget,file.getBytes());
+
+
     }
 
 

@@ -585,16 +585,15 @@ th:src="${user.getAvatar()}"
             <div class="avatar-editprofile">
               <div class="container-avt">
                 <div class="title-edit">Avatar</div>
-                
-                <a id="edit_avatar" href="#" class="textEdit">Edit</a>
+                <input type="file" class="textEdit" id="edit_avatar" onclick="chooseAvatarImg()">
               </div>
-              <img th:src="${user.getAvatar()}" alt="" class="avt-img">
+              <img id="avt_img" th:src="${user.getAvatar()}" alt="" class="avt-img">
             </div>
             <div class="coverimg-editprofile ">
               <div class="container-coverimg">
                 <div class="title-edit">Cover image</div>
-                
-                <a href="#" class="textEdit">Edit</a>
+                <input type="file" class="textEdit" id="edit_background" onclick="chooseAvatarImg()">
+                <a href="#" class="textEdit" >Edit</a>
               </div>
               <img th:src="${user.getBackground()}" alt="" class="cover-img">
             </div>
@@ -644,7 +643,7 @@ th:src="${user.getAvatar()}"
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button id="save_changes" type="button" class="btn btn-primary">Save changes</button>
         </div>
     </div>
 </div>

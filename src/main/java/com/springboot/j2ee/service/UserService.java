@@ -9,4 +9,8 @@ public interface UserService {
     User getInfo(String email);
     Boolean checkEmail(String email);
     Boolean createPost(PostDTO postDTO,String email);
+    User saveUser(User user);
+
+    User editAvatar(String image);
+    User editBackground(String image);
 }
