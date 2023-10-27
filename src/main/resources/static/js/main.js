@@ -310,14 +310,6 @@ async function testCmt(button) {
   const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
 
 
-  // const resp = await fetch(`/createComment`,{
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     // 'Content-Type': 'application/x-www-form-urlencoded',
-  //   },
-  //   body: JSON.stringify(data)
-  // })
   const status = resp.status;
   console.log(status)
   const data1 = await resp.text();
