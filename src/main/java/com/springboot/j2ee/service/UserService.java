@@ -11,6 +11,7 @@ public interface UserService {
     Boolean createPost(PostDTO postDTO,String email);
     User saveUser(User user);
 
+    User getInfoById(long id);
     User editAvatar(String image);
     User editBackground(String image);
 }
