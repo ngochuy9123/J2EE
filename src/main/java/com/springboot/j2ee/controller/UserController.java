@@ -1,31 +1,31 @@
 package com.springboot.j2ee.controller;
 
 
+import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.entity.Friend;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.EmailService;
+import com.springboot.j2ee.service.FriendService;
 import com.springboot.j2ee.service.PostService;
 import com.springboot.j2ee.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -34,6 +34,7 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final PostService postService;
+    private final FriendService friendService;
 
     public static String email_md ;
     public static User user_pub;
@@ -41,30 +42,33 @@ public class UserController {
     public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
     public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
     public static final String pathImg = "/uploads/";
-    public UserController(UserService userService, EmailService emailService, PostService postService) {
+    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService) {
         this.userService = userService;
         this.emailService = emailService;
         this.postService = postService;
+        this.friendService = friendService;
     }
 
 
 
     @GetMapping("home")
-    public String showHome(Principal principal, Authentication auth, Model model){
-        String userName = principal.getName();
+    public String showHome(@AuthenticationPrincipal CustomUser principal, Authentication auth, Model model){
+        String userName = principal.getUsername();
         email_md = userName;
         user_pub = userService.getInfo(userName);
+        List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
         model.addAttribute("posts",postService.getAllPost());
         model.addAttribute("user",user_pub);
+        model.addAttribute("lst_friend_request",list_friend_request);
         return "index";
     }
 
-    @GetMapping("profile")
-    public String showProfile(Model model){
-        model.addAttribute("user",user_pub);
-        return "profile";
-    }
+//    @GetMapping("profile")
+//    public String showProfile(Model model){
+//        model.addAttribute("user",user_pub);
+//        return "profile";
+//    }
 
     @GetMapping("signin")
     public String showSignInForm(){
@@ -139,9 +143,32 @@ public class UserController {
         fileNames.append(file.getOriginalFilename());
         Files.write(fileNameAndPath, file.getBytes());
         Files.write(fileNameAndPathTarget,file.getBytes());
-
-
     }
+
+    @GetMapping("profile")
+    public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model){
+        if (id == -1){
+            id = user_pub.getId();
+        }
+
+
+        boolean isCurrentUser =false;
+        if (id == user_pub.getId()){
+            isCurrentUser=true;
+        }
+
+        if (isCurrentUser){
+            User user = userService.getInfoById(user_pub.getId());
+            model.addAttribute("user",user);
+        }
+        else{
+            User user = userService.getInfoById(id);
+            model.addAttribute("user",user);
+        }
+        model.addAttribute("isCurrentUser", isCurrentUser);
+        return "profile";
+    }
+
 
 
 

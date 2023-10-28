@@ -38,10 +38,10 @@
     <!-- NAVBAR -->
     <div class="navbar">
       <div class="left">
-        <a href="/" style="text-decoration: none">
+        <a href="/home" style="text-decoration: none">
           <span>Social</span>
         </a>
-        <a href="/"><i class="fa-solid fa-house"></i></a>
+        <a href="/home"><i class="fa-solid fa-house"></i></a>
 
         <i class="fa-regular fa-moon"></i>
         <i class="fa-solid fa-table-cells-large"></i>
@@ -207,129 +207,33 @@
         <div class="dropdown">
           <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
           <i class="fa-regular fa-user">
-            <div class="notice-addfr">4</div>
+            <div th:if="${lst_friend_request.size()>0}" class="notice-addfr" th:text="${lst_friend_request.size()}"></div>
           </i>
         </div>
         <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
           <div class="recently">Friend request</div>
-            <li><a class="dropdown-item" href="#">
+
+            <li th:each="friend_req:${lst_friend_request}" >
+              <a class="dropdown-item" th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
+              >
               <i class="user">
                 <img
-                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                        th:src="${friend_req.getUserFrom().getAvatar()}"
                   alt=""
                 />
                <span class="detail-noti">  <strong>
 
                 John Doe
               </strong>đã gửi cho bạn lời mời kết bạn
-              <div>1 tuần trước</div>
+              <div th:text="${friend_req.getCreatedAt()}"></div>
               <div class="wrap-btn">
-                <button class="accept-btn">Accept</button>
+                <button  class="accept-btn">Accept</button>
                 <button class="dismiss-btn">Dismiss</button>
               </div>
             </span>
-               
-              
-                </i>
-                
-               
-                
+              </i>
               </a></li>
-            
-              <li><a class="dropdown-item" href="#">
-                <i class="user">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  />
-                 <span class="detail-noti">  <strong>
-  
-                  John Doe
-                </strong>đã gửi cho bạn lời mời kết bạn
-                <div>1 tuần trước</div>
-                <div class="wrap-btn">
-                  <button class="accept-btn">Accept</button>
-                  <button class="dismiss-btn">Dismiss</button>
-                </div>
-              </span>
-                 
-                
-                  </i>
-                  
-                 
-                  
-                </a></li>
-                <li><a class="dropdown-item" href="#">
-                  <i class="user">
-                    <img
-                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                      alt=""
-                    />
-                   <span class="detail-noti">  <strong>
-    
-                    John Doe
-                  </strong>đã gửi cho bạn lời mời kết bạn
-                  <div>1 tuần trước</div>
-                  <div class="wrap-btn">
-                    <button class="accept-btn">Accept</button>
-                    <button class="dismiss-btn">Dismiss</button>
-                  </div>
-                </span>
-                   
-                  
-                    </i>
-                    
-                   
-                    
-                  </a></li>
-                  <li><a class="dropdown-item" href="#">
-                    <i class="user">
-                      <img
-                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                        alt=""
-                      />
-                     <span class="detail-noti">  <strong>
-      
-                      John Doe
-                    </strong>đã gửi cho bạn lời mời kết bạn
-                    <div>1 tuần trước</div>
-                    <div class="wrap-btn">
-                      <button class="accept-btn">Accept</button>
-                      <button class="dismiss-btn">Dismiss</button>
-                    </div>
-                  </span>
-                     
-                    
-                      </i>
-                      
-                     
-                      
-                    </a></li>
-                    <li><a class="dropdown-item" href="#">
-                      <i class="user">
-                        <img
-                          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                          alt=""
-                        />
-                       <span class="detail-noti">  <strong>
-        
-                        John Doe
-                      </strong>đã gửi cho bạn lời mời kết bạn
-                      <div>1 tuần trước</div>
-                      <div class="wrap-btn">
-                        <button class="accept-btn">Accept</button>
-                        <button class="dismiss-btn">Dismiss</button>
-                      </div>
-                    </span>
-                       
-                      
-                        </i>
-                        
-                       
-                        
-                      </a></li>
-                      <a href="" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
-   
+          <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
         </ul>
 
       </div>
@@ -455,7 +359,7 @@
       <div class="leftBar">
         <div class="container">
           <div class="menu">
-            <a class="user" href="/profile.html">
+            <a class="user" href="profile">
               <img
                 th:src="${user.getAvatar()}"
                 alt=""
@@ -465,7 +369,7 @@
 
             </a>
             <div class="item">
-              <a href="./friends.html">
+              <a href="./friend">
                 <img src="./assets/1.png" alt="" />
                 <span>Friends</span>
               </a>
@@ -736,33 +640,23 @@
       <div class="rightBar">
         <div class="container">
           <div class="item">
-            <span>Suggestions For You</span>
-            <div class="user">
+
+            <span>List Friend Request</span>
+
+            <div th:each="friend_req:${lst_friend_request}" class="user">
               <div class="userInfo">
                 <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                        th:src="${friend_req.getUserFrom().getAvatar()}"
                   alt=""
                 />
-                <span>Jane Doe</span>
+                <span th:text="${friend_req.getUserFrom().getEmail()}"></span>
               </div>
               <div class="buttons">
-                <button>follow</button>
-                <button>dismiss</button>
+                <button>ACCEPT</button>
+                <button>DECLINE</button>
               </div>
             </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <span>Jane Doe</span>
-              </div>
-              <div class="buttons">
-                <button>follow</button>
-                <button>dismiss</button>
-              </div>
-            </div>
+
           </div>
           <div class="item">
             <span>Latest Activities</span>

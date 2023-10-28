@@ -566,11 +566,17 @@ th:src="${user.getAvatar()}"
               <div class="right">
                 <i class="material-icons">email</i>
                 <!-- Edit Profile div -->
-  <div class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+
+  <div th:if="${isCurrentUser}" class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">
    
     <i class="fa-solid fa-pen"></i>Edit Profile
 
-</div>
+  </div>
+  <div th:unless="${isCurrentUser}">
+    <!-- Hiển thị giao diện của người dùng khác -->
+    <input type="hidden" name="idUserToHidden" th:value="${user.getId()}">
+    <button onclick="addFriend()"  class="sendFriendRequestBtn">ADD FRIEND</button>
+  </div>
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

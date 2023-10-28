@@ -135,3 +135,18 @@ document.getElementById('save_changes').addEventListener('click', async function
   }
   location.reload()
 });
+
+
+
+async function addFriend() {
+  let userId = document.querySelector('input[name="idUserToHidden"]').value;
+  let data = new FormData();
+  data.append('userToId', userId);
+  const resp = await fetch("/addFriend", {
+    method: "POST",
+    body: data
+  });
+  let http = resp.status
+  let announce = await resp.text()
+  console.log(announce)
+}
