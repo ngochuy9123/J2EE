@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findUserById(id);
+    }
+
 
     @Override
     public Boolean checkEmail(String email) {

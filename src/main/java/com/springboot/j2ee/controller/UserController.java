@@ -54,13 +54,6 @@ public class UserController {
         return "index";
     }
 
-    @GetMapping("chat")
-    public String chat(Principal principal, Model model){
-        String userName = principal.getName();
-        System.out.println("Current Logged in User is: " + userName);
-        model.addAttribute("user",userService.getInfo(userName));
-        return "chat";
-    }
 
     @GetMapping("signin")
     public String showSignInForm(){
@@ -100,34 +93,32 @@ public class UserController {
     @PostMapping("create_post")
     public String createPost(@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam("image") MultipartFile file)throws IOException {
         StringBuilder fileNames = new StringBuilder();
-        UPLOAD_DIRECTORY = UPLOAD_DIRECTORY.concat(email_md);
-        System.out.println(Path.of(UPLOAD_DIRECTORY));
-        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))) {
+        var directory = UPLOAD_DIRECTORY.concat(email_md);
+        Path directoryPath = Path.of(directory);
+        System.out.println(directoryPath);
+        if (!Files.exists(directoryPath)) {
 
-                Files.createDirectories(Path.of(UPLOAD_DIRECTORY));
+                Files.createDirectories(directoryPath);
 
         }
         String pathTemp = pathImg.concat(email_md);
         pathTemp = pathTemp.concat("/");
         pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-        if (!Files.exists(Path.of(UPLOAD_DIRECTORY))){
+        if (!Files.exists(directoryPath)){
 
         }
-        System.out.println(UPLOAD_DIRECTORY);
-        Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, file.getOriginalFilename());
+        System.out.println(directory);
+        Path fileNameAndPath = Paths.get(directory, file.getOriginalFilename());
         fileNames.append(file.getOriginalFilename());
         Files.write(fileNameAndPath, file.getBytes());
 
-        String t = UPLOAD_DIRECTORY.concat("/");
+        String t = directory.concat("/");
 
 
         postDTO.setImageUrl(pathTemp);
         userService.createPost(postDTO,this.email_md);
-        UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
         return "redirect:/home";
     }
-
-
 
 }

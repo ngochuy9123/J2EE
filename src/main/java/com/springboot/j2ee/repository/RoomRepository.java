@@ -10,5 +10,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     ArrayList<Room> findRoomsByParticipantsContainsOrderByLastUpdated(User participant);
 
+    Room findRoomById(Long roomId);
+
 
 }

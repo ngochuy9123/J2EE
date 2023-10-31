@@ -1,7 +1,5 @@
 package com.springboot.j2ee.config;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +20,7 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/register","/css/**","/js/**","/assets/**","/img/**","/signin").permitAll()
                         .anyRequest().authenticated()

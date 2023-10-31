@@ -1,5 +1,6 @@
 package com.springboot.j2ee.dto;
 
+import com.springboot.j2ee.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -28,4 +29,23 @@ public class UserDTO {
     @NotEmpty(message = "Phone should not be empty")
     private String phone;
     private String avatar;
+
+    public UserDTO(User user) {
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.password = "";
+        this.phone = user.getPhone();
+        this.avatar = user.getAvatar();
+    }
+
+    public UserDTO(User user, String password) {
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.password = password;
+        this.phone = user.getPhone();
+        this.avatar = user.getAvatar();
+    }
+
 }
