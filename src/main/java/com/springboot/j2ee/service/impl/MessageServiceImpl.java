@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void save(MessageDTO messageDTO) {
         Message message = new Message();
-        User user = userRepository.findUserById(messageDTO.getUserId());
+        User user = userRepository.findById(messageDTO.getUserId()).get();
         Room room = roomRepository.findRoomById(messageDTO.getRoomId());
 
         message.setUser(user);
