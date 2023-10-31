@@ -55,6 +55,7 @@
           </div>
           <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger">
             <div class="recently">Recently</div>
+
               <li>
                 <a class="dropdown-item" href="#">
               
@@ -73,133 +74,7 @@
                 </div>
                 </a>
               </li>
-              
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
 
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
           </ul>
       </div>
       </div>
@@ -215,24 +90,25 @@
 
             <li th:each="friend_req:${lst_friend_request}" >
               <a class="dropdown-item" th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
-              >
+              ></a>
               <i class="user">
                 <img
                         th:src="${friend_req.getUserFrom().getAvatar()}"
                   alt=""
                 />
-               <span class="detail-noti">  <strong>
+               <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
 
-                John Doe
+
               </strong>đã gửi cho bạn lời mời kết bạn
               <div th:text="${friend_req.getCreatedAt()}"></div>
               <div class="wrap-btn">
-                <button  class="accept-btn">Accept</button>
-                <button class="dismiss-btn">Dismiss</button>
+                <input type="hidden" th:value="${friend_req.getUserFrom().getId()}" class="accept-input"/>
+                <button onclick="acceptFriendRequest(this)" class="accept-btn">Accept</button>
+                <button onclick="declineFriendRequest(this)" class="dismiss-btn">Dismiss</button>
               </div>
             </span>
               </i>
-              </a></li>
+              </li>
           <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
         </ul>
 
@@ -608,7 +484,7 @@
               </div>
             </div>
 <!--            Comment Post-->
-            <div class=" comments" id="comments-container-${post.id}" >
+            <div class=" comments" th:id="${post.getId()}" >
               <!-- Comments section, replace with your comments -->
 
                 <div class="write">
@@ -617,14 +493,14 @@
                   <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
                 </div>
 
-              <div class="comment">
-                <img src="https://khoinguonsangtao.vn/wp-content/uploads/2022/07/avatar-gau-cute.jpg" alt="" />
-                <div class="info">
-                  <span>Hello Huy</span>
-                  <p>Hahahah HIhihihih</p>
-                </div>
-                <span class="date">1 hour ago</span>
-              </div>
+<!--              <div class="comment">-->
+<!--                <img src="https://khoinguonsangtao.vn/wp-content/uploads/2022/07/avatar-gau-cute.jpg" alt="" />-->
+<!--                <div class="info">-->
+<!--                  <span>Hello Huy</span>-->
+<!--                  <p>Hahahah HIhihihih</p>-->
+<!--                </div>-->
+<!--                <span class="date">1 hour ago</span>-->
+<!--              </div>-->
             </div>
           </div>
         </div>

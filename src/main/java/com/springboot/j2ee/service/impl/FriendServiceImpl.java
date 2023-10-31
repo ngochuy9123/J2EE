@@ -29,9 +29,11 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Friend sendFriendRequest(long idUserFrom, long idUserTo) {
         User userTo = userRepository.findById(idUserTo).get();
+        User userFrom = userRepository.findById(idUserFrom).get();
+
         Friend friend = new Friend();
         friend.setUserTo(userTo);
-        friend.setUserFrom(UserController.user_pub);
+        friend.setUserFrom(userFrom);
         friend.setStatus(EFriendStatus.SENDING);
         friend.setCreatedAt(timestamp);
         return friendRepository.save(friend);
@@ -40,7 +42,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<Friend> displayListFriend(long idUser) {
         User user = userRepository.findById(idUser).get();
-        return friendRepository.findByUserFromOrUserToAndStatus(user,user,EFriendStatus.FRIEND);
+        return friendRepository.findByUserFromAndStatusOrUserToAndStatus(user,EFriendStatus.FRIEND,user,EFriendStatus.FRIEND);
     }
 
     @Override
@@ -51,11 +53,31 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public Friend acceptFriendRequest(long idUserFrom, long idUserTo) {
-        return null;
+        User userFrom = userRepository.findById(idUserFrom).get();
+        User userTo = userRepository.findById(idUserTo).get();
+        Friend friend = friendRepository.findByUserToAndUserFrom(userTo,userFrom);
+        if (friend == null){
+            friend = friendRepository.findByUserToAndUserFrom(userFrom,userTo);
+        }
+        friend.setStatus(EFriendStatus.FRIEND);
+        return friendRepository.save(friend);
     }
 
     @Override
     public Friend declineFriendRequest(long idUserFrom, long idUserTo) {
-        return null;
+        User userFrom = userRepository.findById(idUserFrom).get();
+        User userTo = userRepository.findById(idUserTo).get();
+//        co the rut gon vi delete chi co 1 ben co the delete la userTo
+        Friend friend = friendRepository.findByUserToAndUserFrom(userTo,userFrom);
+        if (friend == null){
+            friend = friendRepository.findByUserToAndUserFrom(userFrom,userTo);
+        }
+
+        System.out.println(friend.getId());
+
+        friendRepository.deleteById(friend.getId());
+
+        return friend;
+
     }
 }

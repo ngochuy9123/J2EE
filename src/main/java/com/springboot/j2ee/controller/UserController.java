@@ -146,32 +146,27 @@ public class UserController {
     }
 
     @GetMapping("profile")
-    public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model){
+    public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model,@AuthenticationPrincipal CustomUser principal){
         if (id == -1){
-            id = user_pub.getId();
+            id = principal.getUser().getId();
         }
-
-
         boolean isCurrentUser =false;
-        if (id == user_pub.getId()){
+        if (id == principal.getUser().getId()){
             isCurrentUser=true;
         }
 
         if (isCurrentUser){
-            User user = userService.getInfoById(user_pub.getId());
+            User user = userService.getInfoById(principal.getUser().getId());
             model.addAttribute("user",user);
         }
         else{
             User user = userService.getInfoById(id);
             model.addAttribute("user",user);
         }
+        model.addAttribute("lsPost",postService.getPostByIdUser(id));
         model.addAttribute("isCurrentUser", isCurrentUser);
         return "profile";
     }
-
-
-
-
 
 
 }

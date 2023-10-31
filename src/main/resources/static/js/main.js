@@ -310,10 +310,42 @@ async function testCmt(button) {
   const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
 
 
-  const status = resp.status;
+  let status = resp.status;
+  if (status === 201){
+    addComment(postId)
+  }
   console.log(status)
   const data1 = await resp.text();
   console.log(data1)
 
 }
 
+async function acceptFriendRequest(button) {
+  let inputValue = button.previousElementSibling.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/acceptFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
+}
+async function declineFriendRequest(button) {
+  let hiddenInput = button.parentElement.querySelector('.accept-input');
+  let inputValue = hiddenInput.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/declineFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
+}
