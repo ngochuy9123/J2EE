@@ -746,7 +746,59 @@ th:src="${user.getAvatar()}"
             </div>
           </div>
         </div>
-        <div id="post-container"></div>
+        <div id="post-container">
+
+
+          <div th:each="post:${lsPost}" class="post">
+            <div class="container">
+              <div class="user">
+                <div class="userInfo">
+                  <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
+                  <div class="details">
+                    <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
+                      <span class="name" th:text="${post.getUser().getEmail()}"></span>
+                    </a>
+                    <span class="date" th:text="${post.getCreatedAt()}"></span>
+                  </div>
+                </div>
+                <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span>...</span>
+                </div>
+                <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
+
+                </ul>
+              </div>
+
+
+
+              <div class="content">
+                <p th:text="${post.getContent()}"></p>
+                <img th:src="${post.getImageUrl()}" alt="Post Image">
+              </div>
+              <div class="info">
+                <div class="item" id="item-${post.id}" th:onclick="toggleComments(${post.getId()})">
+                  <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+                  12 Likes
+                </div>
+                <div class="item" th:onclick="toggleComments(${post.getId()})" >
+                  <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+                  12 Comments
+                </div>
+                <div class="item">
+                  <span class="share-icon"><i class="fa-solid fa-share"></i></span>
+                  Share
+                </div>
+              </div>
+              <div class=" comments" id="comments-container-${post.id}" >
+                <!-- Comments section, replace with your comments -->
+              </div>
+            </div>
+          </div>
+
+
+        </div>
         <!-- Include Posts content here -->
       </div>
 
@@ -849,6 +901,10 @@ th:src="${user.getAvatar()}"
             </div>
             <!-- Repeat the above user elements for additional online friends -->
           </div>
+
+
+
+
         </div>
       </div>
     </div>
@@ -877,6 +933,9 @@ th:src="${user.getAvatar()}"
         
       </ul>
           </div>
+
+
+
           <div class="content">
             <p>${post.desc}</p>
             <img src="${post.img}" alt="Post Image">

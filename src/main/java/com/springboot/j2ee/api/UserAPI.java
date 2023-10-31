@@ -1,8 +1,10 @@
 package com.springboot.j2ee.api;
 
+import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,16 +31,16 @@ public class UserAPI {
         this.userService = userService;
     }
     @PostMapping("editAvatar")
-    public String editAvatar(@RequestParam("image") MultipartFile file) throws IOException {
+    public String editAvatar(@RequestParam("image") MultipartFile file,@AuthenticationPrincipal CustomUser principal) throws IOException {
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(UserController.email_md);
+            String pathTemp = pathImg.concat(principal.getUsername());
             pathTemp = pathTemp.concat("/");
             pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            saveImage(file);
-            saveImage(file);
+            saveImage(file, principal.getUsername());
+            saveImage(file,principal.getUsername());
 
-            User user = userService.getInfo(UserController.email_md);
+            User user = userService.getInfo(principal.getUsername());
             user.setAvatar(pathTemp);
             userService.saveUser(user);
 
@@ -48,16 +50,16 @@ public class UserAPI {
     }
 
     @PostMapping("editBackground")
-    public String editBackground(@RequestParam("image") MultipartFile file) throws IOException {
+    public String editBackground(@RequestParam("image") MultipartFile file,@AuthenticationPrincipal CustomUser principal) throws IOException {
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(UserController.email_md);
+            String pathTemp = pathImg.concat(principal.getUsername());
             pathTemp = pathTemp.concat("/");
             pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            saveImage(file);
-            saveImage(file);
+            saveImage(file, principal.getUsername());
+            saveImage(file,principal.getUsername());
 
-            User user = userService.getInfo(UserController.email_md);
+            User user = userService.getInfo(principal.getUsername());
             user.setAvatar(pathTemp);
             userService.saveUser(user);
 
@@ -67,11 +69,11 @@ public class UserAPI {
     }
 
 
-    public void saveImage(MultipartFile file) throws IOException {
+    public void saveImage(MultipartFile file,String email) throws IOException {
         StringBuilder fileNames = new StringBuilder();
 
-        String uploadDirectory = UPLOAD_DIRECTORY.concat(UserController.email_md);
-        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(UserController.email_md);
+        String uploadDirectory = UPLOAD_DIRECTORY.concat(email);
+        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email);
 
         if (!Files.exists(Path.of(uploadDirectory))) {
             Files.createDirectories(Path.of(uploadDirectory));
