@@ -72,6 +72,30 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.zendesk/mysql-binlog-connector-java -->
+		<dependency>
+			<groupId>com.zendesk</groupId>
+			<artifactId>mysql-binlog-connector-java</artifactId>
+			<version>0.28.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+			<version>6.0.13</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
