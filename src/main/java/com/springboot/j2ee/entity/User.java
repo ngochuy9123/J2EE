@@ -38,6 +38,8 @@ public class User {
 
     private String avatar;
 
+    private String background;
+
     private String role;
 
     @Column(name = "created_at")
@@ -53,6 +55,31 @@ public class User {
             fetch = FetchType.LAZY
     )
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userFrom",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Friend> lsFriendFrom = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "userTo",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Friend> lsFriendTo = new ArrayList<>();
+
 
 
     public User(String firstName, String lastName, String email, String password, String phone, String role,Timestamp createdAt,Timestamp updatedAt) {

@@ -307,23 +307,45 @@ async function testCmt(button) {
     content: commentText
   };
 
+  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
 
-  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`)
-  const status = resp.status;
-      // $.ajax({
-      //   url: "/createComment",
-      //   method: "GET",
-      //   data: JSON.stringify(data), // Chuyển dữ liệu thành chuỗi JSON
-      //   contentType: "application/json; charset=utf-8",
-      //   dataType: "json",
-      //   success: function (response) {
-      //     // Xử lý dữ liệu từ máy chủ nếu cần
-      //     // console.log(response)
-      //   },
-      //   error: function (error) {
-      //     // Xử lý lỗi nếu có
-      //     console.error("An error occurred:", error);
-      //   }
+
+  let status = resp.status;
+  if (status === 201){
+    addComment(postId)
+  }
+  console.log(status)
+  const data1 = await resp.text();
+  console.log(data1)
 
 }
 
+async function acceptFriendRequest(button) {
+  let inputValue = button.previousElementSibling.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/acceptFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
+}
+async function declineFriendRequest(button) {
+  let hiddenInput = button.parentElement.querySelector('.accept-input');
+  let inputValue = hiddenInput.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/declineFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
+}

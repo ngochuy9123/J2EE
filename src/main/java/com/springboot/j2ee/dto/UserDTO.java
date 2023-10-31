@@ -29,6 +29,7 @@ public class UserDTO {
     @NotEmpty(message = "Phone should not be empty")
     private String phone;
     private String avatar;
+    private String background;
 
     public UserDTO(User user) {
         this.firstName = user.getFirstName();

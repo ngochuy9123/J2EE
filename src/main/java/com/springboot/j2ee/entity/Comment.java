@@ -19,5 +19,18 @@ public class Comment {
 
 
     @ManyToOne
-    private Post post;
+    @JoinColumn(name = "post_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "post_comment_fk")
+    )
+    private  Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "user_comment_fk")
+    )
+    private User user;
 }

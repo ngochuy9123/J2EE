@@ -1,5 +1,6 @@
 package com.springboot.j2ee.service.impl;
 
+import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.Post;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
         User user = new User(userDTO.getFirstName(),userDTO.getLastName()
                 ,userDTO.getEmail(),passwordEncoder.encode( userDTO.getPassword()),userDTO.getPhone(),"User",timestamp,timestamp);
         user.setAvatar(userDTO.getAvatar());
+        user.setBackground(userDTO.getBackground());
         return userRepository.save(user);
     }
 
@@ -62,6 +65,28 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User getInfoById(long id) {
+        Optional<User> u = userRepository.findById(id);
+        return u.get();
+    }
+
+    @Override
+    public User editAvatar(String image) {
+        UserController.user_pub.setAvatar(image);
+
+        return userRepository.save(UserController.user_pub);
+    }
+
+    @Override
+    public User editBackground(String image) {
+        return null;
+    }
 
 
 }
