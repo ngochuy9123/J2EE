@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -86,6 +88,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User editBackground(String image) {
         return null;
+    }
+
+    @Override
+    public List<UserDTO> searchUser(String email,Long id) {
+//        return userRepository.findByEmailLikeAndIdNot(email,id);
+        var lstUser = userRepository.findByEmailLike(email);
+        List<UserDTO> dsUserDTO = new ArrayList<>();
+        for (User u:lstUser) {
+             dsUserDTO.add(changeToDTO(u));
+        }
+        return dsUserDTO;
+    }
+
+    public UserDTO changeToDTO(User user){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setBackground(user.getBackground());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setPassword(user.getPassword());
+        userDTO.setPhone(user.getPhone());
+        userDTO.setAvatar(userDTO.getAvatar());
+        userDTO.setFirstName(userDTO.getFirstName());
+        userDTO.setLastName(userDTO.getLastName());
+        return userDTO;
     }
 
 

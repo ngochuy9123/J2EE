@@ -296,7 +296,7 @@ async function testCmt(button) {
 
 
   var postId = button.getAttribute("data-post-id");
-  const commentInput = document.getElementById(postId);
+  const commentInput = document.getElementById('cmt'+postId);
   const commentText = commentInput.value.trim();
   console.log(commentText)
   // Lấy giá trị từ các trường input
@@ -330,9 +330,13 @@ async function acceptFriendRequest(button) {
         method: "POST",
         body: data
       })
+  let status = resp.status
+
   const data1 = await resp.text();
   console.log(data1)
-
+  if (status === 200){
+    location.reload()
+  }
 }
 async function declineFriendRequest(button) {
   let hiddenInput = button.parentElement.querySelector('.accept-input');
@@ -349,3 +353,83 @@ async function declineFriendRequest(button) {
   console.log(data1)
 
 }
+
+document.querySelector('.search input').addEventListener('keyup', async function (event) {
+  if (event.key === 'Enter') {
+
+    var inputElement = document.querySelector('.search input');
+    var userInput = inputElement.value;
+
+    let data = new FormData
+    data.append("contentSearch", userInput)
+
+    const resp1 = await fetch("/searchUser",
+        {
+          method: "POST",
+          body: data
+        })
+    if (resp1.ok) {
+      let userList = await resp1.json();
+      console.log(userList)
+      // createUserList(userList)
+    } else {
+      console.error("Lỗi khi truy vấn danh sách người dùng");
+    }
+
+  }
+});
+
+
+function createUserList(userList) {
+  var ulElement = document.createElement('ul');
+  ulElement.classList.add('dropdown-menu', 'dropdown-menu-end', 'drop-search');
+
+  var recentlyElement = document.createElement('div');
+  recentlyElement.classList.add('recently');
+  recentlyElement.textContent = 'Recently';
+
+  ulElement.appendChild(recentlyElement);
+
+  userList.forEach(user => {
+    var liElement = document.createElement('li');
+    var aElement = document.createElement('a');
+    aElement.classList.add('dropdown-item');
+    aElement.href = '#';
+
+    var userSearchElement = document.createElement('div');
+    userSearchElement.classList.add('user-search');
+
+    var imgElement = document.createElement('img');
+    imgElement.src = user.avatar;
+    imgElement.alt = '';
+
+    var nameSearchElement = document.createElement('div');
+    nameSearchElement.classList.add('name-search');
+    nameSearchElement.textContent = user.background;
+
+    var emailSearchElement = document.createElement('div');
+    emailSearchElement.classList.add('email-search');
+    emailSearchElement.textContent = user.email;
+
+    var phoneSearchElement = document.createElement('div');
+    phoneSearchElement.classList.add('phone-search');
+    phoneSearchElement.textContent = user.phone;
+
+    var timeSearchElement = document.createElement('i');
+    timeSearchElement.classList.add('fa-solid', 'fa-xmark', 'time-search');
+
+    nameSearchElement.appendChild(emailSearchElement);
+    userSearchElement.appendChild(imgElement);
+    userSearchElement.appendChild(nameSearchElement);
+    userSearchElement.appendChild(phoneSearchElement);
+    userSearchElement.appendChild(timeSearchElement);
+
+    aElement.appendChild(userSearchElement);
+    liElement.appendChild(aElement);
+    ulElement.appendChild(liElement);
+  });
+
+  var dropdownTriggerElement = document.getElementById('dropdownTrigger');
+  dropdownTriggerElement.parentNode.replaceChild(ulElement, dropdownTriggerElement);
+}
+
