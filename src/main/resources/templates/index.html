@@ -448,9 +448,9 @@
           <div class="container">
             <div class="user">
               <div class="userInfo">
-                <img th:src="${user.getAvatar()}" alt="User Profile Pic">
+                <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
                 <div class="details">
-                  <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
+                  <a th:href="'/profile?id='+${post.getUser().getId()}" style="text-decoration: none; color: inherit;">
                     <span class="name" th:text="${post.getUser().getEmail()}"></span>
                   </a>
                   <span class="date" th:text="${post.getCreatedAt()}"></span>
@@ -489,7 +489,7 @@
 
                 <div class="write">
                   <img th:src="${user.getAvatar()}" alt="" />
-                  <input type="text" placeholder="write a comment" th:id="${post.getId()}" />
+                  <input type="text" placeholder="write a comment" th:id="'cmt'+${post.getId()}" />
                   <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
                 </div>
 

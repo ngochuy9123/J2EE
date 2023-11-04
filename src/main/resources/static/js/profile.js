@@ -137,7 +137,7 @@ document.getElementById('save_changes').addEventListener('click', async function
 });
 
 
-
+// Friends
 async function addFriend() {
   let userId = document.querySelector('input[name="idUserToHidden"]').value;
   let data = new FormData();
@@ -149,4 +149,37 @@ async function addFriend() {
   let http = resp.status
   let announce = await resp.text()
   console.log(announce)
+}
+async function acceptFriendRequest(button) {
+  let inputValue = button.previousElementSibling.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/acceptFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+  if (status === 200){
+    location.reload()
+  }
+}
+async function declineFriendRequest(button) {
+  let hiddenInput = button.parentElement.querySelector('.accept-input');
+  let inputValue = hiddenInput.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/declineFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
 }

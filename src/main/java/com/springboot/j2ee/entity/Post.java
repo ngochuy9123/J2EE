@@ -66,7 +66,13 @@ public class Post {
     )
     private List<Comment> comments = new ArrayList<>();
 
-
+    @OneToMany(
+            mappedBy = "postLike",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
+            fetch = FetchType.LAZY
+    )
+    private List<Like> likes = new ArrayList<>();
 
 
 
