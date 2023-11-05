@@ -263,7 +263,6 @@ async function testCmt(button) {
   var postId = button.getAttribute("data-post-id");
   const commentInput = document.getElementById('cmt'+postId);
   const commentText = commentInput.value.trim();
-  console.log(commentText)
   // Lấy giá trị từ các trường input
 
   // Dữ liệu cần gửi
@@ -274,14 +273,15 @@ async function testCmt(button) {
 
   const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
 
-
   let status = resp.status;
-  if (status === 201){
-    addComment(postId)
-  }
-  console.log(status)
+
+
   const data1 = await resp.text();
-  console.log(data1)
+
+  let post_container = document.getElementById("fetch-data-comment-"+postId);
+  await fetDataComment(post_container);
+
+  commentInput.value = "";
 
 }
 
@@ -378,6 +378,18 @@ async function searchFriend(){
   var inputElement = document.querySelector('.search input');
   var userInput = inputElement.value;
 
+  var ignoreClickOnMeElement = document.querySelector(".search");
+
+  document.addEventListener('click', function(event) {
+    var isClickInsideElement = ignoreClickOnMeElement.contains(event.target);
+    if (!isClickInsideElement) {
+      document.getElementById("fetch-data-search").style.display = "none";
+    }else {
+      processChange();
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  });
+
   let data = new FormData
   data.append("contentSearch", userInput)
 
@@ -445,25 +457,35 @@ const processChange = debounce(() => searchFriend());
 
 async function fetchDataCommentPost(){
   const containerPosts = document.querySelectorAll(".container-post");
-  await containerPosts.forEach(async item =>{
-    let id = item.id;
-    let post_id = id.split("-")[3];
+  await containerPosts.forEach(async item => await fetDataComment(item));
+}
 
-    let data = new FormData();
-    data.append("post_id", post_id);
+async function fetDataComment(item){
+  let id = item.id;
+  let post_id = id.split("-")[3];
 
-    const resp1 = await fetch("/searchComment",
-        {
-          method: "POST",
-          body: data
-        })
-    if (resp1.ok) {
-      let str_comment = "";
-      let comments = await resp1.json();
-      console.log(comments);
-      if(comments.length > 0){
-        comments.forEach(item=>{
-          str_comment += `
+  let container = item.parentElement.parentElement;
+
+  let info = container.querySelector(".info");
+
+
+
+
+  let data = new FormData();
+  data.append("post_id", post_id);
+
+  const resp1 = await fetch("/searchComment",
+      {
+        method: "POST",
+        body: data
+      })
+  if (resp1.ok) {
+    let str_comment = "";
+    let comments = await resp1.json();
+    console.log(comments);
+    if(comments.length > 0){
+      comments.forEach(item=>{
+        str_comment += `
           <div class="comment">
           <img src="${item.user_avatar}" alt="" />
           <div class="info">
@@ -473,11 +495,25 @@ async function fetchDataCommentPost(){
           <span class="date">1 hour ago</span>
         </div>
           `;
-        });
-        item.innerHTML = str_comment;
-      }
+      });
+      item.innerHTML = str_comment;
     }
-  });
+
+    info.innerHTML = `
+  <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
+    <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+    12 Likes
+  </div>
+  <div class="item" onclick="toggleComments(${post_id})">
+    <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+    ${comments.length} Comments
+  </div>
+  <div class="item">
+    <span class="share-icon"><i class="fa-solid fa-share"></i></span>
+    Share
+  </div>
+  `;
+  }
 }
 
 fetchDataCommentPost();
