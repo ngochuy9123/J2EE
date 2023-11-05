@@ -163,8 +163,8 @@ public class UserController {
             User user = userService.getInfoById(id);
             model.addAttribute("user",user);
         }
-        model.addAttribute("lsPost",postService.getPostByIdUser(id));
         model.addAttribute("isCurrentUser", isCurrentUser);
+        model.addAttribute("lsPost",postService.getPostByIdUser(id));
         return "profile";
     }
 

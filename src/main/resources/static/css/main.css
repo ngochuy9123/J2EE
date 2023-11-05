@@ -38,7 +38,7 @@
 }
 
 /* Style the input inside the search bar */
-.navbar .left .search input {
+.navbar .left .search .input {
   border: none;
   width: 500px;
   background-color: transparent;
