@@ -1,0 +1,398 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/profile.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <!-- Include the Material Icons CSS library -->
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+            integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    />
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+    />
+    <title>Search</title>
+    <style>
+        .user:hover{
+            background: rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="left">
+        <a href="/" style="text-decoration: none">
+            <span>Social</span>
+        </a>
+        <a href="/">
+            <i class="fa-solid fa-house"></i>
+        </a>
+
+        <i class="fa-regular fa-moon"></i>
+        <i class="fa-solid fa-table-cells-large"></i>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <form action="/search" method="get">
+                        <input th:value="${filter}" type="text" class="input" name="filter" placeholder="Search..." id="search"  autocomplete="off"/>
+                    </form>
+                </div>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger" id="fetch-data-search" style="display: none;">
+            </ul>
+        </div>
+    </div>
+    <div class="right">
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
+
+                <i class="fa-regular fa-user">
+                    <div class="notice-addfr">4</div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
+                <div class="recently">Friend request</div>
+                <li><a class="dropdown-item" href="#">
+                    <i class="user">
+                        <img
+                                src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
+
+                John Doe
+              </strong>đã gửi cho bạn lời mời kết bạn
+              <div>1 tuần trước</div>
+              <div class="wrap-btn">
+                <button class="accept-btn">Accept</button>
+                <button class="dismiss-btn">Dismiss</button>
+              </div>
+            </span>
+                    </i>
+                </a></li>
+                <a href="" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
+
+            </ul>
+
+        </div>
+
+        <a href="../chat/index.html">
+            <i class="fa-regular fa-envelope">
+                <div class="notice-message">2</div>
+            </i>
+        </a>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
+                <i class="fa-regular fa-bell">
+                    <div class="notice-notifi">2</div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                <div class="recently">Notification</div>
+                <li><a class="dropdown-item" href="#">
+
+                    <i class="user">
+                        <img
+                                src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
+
+                John Doe
+              </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+
+                    </i>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+
+                    <i class="user">
+                        <img
+                                th:src="${user.getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
+
+                  John Doe
+                </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+
+                    </i>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+
+                    <i class="user">
+                        <img
+                                th:src="${user.getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
+
+                    John Doe
+                  </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+
+                    </i>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+
+                    <i class="user">
+                        <img
+                                th:src="${user.getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
+
+                      John Doe
+                    </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+
+                    </i>
+                </a></li>
+
+
+            </ul>
+
+
+
+
+
+        </div>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="user">
+                    <img
+                            src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                            alt=""
+                    />
+
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                    <li><a class="dropdown-item" href="#">
+
+                        <i class="user">
+                            <img
+                                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                                    alt=""
+                            />
+                            John Doe
+                        </i>
+                    </a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Setting</a></li>
+                    <hr>
+                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CONTENT -->
+<div class="container-content">
+    <!-- LEFT BAR -->
+    <div class="leftBar">
+        <div class="container">
+            <div class="menu">
+                <div class="user">
+                    <img
+                            src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                            alt=""
+                    />
+                    <span>John Doe</span>
+                </div>
+                <div class="item">
+                    <a href="/friends/index.html">
+                        <img src="../assets/1.png" alt="" />
+                        <span>Friends</span>
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- OUTLET -->
+    <div class="outlet">
+        <!-- PROFILE -->
+
+        <div id="post-container" style="margin-top: 20px;">
+            <div th:if="${posts.size()==0}">
+                <div class="alert alert-danger text-center">Không tìm thấy bài đăng nào!</div>
+            </div>
+            <div th:each="post:${posts}" class="post">
+                <div class="container">
+                    <div class="user">
+                        <div class="userInfo">
+                            <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
+                            <div class="details">
+                                <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
+                                    <span class="name" th:text="${post.getUser().getEmail()}"></span>
+                                </a>
+                                <span class="date" th:text="${post.getCreatedFormat()}"></span>
+                            </div>
+                        </div>
+                        <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>...</span>
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="content">
+                        <p th:text="${post.getContent()}"></p>
+                        <div th:if="${post.getImageUrl()!=null}">
+                            <img th:src="${post.getImageUrl()}"  alt="Post Image">
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="item" id="item-${post.id}" th:onclick="toggleComments(${post.getId()})">
+                            <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+                            12 Likes
+                        </div>
+                        <div class="item" th:onclick="toggleComments(${post.getId()})" >
+                            <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+                            12 Comments
+                        </div>
+                        <div class="item">
+                            <span class="share-icon"><i class="fa-solid fa-share"></i></span>
+                            Share
+                        </div>
+                    </div>
+                    <div class=" comments" id="comments-container-${post.id}" >
+                        <!-- Comments section, replace with your comments -->
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- Include Posts content here -->
+    </div>
+
+    <!-- RIGHT BAR -->
+    <div class="rightBar">
+        <div class="container">
+            <div class="item" style="padding: 0;padding-top: 20px">
+                <span style="padding-left: 20px">Suggestions For You</span>
+
+                <div th:if="${users.size()==0}">
+                    <div class="alert alert-danger text-center">Không tìm thấy người dùng nào!</div>
+                </div>
+
+                <div th:each="u:${users}">
+                    <a th:href="@{'profile?id=' + ${u.getId()}}"><div class="user" style="margin: 0;padding: 20px;">
+                        <div class="userInfo">
+                            <img th:src="${u.getAvatar()}"
+                                    alt=""
+                            />
+                            <div><span th:text="${u.getLastName()+' '+u.getFirstName()}"></span></div>
+                            <div class="name-search">
+                                tienhaile488@gmail.com
+
+                                <span class="location-search">Sai Gon</span>
+                            </div>
+                        </div>
+                    </div></a>
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    async function searchFriend(){
+        var inputElement = document.querySelector('.search input');
+        var userInput = inputElement.value;
+
+        let data = new FormData
+        data.append("contentSearch", userInput)
+
+        const resp1 = await fetch("/searchUser",
+            {
+                method: "POST",
+                body: data
+            })
+        if (resp1.ok) {
+            let userList = await resp1.json();
+            let strHTML = "";
+
+
+            if(!userInput){
+                document.getElementById("fetch-data-search").innerHTML = "";
+                document.getElementById("fetch-data-search").style.display = "none";
+            }else{
+                userList.forEach(item=>{
+                    strHTML += `
+      <li>
+                <a class="dropdown-item" href="profile?id=${item.id}">
+
+                <div class="user-search">
+                  <img
+                    src="${item.avatar}"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    ${item.lastName} ${item.firstName}
+
+                    <span class="location-search">${item.email}</span>
+                  </div>
+
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>`;
+                });
+                console.log(userList);
+                if(!strHTML){
+                    strHTML = `<li>
+<div class="alart alert-success text-ceter">Không có người dùng nào!</div>
+</li>`;
+                }
+                document.getElementById("fetch-data-search").innerHTML = strHTML;
+                document.getElementById("fetch-data-search").style.display = "block";
+            }
+        } else {
+            console.error("Lỗi khi truy vấn danh sách người dùng");
+        }
+    }
+
+    function debounce(func, timeout = 500){
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+    const processChange = debounce(() => searchFriend());
+document.getElementById("search").onkeyup = ()=>processChange();
+</script>
+
+<script src="./js/main.js" defer></script>
+<script src="./js/profile.js" defer></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"
+></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</html>

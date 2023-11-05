@@ -103,15 +103,15 @@ public class UserServiceImpl implements UserService {
 
     public UserDTO changeToDTO(User user){
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
         userDTO.setBackground(user.getBackground());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setPhone(user.getPhone());
-        userDTO.setAvatar(userDTO.getAvatar());
-        userDTO.setFirstName(userDTO.getFirstName());
-        userDTO.setLastName(userDTO.getLastName());
+        userDTO.setAvatar(user.getAvatar());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
         return userDTO;
     }
-
 
 }

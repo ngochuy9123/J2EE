@@ -46,43 +46,8 @@ function generatePostHTML(post) {
     </div>
   `;
 }
-const posts = [
-  {
-    id: 1,
-    name: "John Doe",
-    userId: 1,
-    profilePic:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    img: "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    userId: 2,
-    profilePic:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    desc: "Post 2 Tenetur iste voluptates dolorem rem commodi voluptate pariatur, voluptatum, laboriosam consequatur enim nostrum cumque! Maiores a nam non adipisci minima modi tempore.",
-    img: "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  },
-];
+const posts = [];
 const comments = [
-  {
-    id: 1,
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-    name: "John Doe",
-    userId: 1,
-    profilePicture:
-      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  },
-  {
-    id: 2,
-    desc: "coment 22222 Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-    name: "Jane Doe",
-    userId: 2,
-    profilePicture:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  },
 ];
 function generateCommentsHTML(comments, currentUser, postId) {
   let commentsHTML = `
@@ -350,34 +315,10 @@ async function declineFriendRequest(button) {
         body: data
       })
   const data1 = await resp.text();
-  console.log(data1)
+  console.log(data1);
 
 }
 
-document.querySelector('.search input').addEventListener('keyup', async function (event) {
-  if (event.key === 'Enter') {
-
-    var inputElement = document.querySelector('.search input');
-    var userInput = inputElement.value;
-
-    let data = new FormData
-    data.append("contentSearch", userInput)
-
-    const resp1 = await fetch("/searchUser",
-        {
-          method: "POST",
-          body: data
-        })
-    if (resp1.ok) {
-      let userList = await resp1.json();
-      console.log(userList)
-      // createUserList(userList)
-    } else {
-      console.error("Lỗi khi truy vấn danh sách người dùng");
-    }
-
-  }
-});
 
 
 function createUserList(userList) {
@@ -432,4 +373,114 @@ function createUserList(userList) {
   var dropdownTriggerElement = document.getElementById('dropdownTrigger');
   dropdownTriggerElement.parentNode.replaceChild(ulElement, dropdownTriggerElement);
 }
+
+async function searchFriend(){
+  var inputElement = document.querySelector('.search input');
+  var userInput = inputElement.value;
+
+  let data = new FormData
+  data.append("contentSearch", userInput)
+
+  const resp1 = await fetch("/searchUser",
+      {
+        method: "POST",
+        body: data
+      })
+  if (resp1.ok) {
+    let userList = await resp1.json();
+    let strHTML = "";
+
+
+    if(!userInput){
+      document.getElementById("fetch-data-search").innerHTML = "";
+      document.getElementById("fetch-data-search").style.display = "none";
+    }else{
+      userList.forEach(item=>{
+        strHTML += `
+      <li>
+                <a class="dropdown-item" href="profile?id=${item.id}">
+              
+                <div class="user-search">
+                  <img
+                    src="${item.avatar}"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    ${item.lastName} ${item.firstName}
+
+                    <span class="location-search">${item.email}</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>`;
+      });
+      console.log(userList);
+      if(!strHTML){
+        strHTML = `<li>
+<div class="alart alert-success text-ceter">Không có người dùng nào!</div>
+</li>`;
+      }
+      document.getElementById("fetch-data-search").innerHTML = strHTML;
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  } else {
+    console.error("Lỗi khi truy vấn danh sách người dùng");
+  }
+}
+
+
+
+function debounce(func, timeout = 500){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+const processChange = debounce(() => searchFriend());
+// const processChange = debounce(() => console.log(123));
+
+
+async function fetchDataCommentPost(){
+  const containerPosts = document.querySelectorAll(".container-post");
+  await containerPosts.forEach(async item =>{
+    let id = item.id;
+    let post_id = id.split("-")[3];
+
+    let data = new FormData();
+    data.append("post_id", post_id);
+
+    const resp1 = await fetch("/searchComment",
+        {
+          method: "POST",
+          body: data
+        })
+    if (resp1.ok) {
+      let str_comment = "";
+      let comments = await resp1.json();
+      console.log(comments);
+      if(comments.length > 0){
+        comments.forEach(item=>{
+          str_comment += `
+          <div class="comment">
+          <img src="${item.user_avatar}" alt="" />
+          <div class="info">
+            <span>${item.user_name}</span>
+            <p>${item.content}</p>
+          </div>
+          <span class="date">1 hour ago</span>
+        </div>
+          `;
+        });
+        item.innerHTML = str_comment;
+      }
+    }
+  });
+}
+
+fetchDataCommentPost();
+
+
 

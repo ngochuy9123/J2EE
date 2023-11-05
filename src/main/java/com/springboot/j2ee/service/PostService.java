@@ -8,4 +8,6 @@ public interface PostService {
     Post getInfoPost(Long id);
     List<Post> getAllPost();
     List<Post> getPostByIdUser(Long id);
+
+    List<Post> findPost(String filter);
 }

@@ -20,4 +20,5 @@ public interface UserService {
     User editAvatar(String image);
     User editBackground(String image);
     List<UserDTO> searchUser(String email,Long id);
+
 }

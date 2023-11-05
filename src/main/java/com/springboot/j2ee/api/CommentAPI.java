@@ -2,6 +2,8 @@ package com.springboot.j2ee.api;
 
 import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.controller.UserController;
+import com.springboot.j2ee.dto.CommentDTO;
+import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.Comment;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
@@ -13,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.*;
+
 @RestController
 public class CommentAPI {
 
@@ -23,7 +27,6 @@ public class CommentAPI {
 
     public CommentAPI(CommentService commentService, UserService userService, PostService postService) {
         this.commentService = commentService;
-
         this.userService = userService;
         this.postService = postService;
     }
@@ -38,6 +41,15 @@ public class CommentAPI {
         Comment comment = commentService.save(cmt);
 //        return new ResponseEntity<>(comment, HttpStatus.CREATED);
         return new ResponseEntity<>("Them Thanh Cong",HttpStatus.CREATED);
+    }
+
+    @PostMapping("/searchComment")
+    @ResponseBody
+    public List<CommentDTO> searchComment(@RequestParam(name = "post_id") String post_id, @AuthenticationPrincipal CustomUser principal){
+        List<Comment> comments = postService.getInfoPost(Long.parseLong(post_id)).getComments();
+        List<CommentDTO> ds = new ArrayList<>();
+        comments.forEach(item->ds.add(new CommentDTO(item)));
+        return ds;
     }
 
 

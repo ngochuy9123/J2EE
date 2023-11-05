@@ -1,5 +1,6 @@
 package com.springboot.j2ee.service.impl;
 
+import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.repository.PostRepository;
@@ -37,6 +38,11 @@ public class PostServiceImpl implements PostService {
     public List<Post> getPostByIdUser(Long id) {
         User user = userRepository.findById(id).get();
         return postRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+
+    @Override
+    public List<Post> findPost(String filter) {
+        return postRepository.findPostByContent(filter);
     }
 
 

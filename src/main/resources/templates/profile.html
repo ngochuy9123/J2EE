@@ -758,7 +758,7 @@ th:src="${user.getAvatar()}"
                     <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
                       <span class="name" th:text="${post.getUser().getEmail()}"></span>
                     </a>
-                    <span class="date" th:text="${post.getCreatedAt()}"></span>
+                    <span class="date" th:text="${post.getCreatedFormat()}"></span>
                   </div>
                 </div>
                 <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -770,12 +770,11 @@ th:src="${user.getAvatar()}"
 
                 </ul>
               </div>
-
-
-
               <div class="content">
                 <p th:text="${post.getContent()}"></p>
-                <img th:src="${post.getImageUrl()}" alt="Post Image">
+                <div th:if="${post.getImageUrl()!=null}">
+                  <img th:src="${post.getImageUrl()}"  alt="Post Image">
+                </div>
               </div>
               <div class="info">
                 <div class="item" id="item-${post.id}" th:onclick="toggleComments(${post.getId()})">
