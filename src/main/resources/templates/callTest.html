@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="container">
+    <video id="localVideo" playsinline="" autoplay="" muted=""></video>
+    <video id="remoteVideo" playsinline="" autoplay=""></video>
+
+    <div class="box">
+        <button id="startButton">Start</button>
+        <button id="hangupButton" disabled="">Hang Up</button>
+    </div>
+
+    <button onclick="sendTest()">Send</button>
+    <p>Click the start button in two tabs (of the same browser; can be in different windows) to make a call</p>
+
+    <a href="https://github.com/webrtc/samples/tree/gh-pages/src/content/peerconnection/channel" title="View source for this page on GitHub" id="viewSource">View source on GitHub</a>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+
+<script src="/js/call/main.js" async></script>
+<!--<script src="/js/call/a.js" async></script>-->
+</body>
+</html>

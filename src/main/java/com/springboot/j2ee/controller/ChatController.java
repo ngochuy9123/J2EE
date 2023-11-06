@@ -53,12 +53,26 @@ public class ChatController {
 
     private static final String messageSocket = "/topic/message/";
 
-    @MessageMapping("/{id}/{uuid}")
-    public void receive(Principal principal, String message, @DestinationVariable String id, @DestinationVariable String uuid) throws Exception {
-        System.out.println(message);
-        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid, "Hi");
+//    @MessageMapping("/{id}/{uuid}")
+//    public void receive(Principal principal, String message, @DestinationVariable String id, @DestinationVariable String uuid) throws Exception {
+//        System.out.println(message);
+//        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid, "Hi");
+//
+//    }
 
+
+    @MessageMapping("/ws/call/{roomId}")
+    @SendTo("/topic/call/{roomId}")
+    public String makeOffer(String message) {
+        return message;
     }
+
+
+    @GetMapping("/callTest")
+    public String callTest() {
+        return "callTest";
+    }
+
     private void handleMessage(Message message, UUID uuid, CustomUser user) {
         var id = user.getUser().getId();
         var dto = new MessageDTO(message);

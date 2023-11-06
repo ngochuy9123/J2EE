@@ -1,3 +1,39 @@
+const conn = new WebSocket('ws://localhost:8080/chat');
+function send(message) {
+    conn.send(JSON.stringify(message));
+}
+configuration = null;
+const peerConnection = new RTCPeerConnection(configuration);
+
+var dataChannel = peerConnection.createDataChannel("dataChannel", { reliable: true });
+dataChannel.onerror = function(error) {
+    console.log("Error:", error);
+};
+dataChannel.onclose = function() {
+    console.log("Data channel is closed");
+};
+
+peerConnection.createOffer(function(offer) {
+    send({
+        event : "offer",
+        data : offer
+    });
+    peerConnection.setLocalDescription(offer);
+}, function(error) {
+    // Handle error here
+});
+
+peerConnection.onicecandidate = function(event) {
+    if (event.candidate) {
+        peerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+        send({
+            event : "candidate",
+            data : event.candidate
+        });
+    }
+};
+
+
 const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
 let selectedId = 0;
