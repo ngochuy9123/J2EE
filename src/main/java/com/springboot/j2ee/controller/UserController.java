@@ -58,7 +58,7 @@ public class UserController {
         user_pub = userService.getInfo(userName);
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
-        model.addAttribute("posts",postService.getAllPost());
+        model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
         model.addAttribute("user",user_pub);
         model.addAttribute("lst_friend_request",list_friend_request);
         return "index";
