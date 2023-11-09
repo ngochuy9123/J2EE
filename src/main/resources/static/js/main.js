@@ -28,7 +28,7 @@ function generatePostHTML(post) {
         <div class="info">
           <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
 <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-12 Likes
+30 Likes
 </div>
           <div class="item" onclick="toggleComments(${post.id})">
             <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
@@ -160,11 +160,41 @@ function toggleLike(postId) {
     if (heartIcon.classList.contains("fa-regular")) {
       heartIcon.classList.remove("fa-regular", "fa-heart");
       heartIcon.classList.add("fa-solid", "fa-heart");
+      likePost(postId).then(r => console.log("Hello"))
     } else {
       heartIcon.classList.remove("fa-solid", "fa-heart");
       heartIcon.classList.add("fa-regular", "fa-heart");
+      dislikePost(postId)
     }
   }
+}
+
+async function likePost(postId) {
+  let data = new FormData
+  data.append("idPost", postId)
+  const resp = await fetch("/likePost",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+}
+
+async function dislikePost(postId) {
+  let data = new FormData
+  data.append("idPost", postId)
+  const resp = await fetch("/dislikePost",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
 }
 
 // ==================HOME ================
@@ -502,7 +532,7 @@ async function fetDataComment(item){
     info.innerHTML = `
   <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
     <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-    12 Likes
+    40 Likes
   </div>
   <div class="item" onclick="toggleComments(${post_id})">
     <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>

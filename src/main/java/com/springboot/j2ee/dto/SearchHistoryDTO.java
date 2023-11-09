@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class SearchHistoryDTO {
 
-public class LikeDTO {
+    private String value;
 
-    private long idPost;
-    private long idUser;
+    private Long idUser;
 }

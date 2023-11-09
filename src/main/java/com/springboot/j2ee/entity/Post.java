@@ -72,7 +72,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "postLike",
+            mappedBy = "postEmote",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
             fetch = FetchType.LAZY

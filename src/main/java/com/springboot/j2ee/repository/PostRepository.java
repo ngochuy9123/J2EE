@@ -19,6 +19,9 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     List<Post> findByUserAndVisibleOrderByCreatedAtDesc(User user, EPostVisibility visibility);
     List<Post> findByVisibleOrderByCreatedAtDesc(EPostVisibility visibility);
+
+
+
     @Query(value = "SELECT * FROM Post p WHERE p.content LIKE CONCAT('%',:filter, '%') and visible <> 0 order by p.created_at desc ", nativeQuery = true)
     List<Post> findPostByContent(@Param("filter") String filter);
 }
