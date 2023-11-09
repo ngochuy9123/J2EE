@@ -81,7 +81,7 @@ public class User {
     private List<Friend> lsFriendTo = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "userLike",
+            mappedBy = "userEmote",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
             fetch = FetchType.LAZY

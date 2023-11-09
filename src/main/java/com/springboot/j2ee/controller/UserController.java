@@ -5,11 +5,10 @@ import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.Friend;
+import com.springboot.j2ee.entity.Like;
+import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
-import com.springboot.j2ee.service.EmailService;
-import com.springboot.j2ee.service.FriendService;
-import com.springboot.j2ee.service.PostService;
-import com.springboot.j2ee.service.UserService;
+import com.springboot.j2ee.service.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +34,7 @@ public class UserController {
     private final EmailService emailService;
     private final PostService postService;
     private final FriendService friendService;
+    private final LikeService likeService;
 
     public static String email_md ;
     public static User user_pub;
@@ -42,11 +42,12 @@ public class UserController {
     public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
     public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
     public static final String pathImg = "/uploads/";
-    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService) {
+    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService) {
         this.userService = userService;
         this.emailService = emailService;
         this.postService = postService;
         this.friendService = friendService;
+        this.likeService = likeService;
     }
 
 
@@ -58,9 +59,24 @@ public class UserController {
         user_pub = userService.getInfo(userName);
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
-        model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
+        List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
+        HashMap<Long,Integer> hashLike = new HashMap<Long,Integer>();
+
+        for (Post p: lstPost) {
+            List<Like> lstLike = likeService.getAllEmoteByPostID(p);
+            if (lstLike.isEmpty()){
+                hashLike.put(p.getId(),0);
+            }
+            else {
+                hashLike.put(p.getId(),lstLike.size());
+            }
+
+        }
+
+        model.addAttribute("posts",lstPost);
         model.addAttribute("user",user_pub);
         model.addAttribute("lst_friend_request",list_friend_request);
+        model.addAttribute("hashLike",hashLike);
         return "index";
     }
 
@@ -107,25 +123,44 @@ public class UserController {
     }
 
     @PostMapping("create_post")
-    public String createPost(@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
+    public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
 
         if ( !file.isEmpty()){
             String pathTemp = pathImg.concat(email_md);
             pathTemp = pathTemp.concat("/");
             pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            saveImage(file);
-            saveImage(file);
-
-            postDTO.setImageUrl(pathTemp);
+            String fileNameAndPathTarget = saveImage(file);
+            String convertedPath = convertToUnixPath(fileNameAndPathTarget);
+            postDTO.setImageUrl(convertedPath);
         }
 
-        userService.createPost(postDTO,this.email_md);
+        userService.createPost(postDTO,principal.getUsername());
 
         return "redirect:/home";
     }
 
-    public void saveImage(MultipartFile file) throws IOException {
+    public String convertToUnixPath(String windowsPath) {
+        // Replace backslashes with forward slashes
+        String unixPath = windowsPath.replace("\\", "/");
+
+        // Remove the initial "."
+        if (unixPath.startsWith("./")) {
+            unixPath = unixPath.substring(2);
+        }
+        int startIndex = unixPath.indexOf("/uploads/");
+
+        // If "/uploads/" is found, extract the substring after it
+        if (startIndex != -1) {
+            return "/uploads/"+ unixPath.substring(startIndex + "/uploads/".length());
+        } else {
+            return null; // "/uploads/" not found in the path
+        }
+
+
+    }
+
+    public String saveImage(MultipartFile file) throws IOException {
         StringBuilder fileNames = new StringBuilder();
 
         String uploadDirectory = UPLOAD_DIRECTORY.concat(email_md);
@@ -143,6 +178,7 @@ public class UserController {
         fileNames.append(file.getOriginalFilename());
         Files.write(fileNameAndPath, file.getBytes());
         Files.write(fileNameAndPathTarget,file.getBytes());
+        return fileNameAndPathTarget.toString();
     }
 
     @GetMapping("profile")

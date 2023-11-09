@@ -398,7 +398,8 @@
             <div class="info">
               <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
                 <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-                12 Likes
+                <p th:text="${hashLike.get(post.getId())}"></p>
+
               </div>
               <div class="item" onclick="toggleComments(${post.id})">
                 <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
