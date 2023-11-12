@@ -1,9 +1,9 @@
-document.addEventListener("click", function (event) {
-  // Hide the tooltip when clicking outside the trigger element
-  if (event.target !== triggerElement) {
-    tooltipContainer.style.display = "none";
-  }
-});
+// document.addEventListener("click", function (event) {
+//   // Hide the tooltip when clicking outside the trigger element
+//   if (event.target !== triggerElement) {
+//     tooltipContainer.style.display = "none";
+//   }
+// });
 function makeEditable(fieldName) {
   const element = document.querySelector(`.${fieldName}`);
   const currentValue = element.innerText;
@@ -38,4 +38,21 @@ function updateValue(fieldName, newValue) {
 
   // Replace the input with the span
   document.querySelector(`.${fieldName}`).replaceWith(spanElement);
+}
+
+// Friends
+async function declineFriendRequest(id_user) {
+
+  console.log(id_user)
+  let data = new FormData
+  data.append("userToId",id_user)
+
+  const resp = await fetch("/declineFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1)
+
 }

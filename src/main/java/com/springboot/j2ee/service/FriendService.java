@@ -16,5 +16,6 @@ public interface FriendService {
     Friend acceptFriendRequest(long idUserFrom,long idUserTo);
 //    remove khoi table
     Friend declineFriendRequest(long idUserFrom,long idUserTo);
+//    Tim kiem ban
 
 }

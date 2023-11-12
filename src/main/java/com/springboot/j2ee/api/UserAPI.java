@@ -2,19 +2,18 @@ package com.springboot.j2ee.api;
 
 import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.controller.UserController;
+import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -90,6 +89,25 @@ public class UserAPI {
         Files.write(fileNameAndPathTarget,file.getBytes());
 
 
+    }
+
+    @PostMapping("searchUser")
+    @ResponseBody
+    public List<UserDTO> searchUser(@RequestParam(name = "contentSearch") String content,@AuthenticationPrincipal CustomUser principal){
+        String email = "%".concat(content).concat("%");
+
+        List<UserDTO> listUser = userService.searchUser(email, principal.getUser().getId());
+        return listUser;
+    }
+
+
+    @GetMapping ("searchUser")
+    @ResponseBody
+    public List<UserDTO> searchUsert(@AuthenticationPrincipal CustomUser principal){
+        String email = "huy";
+
+        List<UserDTO> listUser = userService.searchUser(email, principal.getUser().getId());
+        return listUser;
     }
 
     @GetMapping("editAvatar")

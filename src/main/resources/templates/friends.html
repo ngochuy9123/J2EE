@@ -619,8 +619,8 @@
                                 <img th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:src="${friend.getUserTo().getAvatar()}" alt="">
 
                                 <div class="name-friend">
-                                    <span th:if="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserFrom().getEmail()}"  class="username">Nguyễn Văn A</span>
-                                    <span th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserTo().getEmail()}"  class="username">Nguyễn Văn A</span>
+                                    <span th:if="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserFrom().getEmail()}" th:href="'/profile?id='+${friend.getUserFrom().getId()}" class="username"/>
+                                    <span th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserTo().getEmail()}" th:href="'/profile?id='+${friend.getUserTo().getId()}"  class="username"/>
 
                                 </div>
                             </div>
@@ -630,7 +630,11 @@
                                     <span>...</span>
                                 </div>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-                                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user-xmark"></i>Unfriend</a></li>
+
+                                    <li><button th:if="${friend.getUserFrom().getId() != idCurrentUser}" th:onclick="'javascript:declineFriendRequest(\'' + ${friend.getUserFrom().getId()} + '\')'">Unfriend</button></li>
+                                    <li><button th:if="${friend.getUserTo().getId() != idCurrentUser}" th:onclick="'javascript:declineFriendRequest(\'' + ${friend.getUserTo().getId()} + '\')'">Unfriend</button></li>
+
+
                                     <li><a class="dropdown-item" href="#"><i class="fa-regular fa-star"></i>Like</a></li>
                                     <li><a class="dropdown-item" href="#"><i class="fa-solid fa-rectangle-xmark"></i>Unfollow </a></li>
                                 </ul>

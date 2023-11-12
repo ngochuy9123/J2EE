@@ -4,6 +4,8 @@ import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.User;
 
+import java.util.List;
+
 public interface UserService {
     User save(UserDTO userDTO);
     User getInfo(String email);
@@ -17,4 +19,6 @@ public interface UserService {
     User getInfoById(long id);
     User editAvatar(String image);
     User editBackground(String image);
+    List<UserDTO> searchUser(String email,Long id);
+
 }
