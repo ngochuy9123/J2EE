@@ -60,7 +60,7 @@ function chooseBackgroundImg(){
     var reader = new FileReader();
 
     reader.onload = function() {
-      var imgElement = document.querySelector('.avt-img');
+      var imgElement = document.querySelector('.cover-img');
       imgElement.src = reader.result;
       avatarChanged = true
     }
@@ -71,38 +71,39 @@ function chooseBackgroundImg(){
 
 
 
-let imgBackground = null
-document.getElementById('edit_background').addEventListener('click', function() {
-  backgroundChanged = true;
+// let imgBackground = null
+// document.getElementById('edit_background').addEventListener('click', function() {
+//   backgroundChanged = true;
+//
+//   var input = document.createElement('input');
+//   input.type = 'file';
+//   input.accept = 'image/*';
+//   input.onchange = function(event) {
+//     var file = event.target.files[0];
+//     imgBackground=file
+//     var reader = new FileReader();
+//     reader.onload = function() {
+//       var imgElement = document.querySelector('.cover-img');
+//       imgElement.src = reader.result;
+//     };
+//
+//     reader.readAsDataURL(file);
+//   };
+//
+//   input.click();
+// });
 
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function(event) {
-    var file = event.target.files[0];
-    imgBackground=file
-    var reader = new FileReader();
-    reader.onload = function() {
-      var imgElement = document.querySelector('.cover-img');
-      imgElement.src = reader.result;
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  input.click();
-});
-
+//
 
 document.getElementById('save_changes').addEventListener('click', async function () {
   if (backgroundChanged) {
     console.log('Người dùng đã thay đổi background');
-    let avatar = avatarInput.files[0]
+    let background = backgroundInput.files[0]
 
     let data = new FormData
-    data.append('image', avatar)
+    data.append('image', background)
     // fetch
-    const resp = await fetch("/editAvatar",
+    const resp = await fetch("/editBackground",
         {
           method: "POST",
           body: data

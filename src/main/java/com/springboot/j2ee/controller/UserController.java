@@ -37,7 +37,7 @@ public class UserController {
     private final LikeService likeService;
 
     public static String email_md ;
-    public static User user_pub;
+//    public static User user_pub;
 
     public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
     public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
@@ -55,8 +55,8 @@ public class UserController {
     @GetMapping("home")
     public String showHome(@AuthenticationPrincipal CustomUser principal, Authentication auth, Model model){
         String userName = principal.getUsername();
-        email_md = userName;
-        user_pub = userService.getInfo(userName);
+//        email_md = userName;
+//        user_pub = userService.getInfo(userName);
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
         List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
@@ -74,7 +74,7 @@ public class UserController {
         }
 
         model.addAttribute("posts",lstPost);
-        model.addAttribute("user",user_pub);
+        model.addAttribute("user",principal.getUser());
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         return "index";
@@ -115,10 +115,23 @@ public class UserController {
                 session.setAttribute("msgReg","DANG KI THAT BAI");
             }
             else{
-                emailService.sendSimpleEmail(registrationDTO.getEmail());
                 session.setAttribute("msgReg","DANG KI THANH CONG");
+                session.setAttribute("email",registrationDTO.getEmail());
             }
         }
+        return "redirect:/register";
+    }
+
+    @PostMapping("confrimOTP")
+    public String confirmOTP(@RequestParam String otp, @RequestParam String email, Model model,HttpSession session){
+        if (userService.checkOTP(email,otp)){
+            session.setAttribute("msgReg","DANG KI THANH CONG");
+        }
+        else{
+            session.setAttribute("msgReg","Ban da nhap sai OTP hoac da qua thoi gian 5 phut");
+        }
+
+
         return "redirect:/register";
     }
 
@@ -126,11 +139,11 @@ public class UserController {
     public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
 
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(email_md);
+            String pathTemp = pathImg.concat(principal.getUsername());
             pathTemp = pathTemp.concat("/");
             pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            String fileNameAndPathTarget = saveImage(file);
+            String fileNameAndPathTarget = saveImage(file,principal.getUsername());
             String convertedPath = convertToUnixPath(fileNameAndPathTarget);
             postDTO.setImageUrl(convertedPath);
         }
@@ -160,11 +173,11 @@ public class UserController {
 
     }
 
-    public String saveImage(MultipartFile file) throws IOException {
+    public String saveImage(MultipartFile file,String email) throws IOException {
         StringBuilder fileNames = new StringBuilder();
 
-        String uploadDirectory = UPLOAD_DIRECTORY.concat(email_md);
-        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email_md);
+        String uploadDirectory = UPLOAD_DIRECTORY.concat(email);
+        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email);
 
         if (!Files.exists(Path.of(uploadDirectory))) {
             Files.createDirectories(Path.of(uploadDirectory));
@@ -174,9 +187,10 @@ public class UserController {
         }
 
         Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
-        Path fileNameAndPathTarget = Paths.get(uploadDirectory, file.getOriginalFilename());
+        Path fileNameAndPathTarget = Paths.get(uploadDirectoryTarget, file.getOriginalFilename());
         fileNames.append(file.getOriginalFilename());
         Files.write(fileNameAndPath, file.getBytes());
+
         Files.write(fileNameAndPathTarget,file.getBytes());
         return fileNameAndPathTarget.toString();
     }

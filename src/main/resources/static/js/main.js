@@ -1,82 +1,135 @@
-function generatePostHTML(post) {
-  return `
-    <div class="post">
-      <div class="container">
-        <div class="user">
-          <div class="userInfo">
-            <img src="${post.profilePic}" alt="User Profile Pic">
-            <div class="details">
-              <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
-                <span class="name">${post.name}</span>
-              </a>
-              <span class="date">1 min ago</span>
+
+async function showMoreComments(postId) {
+  console.log("Clicked on 'More comments' for post with ID:", postId);
+
+
+  // Get the post data based on the post ID
+  // const post = posts.find((post) => post.id === postId);
+  // console.log(post);
+  // Update the modal content with the post data
+
+  let postInfo = await getInfoPost(postId)
+  console.log("test", postInfo)
+
+
+  const modalTitle = document.getElementById("modalTitle");
+  const modalContent = document.getElementById("modalContent");
+  modalTitle.textContent = `This is Huy's post`;
+  modalContent.innerHTML = `
+     <div class="post">
+       <div class="container container-cmt">
+         <div class="user">
+           <div class="userInfo">
+             <img src="${postInfo.user.avatar}" alt="User Profile Pic">
+             <div class="details">
+               <a href="/profile/" style="text-decoration: none; color: inherit;">
+                 <span class="name">${postInfo.user.email}</span>
+               </a>
+               <span class="date">${postInfo.created_at}</span>
+             </div>
+           </div>
+           <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             <span>...</span>
+           </div>
+           <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i>Delete</a></li>
+             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
+           </ul>
+         </div>
+         <div class="content content-cmt">
+           <p>${postInfo.content}</p>
+           
+          ${postInfo.image !== "" ? `<img src="${postInfo.image}" alt="Post Image">` : ''}
+  
+         </div>
+         <div class="info">
+           <div class="item" id="item-" onclick="toggleLike(${postInfo.id})">
+             <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+             ${postInfo.numLikes} Likes
+           </div>
+           <div class="item" onclick="toggleComments(1)">
+             <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+             ${postInfo.lstComment.length} Comments
+           </div>
+           <div class="item">
+             <span class="share-icon"><i class="fa-solid fa-share"></i></span>
+             Share
+           </div>
+         </div>
+        <div class=" comments" th:id={postId} >
+              <!-- Comments section, replace with your comments -->
+
+                <div class="write">
+                  <img th:src="" alt="" />
+                  <input type="text" placeholder="write a comment" th:id="'cmt'+${postId}" />
+                  <button onclick="testCmt(this)" th:attr="data-post-id=${postId}">Send</button>
+                </div>
+
+                <div class="container-post" th:id="${'fetch-data-comment-' + postId}">
+
+                 <div class="comment">
+                 ${postInfo.lstComment.map(cmt => `
+                <div class="comment">
+                  <img src="${cmt.avatar}" alt="" />
+                  <div class="info">
+                    <span>${cmt.email}</span>
+                    <p>${cmt.contentComment}</p>
+                  </div>
+                  <span class="date">${cmt.create_at}</span>
+                  
+                </div>
+                </br>
+              `).join('')}
+                                
+                   
+                  
+                  
+                  
+                  
+                 </div>
+                </div>
             </div>
           </div>
-          <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span>...</span>
-      </div>
-      <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
-        
-      </ul>
         </div>
-        <div class="content">
-          <p>${post.desc}</p>
-          <img src="${post.img}" alt="Post Image">
-        </div>
-        <div class="info">
-          <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
-<span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-30 Likes
-</div>
-          <div class="item" onclick="toggleComments(${post.id})">
-            <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-            12 Comments
-          </div>
-          <div class="item">
-            <span class="share-icon"><i class="fa-solid fa-share"></i></span>
-            Share
-          </div>
-        </div>
-        <div class=" comments" id="comments-container-${post.id}" >
-          <!-- Comments section, replace with your comments -->
-        </div>
-      </div>
-    </div>
-  `;
+     </div>
+   `;
+
+
+  // Loop through the posts and append them to the container
+
+  // Trigger the modal
+
+
+  // console.log("comment",comment,currentUser,postId);
+  // generateCommentsHTML(comment,currentUser,postId);
+
+  fetchDataCommentPost()
+  const modal = document.getElementById("modalComment");
+  const modalInstance = new bootstrap.Modal(modal);
+  modalInstance.show();
+
 }
+
+
+async function getInfoPost(postId) {
+  let data = new FormData
+  data.append("idPost", postId)
+  const resp = await fetch("/getInfoPost",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  return await resp.json()
+}
+
+
+
 const posts = [];
 const comments = [
+
 ];
-function generateCommentsHTML(comments, currentUser, postId) {
-  let commentsHTML = `
-      <div class="comments" id="comments-container-${postId}">
-        <div class="write">
-          <img src="${currentUser.profilePic}" alt="" />
-          <input type="text" placeholder="write a comment" id="comment-input-${postId}" />
-          <button onclick="addComment(${postId})">Send</button>
-        </div>
-    `;
-
-  commentsHTML += comments
-    .map(
-      (comment) => `
-          <div class="comment">
-            <img src="${comment.profilePicture}" alt="" />
-            <div class="info">
-              <span>${comment.name}</span>
-              <p>${comment.desc}</p>
-            </div>
-            <span class="date">1 hour ago</span>
-          </div>
-        `
-    )
-    .join("");
-
-  commentsHTML += `</div>`;
-  return commentsHTML;
-}
 
 const currentUser = {
   profilePic:
@@ -526,13 +579,17 @@ async function fetDataComment(item){
         </div>
           `;
       });
+
+      str_comment+=`<div class="more-cmt" onclick="showMoreComments(${post_id})">More Comments</div>`
       item.innerHTML = str_comment;
+
     }
 
     info.innerHTML = `
   <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
+  12 Likes
     <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-    40 Likes
+    
   </div>
   <div class="item" onclick="toggleComments(${post_id})">
     <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
@@ -548,5 +605,18 @@ async function fetDataComment(item){
 
 fetchDataCommentPost();
 
+
+async function getLikeWithPostId(idPost) {
+  let data = new FormData
+  data.append("idPost", idPost)
+
+  const resp = await fetch("/countLikeIdPost",
+      {
+        method: "POST",
+        body: data
+      })
+  return  await resp.text();
+
+}
 
 

@@ -595,13 +595,13 @@ th:src="${user.getAvatar()}"
               </div>
               <img id="avt_img" th:src="${user.getAvatar()}" alt="" class="avt-img">
             </div>
+
             <div class="coverimg-editprofile ">
               <div class="container-coverimg">
                 <div class="title-edit">Cover image</div>
-                <input type="file" class="textEdit" id="edit_background" onclick="chooseAvatarImg()">
-                <a href="#" class="textEdit" >Edit</a>
+                <input type="file" class="textEdit" id="edit_background" onclick="chooseBackgroundImg()">
               </div>
-              <img th:src="${user.getBackground()}" alt="" class="cover-img">
+              <img id="cover_img" th:src="${user.getBackground()}" alt="" class="cover-img">
             </div>
             <div class="information-editprofile ">
               <div class="container-information">

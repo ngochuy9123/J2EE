@@ -1,5 +1,6 @@
 package com.springboot.j2ee.service;
 
+import com.springboot.j2ee.dto.PostInfoDTO;
 import com.springboot.j2ee.entity.Post;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface PostService {
     List<Post> getPostByIdUser(Long id);
 
     List<Post> findPost(String filter);
+    PostInfoDTO getOnePost(Long id);
 }
