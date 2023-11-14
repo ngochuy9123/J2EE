@@ -810,3 +810,72 @@ a {
 .redidect-listfriend:hover {
   text-decoration: underline !important;
 }
+.accept-btn,
+.dismiss-btn {
+  padding: 10px 26px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.accept-btn:hover,
+.dismiss-btn:hover {
+  opacity: 0.9;
+}
+.accept-btn {
+  background-color: #5271ff;
+  color: white;
+}
+.dismiss-btn {
+  background-color: #f0544f;
+  color: white;
+}
+.wrap-btn {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-top: 12px;
+}
+.drop-friend {
+  max-height: 90vh !important;
+  overflow-y: hidden !important;
+}
+.redidect-listfriend {
+  text-decoration: none;
+  color: blue !important;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  width: 100% !important;
+  display: block;
+}
+.redidect-listfriend:hover {
+  text-decoration: underline !important;
+}
+
+.more-cmt{
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+#modalTitle{
+  font-weight: 500 !important;
+  /* text-align: center !important;
+   */
+  margin-left:40% !important ;
+  /* margin: auto !important; */
+}
+.container-cmt{
+  margin-top: -10px !important;
+  max-height: 600px !important;
+  overflow-y: scroll !important;
+}
+.post .content-cmt img{
+  /* width: 80% !important; */
+  height: 300px !important;
+}
+.modal-body{
+
+}

@@ -59,7 +59,7 @@ public class UserAPI {
             saveImage(file,principal.getUsername());
 
             User user = userService.getInfo(principal.getUsername());
-            user.setAvatar(pathTemp);
+            user.setBackground(pathTemp);
             userService.saveUser(user);
 
 
@@ -110,8 +110,4 @@ public class UserAPI {
         return listUser;
     }
 
-    @GetMapping("editAvatar")
-    public String edit(){
-        return "Hello hihi";
-    }
 }

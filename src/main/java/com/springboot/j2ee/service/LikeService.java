@@ -14,4 +14,6 @@ public interface LikeService {
 
     List<Like> getAllEmoteByPostID(Post post);
 
+    long getAllLikeByPostId(Post post);
+
 }

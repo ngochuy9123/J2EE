@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -24,6 +25,8 @@ public class CommentAPI {
 
     private final UserService userService;
     private final PostService postService;
+
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
     public CommentAPI(CommentService commentService, UserService userService, PostService postService) {
         this.commentService = commentService;
@@ -38,6 +41,7 @@ public class CommentAPI {
         cmt.setContent(content);
         cmt.setPost(postService.getInfoPost(Long.parseLong(postId)));
         cmt.setUser(userService.getInfo(principal.getUsername()) );
+        cmt.setCreatedAt(timestamp);
         Comment comment = commentService.save(cmt);
 //        return new ResponseEntity<>(comment, HttpStatus.CREATED);
         return new ResponseEntity<>("Them Thanh Cong",HttpStatus.CREATED);

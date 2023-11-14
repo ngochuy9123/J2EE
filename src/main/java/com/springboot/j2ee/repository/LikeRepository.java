@@ -13,4 +13,6 @@ import java.util.List;
 public interface LikeRepository extends JpaRepository<Like,Long> {
     Like findByPostEmoteAndUserEmote(Post post, User user);
     List<Like> findByPostEmote(Post post);
+
+    long countByPostEmote(Post post);
 }

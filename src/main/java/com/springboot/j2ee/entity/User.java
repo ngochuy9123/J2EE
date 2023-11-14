@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Data
@@ -20,6 +18,9 @@ import java.util.Set;
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
+
+    private static final long OTP_VALID_DURATION = 5*60*1000; //5 minutes
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +42,12 @@ public class User {
     private String background;
 
     private String role;
+
+
+    @Column(name = "otp")
+    private String otp;
+    @Column(name = "otp_request_time")
+    private Timestamp otpRequestTime;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -88,6 +95,8 @@ public class User {
     )
     private List<Like> likes = new ArrayList<>();
 
+    @OneToOne(mappedBy = "userInfo")
+    private UserInfo userInfo;
 
     public User(String firstName, String lastName, String email, String password, String phone, String role,Timestamp createdAt,Timestamp updatedAt) {
         this.firstName = firstName;
@@ -100,16 +109,21 @@ public class User {
         this.updatedAt=updatedAt;
     }
 
-    public Post createPost(Post post){
-        this.posts.add(post);
-        post.setUser(this);
-        return post;
+    public boolean isOTPRequired(){
+        if (this.getOtp()==null){
+            return false;
+        }
+        long currentTimeInMillis = System.currentTimeMillis();
+        long otpRequestedTimeInMillis = this.otpRequestTime.getTime();
+        if (otpRequestedTimeInMillis + OTP_VALID_DURATION < currentTimeInMillis) {
+            // OTP expires
+            return false;
+        }
+
+        return true;
     }
 
-    public void removePost(Post post){
-        this.posts.add(post);
-        post.setUser(null);
-    }
+
 
 
 }
