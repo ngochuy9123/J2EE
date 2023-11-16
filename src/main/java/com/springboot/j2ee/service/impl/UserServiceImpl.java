@@ -1,12 +1,12 @@
 package com.springboot.j2ee.service.impl;
 
-import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
+import com.springboot.j2ee.service.EmailService;
 import com.springboot.j2ee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -17,21 +17,25 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+
+    private final EmailService emailService;
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,PostRepository postRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PostRepository postRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.postRepository = postRepository;
+        this.emailService = emailService;
     }
     @Override
     public User save(UserDTO userDTO) {
@@ -39,7 +43,61 @@ public class UserServiceImpl implements UserService {
                 ,userDTO.getEmail(),passwordEncoder.encode( userDTO.getPassword()),userDTO.getPhone(),"User",timestamp,timestamp);
         user.setAvatar(userDTO.getAvatar());
         user.setBackground(userDTO.getBackground());
+        generateOTP(user);
         return userRepository.save(user);
+    }
+
+    public void generateOTP(User user){
+        String otp = taoChuoiNgauNhien(8);
+        user.setOtp(otp);
+        user.setOtpRequestTime(timestamp);
+
+        emailService.sendSimpleEmail(user.getEmail(),otp);
+    }
+
+    public void clearOTP(User user){
+        user.setOtp(null);
+        user.setOtpRequestTime(null);
+        userRepository.save(user);
+    }
+
+    @Override
+    public Boolean checkOTP(String email, String otp) {
+        User user = userRepository.findByEmail(email);
+        if (user.getOtp().equals(otp)){
+
+            if (user.isOTPRequired()){
+                clearOTP(user);
+                return true;
+            }
+            else{
+                clearOTP(user);
+                String otp_temp = taoChuoiNgauNhien(8);
+                user.setOtp(otp_temp);
+                user.setOtpRequestTime(timestamp);
+                userRepository.save(user);
+                emailService.sendSimpleEmail(user.getEmail(),otp);
+                return false;
+            }
+
+        }
+
+
+        return false;
+    }
+
+    public static String taoChuoiNgauNhien(int doDai) {
+        String kyTu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder chuoiNgauNhien = new StringBuilder();
+
+        // Sử dụng đối tượng Random để chọn ngẫu nhiên ký tự từ chuỗi kyTu
+        Random random = new Random();
+        for (int i = 0; i < doDai; i++) {
+            int viTri = random.nextInt(kyTu.length());
+            chuoiNgauNhien.append(kyTu.charAt(viTri));
+        }
+
+        return chuoiNgauNhien.toString();
     }
 
     @Override
@@ -80,10 +138,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User editAvatar(String image) {
-        UserController.user_pub.setAvatar(image);
+    public User editAvatar(String image,long id) {
 
-        return userRepository.save(UserController.user_pub);
+        User user = userRepository.findById(id).get();
+        user.setAvatar(image);
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -101,6 +161,8 @@ public class UserServiceImpl implements UserService {
         }
         return dsUserDTO;
     }
+
+
 
     public UserDTO changeToDTO(User user){
         UserDTO userDTO = new UserDTO();

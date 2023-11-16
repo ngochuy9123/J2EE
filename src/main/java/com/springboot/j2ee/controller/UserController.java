@@ -41,7 +41,7 @@ public class UserController {
     private final LikeService likeService;
 
     public static String email_md ;
-    public static User user_pub;
+//    public static User user_pub;
 
     @Autowired
     private FileUtils fileUtils;
@@ -53,8 +53,8 @@ public class UserController {
     @GetMapping("home")
     public String showHome(@AuthenticationPrincipal CustomUser principal, Authentication auth, Model model){
         String userName = principal.getUsername();
-        email_md = userName;
-        user_pub = userService.getInfo(userName);
+//        email_md = userName;
+//        user_pub = userService.getInfo(userName);
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
         List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
@@ -72,7 +72,7 @@ public class UserController {
         }
 
         model.addAttribute("posts",lstPost);
-        model.addAttribute("user",user_pub);
+        model.addAttribute("user",principal.getUser());
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         return "index";
@@ -113,10 +113,23 @@ public class UserController {
                 session.setAttribute("msgReg","DANG KI THAT BAI");
             }
             else{
-                emailService.sendSimpleEmail(registrationDTO.getEmail());
                 session.setAttribute("msgReg","DANG KI THANH CONG");
+                session.setAttribute("email",registrationDTO.getEmail());
             }
         }
+        return "redirect:/register";
+    }
+
+    @PostMapping("confrimOTP")
+    public String confirmOTP(@RequestParam String otp, @RequestParam String email, Model model,HttpSession session){
+        if (userService.checkOTP(email,otp)){
+            session.setAttribute("msgReg","DANG KI THANH CONG");
+        }
+        else{
+            session.setAttribute("msgReg","Ban da nhap sai OTP hoac da qua thoi gian 5 phut");
+        }
+
+
         return "redirect:/register";
     }
 
@@ -125,7 +138,7 @@ public class UserController {
 
         if ( !file.isEmpty()){
 
-            String path = fileUtils.saveFile(file, "uploads", "users", principal.getUser().getEmail());
+            String path = fileUtils.saveFile(file, "uploads", "users", principal.getUser().getEmail(), "posts");
             postDTO.setImageUrl(path);
         }
 

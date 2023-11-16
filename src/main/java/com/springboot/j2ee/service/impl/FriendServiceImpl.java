@@ -47,8 +47,8 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<Friend> displayFriendRequest(long idUser) {
-        var user = userRepository.findById(idUser);
-        return friendRepository.findByUserToAndStatusOrderByCreatedAt(user.get(),EFriendStatus.SENDING);
+        User user = userRepository.findById(idUser).get();
+        return friendRepository.findByUserToAndStatusOrderByCreatedAt(user,EFriendStatus.SENDING);
     }
 
     @Override

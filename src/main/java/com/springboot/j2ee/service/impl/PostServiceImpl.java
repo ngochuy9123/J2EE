@@ -1,14 +1,18 @@
 package com.springboot.j2ee.service.impl;
 
-import com.springboot.j2ee.dto.FriendDTO;
+import com.springboot.j2ee.dto.CommentDetailDTO;
+import com.springboot.j2ee.dto.PostInfoDTO;
+import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.entity.Comment;
 import com.springboot.j2ee.entity.Friend;
-import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.enums.EPostVisibility;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
+import com.springboot.j2ee.service.CommentService;
 import com.springboot.j2ee.service.FriendService;
+import com.springboot.j2ee.service.LikeService;
 import com.springboot.j2ee.service.PostService;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +25,17 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final FriendService friendService;
+    private final CommentService commentService;
+    private final LikeService likeService;
 
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, FriendService friendService) {
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, FriendService friendService, CommentService commentService, LikeService likeService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.friendService = friendService;
+        this.commentService = commentService;
+        this.likeService = likeService;
     }
 
 
@@ -85,6 +93,48 @@ public class PostServiceImpl implements PostService {
     public List<Post> findPost(String filter) {
 
         return postRepository.findPostByContent(filter);
+    }
+
+    @Override
+    public PostInfoDTO getOnePost(Long id) {
+        List<Comment> lstCmt = commentService.findCommentByPost(id);
+        PostInfoDTO postInfoDTO = new PostInfoDTO();
+        List<CommentDetailDTO> lstCommentDetailDTO = new ArrayList<>();
+        for (Comment cmt:lstCmt) {
+            CommentDetailDTO commentDetailDTO =new CommentDetailDTO();
+            commentDetailDTO.setContentComment(cmt.getContent());
+            commentDetailDTO.setCreate_at(cmt.getCreatedAt());
+            commentDetailDTO.setAvatar(cmt.getUser().getAvatar());
+            commentDetailDTO.setEmail(cmt.getUser().getEmail());
+            commentDetailDTO.setIdUser(cmt.getUser().getId());
+
+            lstCommentDetailDTO.add(commentDetailDTO);
+        }
+
+        postInfoDTO.setLstComment(lstCommentDetailDTO);
+
+        Post post = postRepository.findById(id).get();
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setEmail(post.getUser().getEmail());
+        userDTO.setAvatar(post.getUser().getAvatar());
+        userDTO.setId(post.getUser().getId());
+
+        postInfoDTO.setUser(userDTO);
+        postInfoDTO.setContent(post.getContent());
+        postInfoDTO.setId(post.getId());
+        postInfoDTO.setNumLikes(likeService.getAllLikeByPostId(post));
+        postInfoDTO.setCreated_at(post.getCreatedAt());
+
+        if (post.getImageUrl() == null){
+            postInfoDTO.setImage("");
+        }
+        else{
+            postInfoDTO.setImage(post.getImageUrl());
+        }
+
+
+        return postInfoDTO;
     }
 
 

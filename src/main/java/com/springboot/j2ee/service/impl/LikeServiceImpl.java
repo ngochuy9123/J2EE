@@ -59,4 +59,10 @@ public class LikeServiceImpl implements LikeService {
 
         return likeRepository.findByPostEmote(post);
     }
+
+    @Override
+    public long getAllLikeByPostId(Post post) {
+
+        return likeRepository.countByPostEmote(post);
+    }
 }

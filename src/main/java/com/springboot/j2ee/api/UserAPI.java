@@ -79,11 +79,6 @@ public class UserAPI {
         return listUser;
     }
 
-    @GetMapping("editAvatar")
-    public String edit(){
-        return "Hello hihi";
-    }
-
 
     @GetMapping("/api/user")
     public ResponseEntity<List<UserDTO>> getUser(@DestinationVariable String email, @DestinationVariable int limit) {

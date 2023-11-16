@@ -2,6 +2,7 @@ package com.springboot.j2ee.service;
 
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 
 import java.util.List;
@@ -17,9 +18,12 @@ public interface UserService {
     User saveUser(User user);
 
     User getInfoById(long id);
-    User editAvatar(String image);
+    User editAvatar(String image,long id);
     User editBackground(String image);
     List<UserDTO> searchUser(String email,Long id);
+
+    Boolean checkOTP(String email,String otp);
+
 
     List<User> getUserByEmailLimitBy(String email, int limit);
 
