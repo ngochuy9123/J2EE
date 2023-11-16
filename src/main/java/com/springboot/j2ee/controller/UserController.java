@@ -9,8 +9,11 @@ import com.springboot.j2ee.entity.Like;
 import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.*;
+import com.springboot.j2ee.utils.FileUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Controller
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
@@ -39,16 +43,10 @@ public class UserController {
     public static String email_md ;
     public static User user_pub;
 
-    public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
-    public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
+    @Autowired
+    private FileUtils fileUtils;
+
     public static final String pathImg = "/uploads/";
-    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService) {
-        this.userService = userService;
-        this.emailService = emailService;
-        this.postService = postService;
-        this.friendService = friendService;
-        this.likeService = likeService;
-    }
 
 
 
@@ -126,13 +124,9 @@ public class UserController {
     public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
 
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(email_md);
-            pathTemp = pathTemp.concat("/");
-            pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            String fileNameAndPathTarget = saveImage(file);
-            String convertedPath = convertToUnixPath(fileNameAndPathTarget);
-            postDTO.setImageUrl(convertedPath);
+            String path = fileUtils.saveFile(file, "uploads", "users", principal.getUser().getEmail());
+            postDTO.setImageUrl(path);
         }
 
         userService.createPost(postDTO,principal.getUsername());
@@ -140,46 +134,6 @@ public class UserController {
         return "redirect:/home";
     }
 
-    public String convertToUnixPath(String windowsPath) {
-        // Replace backslashes with forward slashes
-        String unixPath = windowsPath.replace("\\", "/");
-
-        // Remove the initial "."
-        if (unixPath.startsWith("./")) {
-            unixPath = unixPath.substring(2);
-        }
-        int startIndex = unixPath.indexOf("/uploads/");
-
-        // If "/uploads/" is found, extract the substring after it
-        if (startIndex != -1) {
-            return "/uploads/"+ unixPath.substring(startIndex + "/uploads/".length());
-        } else {
-            return null; // "/uploads/" not found in the path
-        }
-
-
-    }
-
-    public String saveImage(MultipartFile file) throws IOException {
-        StringBuilder fileNames = new StringBuilder();
-
-        String uploadDirectory = UPLOAD_DIRECTORY.concat(email_md);
-        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email_md);
-
-        if (!Files.exists(Path.of(uploadDirectory))) {
-            Files.createDirectories(Path.of(uploadDirectory));
-        }
-        if (!Files.exists(Path.of(uploadDirectoryTarget))) {
-            Files.createDirectories(Path.of(uploadDirectoryTarget));
-        }
-
-        Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
-        Path fileNameAndPathTarget = Paths.get(uploadDirectory, file.getOriginalFilename());
-        fileNames.append(file.getOriginalFilename());
-        Files.write(fileNameAndPath, file.getBytes());
-        Files.write(fileNameAndPathTarget,file.getBytes());
-        return fileNameAndPathTarget.toString();
-    }
 
     @GetMapping("profile")
     public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model,@AuthenticationPrincipal CustomUser principal){

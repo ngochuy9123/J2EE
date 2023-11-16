@@ -1,37 +1,37 @@
-const conn = new WebSocket('ws://localhost:8080/chat');
-function send(message) {
-    conn.send(JSON.stringify(message));
-}
-configuration = null;
-const peerConnection = new RTCPeerConnection(configuration);
-
-var dataChannel = peerConnection.createDataChannel("dataChannel", { reliable: true });
-dataChannel.onerror = function(error) {
-    console.log("Error:", error);
-};
-dataChannel.onclose = function() {
-    console.log("Data channel is closed");
-};
-
-peerConnection.createOffer(function(offer) {
-    send({
-        event : "offer",
-        data : offer
-    });
-    peerConnection.setLocalDescription(offer);
-}, function(error) {
-    // Handle error here
-});
-
-peerConnection.onicecandidate = function(event) {
-    if (event.candidate) {
-        peerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
-        send({
-            event : "candidate",
-            data : event.candidate
-        });
-    }
-};
+// const conn = new WebSocket('ws://localhost:8080/chat');
+// function send(message) {
+//     conn.send(JSON.stringify(message));
+// }
+// configuration = null;
+// const peerConnection = new RTCPeerConnection(configuration);
+//
+// var dataChannel = peerConnection.createDataChannel("dataChannel", { reliable: true });
+// dataChannel.onerror = function(error) {
+//     console.log("Error:", error);
+// };
+// dataChannel.onclose = function() {
+//     console.log("Data channel is closed");
+// };
+//
+// peerConnection.createOffer(function(offer) {
+//     send({
+//         event : "offer",
+//         data : offer
+//     });
+//     peerConnection.setLocalDescription(offer);
+// }, function(error) {
+//     // Handle error here
+// });
+//
+// peerConnection.onicecandidate = function(event) {
+//     if (event.candidate) {
+//         peerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+//         send({
+//             event : "candidate",
+//             data : event.candidate
+//         });
+//     }
+// };
 
 
 const id = document.getElementById("userIdDiv").innerText;
@@ -102,6 +102,10 @@ async function showMessage(message) {
 const updateTotalMissed = async (roomId) => {
     const total = await getTotalMissedMessages(roomId);
     const div = document.getElementById(`missed${roomId}`);
+    if (div == null) {
+        setupSidePanel();
+        return;
+    }
 
     let missedDiv= "";
     if (total !== 0) {
@@ -111,6 +115,19 @@ const updateTotalMissed = async (roomId) => {
     div.innerHTML = missedDiv
 }
 
+const getDiffTime = (date) => {
+    const now = Date.now();
+    const diffInDays = (now - date) / (1000 * 60 * 60 * 24) | 0;
+    const diffInHours = (now - date) / (1000 * 60 * 60) | 0;
+
+    let showDate = "";
+    if (diffInDays !== 0) {
+        return diffInDays + " ngày"
+    }
+    else {
+        return diffInHours + " giờ"
+    }
+}
 
 const setupSidePanel = async () => {
     const resp = await fetch("/rooms");
@@ -121,23 +138,7 @@ const setupSidePanel = async () => {
     let html = ``;
 
     for (const datum of data) {
-        const now = Date.now();
-        const diffInDays = (now - new Date(datum[
-            'lastUpdated'
-            ])) / (1000 * 60 * 60 * 24) | 0;
-
-        const diffInHours = (now - new Date(datum[
-            'lastUpdated'
-            ])) / (1000 * 60 * 60) | 0;
-
-
-        let showDate = "";
-        if (diffInDays != 0) {
-            showDate = diffInDays + " ngày"
-        }
-        else {
-            showDate = diffInHours + " giờ"
-        }
+        const showDate = getDiffTime(new Date(datum['lastUpdated']))
         const missedMessage = await getTotalMissedMessages(datum['id'])
         let missedDiv= "";
         if (missedMessage !== 0) {
@@ -146,8 +147,8 @@ const setupSidePanel = async () => {
         
         console.log(datum)
         html += `
-            <li class="clearfix d-flex" id="r${datum['id']}" onclick="setChatPanel(${datum['id']})">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+            <li class="clearfix d-flex" id="r${datum['id']}">
+                <img src="${datum['roomAvatar']}" alt="avatar">
                 <div class="about d-flex justify-content-between" style="width: 80%">
                 <div>
                     <div class="name">${datum['name']}</div>
@@ -162,6 +163,11 @@ const setupSidePanel = async () => {
         document.getElementById("roomList").innerHTML = html;
 
     }
+
+    for (const datum of data) {
+        const elem = document.getElementById(`r${datum['id']}`);
+        elem.addEventListener("click",()=> setChatPanel(datum))
+    }
 }
 
 const getTotalMissedMessages = async (roomId) => {
@@ -171,9 +177,19 @@ const getTotalMissedMessages = async (roomId) => {
 
 
 
-const setChatPanel = async (roomId) => {
+const setChatPanel = async (room) => {
+    console.log(room)
+    const roomId = room['id']
+    const roomImg = room['roomAvatar']
+
     const resp = await fetch(`/room/${roomId}`)
     const data = await resp.json();
+
+    const groupImg = document.getElementById("groupAvatar");
+    groupImg.src = roomImg
+
+    const roomNameDiv = document.getElementById("roomName");
+    roomNameDiv.innerText = room["name"]
 
     selectedId = roomId;
 
@@ -191,15 +207,18 @@ const setChatPanel = async (roomId) => {
 
     const chatHistoryElem = document.getElementById("chatHistory");
     chatHistoryElem.innerHTML = html;
+    const container = document.getElementById("chatHistoryContainer");
+    setMainChatPanel("FALSE")
 
-    chatHistoryElem.scrollTo( 0, chatHistoryElem.scrollHeight )
-
+    container.scrollTo( 0, container.scrollHeight)
 }
 
 const generateChatHtml = (data) => {
     const uId = data['userId']
     let html = "";
     const date = new Date(data['timeSend']);
+
+
 
     if (uId == id) {
         return `
@@ -261,5 +280,32 @@ const sendMessage = async (event) => {
     });
 }
 
+const setMainChatPanel = (value) => {
+    const main = document.getElementById("mainChat")
+    main.setAttribute("data-hide", value)
+}
+
+const hideChatPanel = () => {
+    setMainChatPanel("TRUE");
+}
+
+const setRoomName = (value) => {
+    const elem = document.getElementById("roomName")
+    elem.innerText = value
+}
+
+
+const setRoomImage = (value) => {
+    const elem = document.getElementById("groupAvatar")
+    const fr = new FileReader()
+    fr.readAsDataURL(value)
+
+    fr.onload = () => {
+        elem.src = fr.result;
+    }
+
+}
+
 connect();
 setupSidePanel();
+setMainChatPanel("TRUE");

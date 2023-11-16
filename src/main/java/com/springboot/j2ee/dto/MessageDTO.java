@@ -11,13 +11,13 @@ import java.sql.Timestamp;
 @Data
 public class MessageDTO {
     private Long id;
-
     private String message;
 
     private Long userId;
     private String userName = "";
 
     private Long roomId;
+    private String avatar;
 
     private Timestamp timeSend;
 
@@ -26,6 +26,7 @@ public class MessageDTO {
         this.message = message.getMessage();
         this.userId = message.getUser().getId();
         this.userName = message.getUser().getEmail();
+        this.avatar = message.getUser().getAvatar();
         this.roomId = message.getRoom().getId();
         this.timeSend = message.getTimeSend();
     }

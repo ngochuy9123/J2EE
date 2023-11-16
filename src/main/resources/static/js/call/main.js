@@ -212,12 +212,16 @@ const createVideoDiv = (uuid) => {
 }
 
 
+let isAnswerSet = false;
+
 const pcs = {
 
 }
 
 let pc;
 let localStream;
+
+const alreadyAnswer = []
 
 const host = new URL(location)
 console.log(host.host)
@@ -228,32 +232,27 @@ signaling.onmessage = async message => {
         console.log('not ready yet');
         return;
     }
-    console.log(message)
     const data = JSON.parse(message.data);
+    console.log(data)
+
     const pc = pcs[data.id]
 
     switch (data.type) {
         case 'offer':
-            handleOffer(data);
+            await handleOffer(data);
             break;
         case 'answer':
-            setTimeout(async ()=> await handleAnswer(data), 2000)
-
+            await handleAnswer(data)
             break;
         case 'candidate':
-            handleCandidate(data);
+            await handleCandidate(data);
             break;
         case 'ready':
-            // A second tab joined. This tab will initiate a call unless in a call already.
-            if (pc) {
-                console.log('already in call, ignoring');
-                return;
-            }
-            makeCall(data);
+            await makeCall(data);
             break;
         case 'bye':
             if (pc) {
-                hangup();
+                await hangup();
             }
             break;
         default:
@@ -290,7 +289,7 @@ async function hangup() {
 };
 
 function createPeerConnection(data) {
-    let pc = new RTCPeerConnection();
+    let pc = new RTCPeerConnection(null);
     const div = createVideoDiv(data.id)
 
     pc.onicecandidate = e => {
@@ -303,7 +302,6 @@ function createPeerConnection(data) {
             message.candidate = e.candidate.candidate;
             message.sdpMid = e.candidate.sdpMid;
             message.sdpMLineIndex = e.candidate.sdpMLineIndex;
-            message.id = localUUID;
         }
         send(message);
     };
@@ -337,19 +335,32 @@ async function handleOffer(offer) {
 }
 
 async function handleAnswer(answer) {
+    console.log("[ANSWER!!!------]")
+    console.log(answer)
+    console.log("[ANSWER!!!------]")
+    if (alreadyAnswer.includes(answer.id)) {
+        return;
+    }
     try {
         const pc = pcs[answer.id];
+        alreadyAnswer.push(answer.id)
+        
         if (!pc) {
             console.error('no peerconnection');
             return;
         }
+
+
         await pc.setRemoteDescription(answer);
+
     }
     catch (e) {
+            const pc = pcs[answer.id];
             console.error(e)
             console.log("ERR:")
             console.log("____")
             console.log(answer)
+            console.log(pc)
             console.log("____")
         }
 }

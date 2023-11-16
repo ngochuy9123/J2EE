@@ -9,6 +9,7 @@ import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
 import com.springboot.j2ee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -112,6 +113,16 @@ public class UserServiceImpl implements UserService {
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         return userDTO;
+    }
+
+    @Override
+    public List<User> getUserByEmailLimitBy(String email, int limit) {
+        return userRepository.findUsersByEmailContainingIgnoreCase(email, PageRequest.of(0, limit));
+    }
+
+    @Override
+    public List<User> getUserByEmailLimitBy(String email, int start, int count) {
+        return userRepository.findUsersByEmailContainingIgnoreCase(email, PageRequest.of(start, start + count));
     }
 
 }

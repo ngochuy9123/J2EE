@@ -27,4 +27,6 @@ public class Room {
     private List<Message> messages = new ArrayList<>();
 
     private Timestamp lastUpdated;
+
+    private String roomAvatar;
 }

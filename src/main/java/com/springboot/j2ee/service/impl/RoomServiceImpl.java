@@ -6,12 +6,14 @@ import com.springboot.j2ee.enums.ERoomType;
 import com.springboot.j2ee.repository.RoomRepository;
 import com.springboot.j2ee.service.RoomService;
 import com.springboot.j2ee.service.UserService;
+import com.springboot.j2ee.utils.FileUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -25,10 +27,13 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    FileUtils fileUtils;
+
     @Override
     public List<Room> getAllRoomByUserName(String name) {
         User user = userService.getInfo(name);
-        return roomRepository.findRoomsByParticipantsContainsOrderByLastUpdated(user);
+        return roomRepository.findRoomsByParticipantsContainsOrderByLastUpdatedDesc(user);
     }
 
     @Override
@@ -47,15 +52,15 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean addRoom(User mainUser, Long[] others) {
-        if (others == null || others.length == 0) {
+    public boolean addRoom(User mainUser, List<Long> others) {
+        if (others == null || others.isEmpty()) {
             return false;
         }
 
         Room room = new Room();
 
         ERoomType roomType;
-        if (others.length == 1) {
+        if (others.size() == 1) {
             roomType = ERoomType.NORMAL;
         }
         else {
@@ -64,17 +69,49 @@ public class RoomServiceImpl implements RoomService {
         room.setRoomType(roomType);
         room.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 
-        List<User> users = Arrays.stream(others).map(id -> userService.getUserById(id)).toList();
+        List<User> users = new java.util.ArrayList<>(others.stream().map(id -> userService.getUserById(id)).toList());
+        users.add(userService.getUserById(mainUser.getId()));
         room.setParticipants(users);
 
 
-        var names = users.stream().map(User::getFirstName)
-                .reduce("", (s, s2) -> s +", "+ s2);
-
+        var names = String.join(",", users.stream().map(User::getFirstName).toList());
 
         room.setName(names);
 
         save(room);
+
+        return true;
+    }
+
+    @Override
+    public boolean removeUserFromRoom(Long userId, Long roomId) {
+        var user = userService.getUserById(userId);
+        var room = roomRepository.findRoomById(roomId);
+        room.getParticipants().remove(user);
+        roomRepository.save(room);
+        return true;
+    }
+
+    @Override
+    public boolean renameRoom(Long roomId, String value) {
+        var room = roomRepository.findRoomById(roomId);
+        room.setName(value);
+        roomRepository.save(room);
+        return true;
+    }
+
+    @Override
+    public boolean setRoomAvatar(Long roomId, MultipartFile file) {
+        var room = roomRepository.findRoomById(roomId);
+        try {
+            var location = fileUtils.saveFile(file, "uploads", "rooms", roomId.toString());
+            room.setRoomAvatar(location);
+            roomRepository.save(room);
+
+        } catch (IOException e) {
+            System.out.println("Cannot save file");
+        }
+
 
         return true;
     }

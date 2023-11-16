@@ -21,4 +21,7 @@ public interface UserService {
     User editBackground(String image);
     List<UserDTO> searchUser(String email,Long id);
 
+    List<User> getUserByEmailLimitBy(String email, int limit);
+
+    List<User> getUserByEmailLimitBy(String email, int start, int count);
 }
