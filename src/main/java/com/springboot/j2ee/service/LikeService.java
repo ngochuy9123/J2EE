@@ -16,4 +16,6 @@ public interface LikeService {
 
     long getAllLikeByPostId(Post post);
 
+
+
 }

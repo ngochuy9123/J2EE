@@ -12,6 +12,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
     public boolean existsByEmail(String email);
+
+
+    public User findByEmailAndOtpConfirm(String email,boolean otpConfirm);
     public User findByEmail(String email);
     public List<User> findByEmailLikeAndIdNot(String email,Long id);
     @Query(value = "SELECT * FROM User u WHERE u.email LIKE CONCAT('%',:email, '%')", nativeQuery = true)
