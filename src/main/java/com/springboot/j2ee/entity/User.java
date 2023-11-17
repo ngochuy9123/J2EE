@@ -31,6 +31,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    private String username;
+
     private String email;
 
     private String password;
@@ -48,6 +50,9 @@ public class User {
     private String otp;
     @Column(name = "otp_request_time")
     private Timestamp otpRequestTime;
+
+    @Column(name = "otp_confirm")
+    private boolean otpConfirm;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

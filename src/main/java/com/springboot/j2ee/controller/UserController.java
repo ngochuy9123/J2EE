@@ -2,12 +2,11 @@ package com.springboot.j2ee.controller;
 
 
 import com.springboot.j2ee.config.CustomUser;
+import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
-import com.springboot.j2ee.entity.Friend;
-import com.springboot.j2ee.entity.Like;
-import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.entity.*;
+import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.service.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -35,19 +34,21 @@ public class UserController {
     private final PostService postService;
     private final FriendService friendService;
     private final LikeService likeService;
+    private final CommentService commentService;
+    private final UserInfoService userInfoService;
 
-    public static String email_md ;
-//    public static User user_pub;
 
     public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
     public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
     public static final String pathImg = "/uploads/";
-    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService) {
+    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService, CommentService commentService, UserInfoService userInfoService) {
         this.userService = userService;
         this.emailService = emailService;
         this.postService = postService;
         this.friendService = friendService;
         this.likeService = likeService;
+        this.commentService = commentService;
+        this.userInfoService = userInfoService;
     }
 
 
@@ -110,17 +111,23 @@ public class UserController {
 
             registrationDTO.setAvatar("https://cdn.alongwalk.info/vn/wp-content/uploads/2022/10/14054104/image-100-y-tuong-avatar-cute-doc-dao-an-tuong-nhat-cho-ban-166567566414594.jpg");
             registrationDTO.setBackground("https://c4.wallpaperflare.com/wallpaper/321/512/923/tom-and-jerry-heroes-cartoons-desktop-hd-wallpaper-for-mobile-phones-tablet-and-pc-1920%C3%971200-wallpaper-thumb.jpg");
+            registrationDTO.setUsername(registrationDTO.getFirstName()+" "+registrationDTO.getLastName());
             User u = userService.save(registrationDTO);
             if (u==null){
                 session.setAttribute("msgReg","DANG KI THAT BAI");
             }
             else{
+
+                userInfoService.addInfoUser(u);
+
                 session.setAttribute("msgReg","DANG KI THANH CONG");
                 session.setAttribute("email",registrationDTO.getEmail());
             }
         }
         return "redirect:/register";
     }
+
+
 
     @PostMapping("confrimOTP")
     public String confirmOTP(@RequestParam String otp, @RequestParam String email, Model model,HttpSession session){
@@ -134,6 +141,8 @@ public class UserController {
 
         return "redirect:/register";
     }
+
+
 
     @PostMapping("create_post")
     public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
@@ -152,6 +161,9 @@ public class UserController {
 
         return "redirect:/home";
     }
+
+
+
 
     public String convertToUnixPath(String windowsPath) {
         // Replace backslashes with forward slashes
@@ -206,15 +218,62 @@ public class UserController {
         }
 
         if (isCurrentUser){
+
             User user = userService.getInfoById(principal.getUser().getId());
             model.addAttribute("user",user);
+            model.addAttribute("infoUser", userInfoService.getInfoByIdUser(user));
         }
         else{
+            //            xử lý đã gửi lời mời kết bạn chưa nếu rồi thì có thể xóa lời mời
+//            Xử lý có ai gửi lời mời không nếu có thì có thể hủy lời mời
+//            Kiểm tra đã là bạn bè chưa
             User user = userService.getInfoById(id);
             model.addAttribute("user",user);
+            model.addAttribute("infoUser", userInfoService.getInfoByIdUser(user));
         }
+
+        if (!isCurrentUser){
+            EFriendRequest eFriendRequest = friendService.checkFriendRequest(id,principal.getUser().getId());
+            String friendRequest = eFriendRequest.toString();
+            model.addAttribute("friend_request", friendRequest);
+        }
+        HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
+        HashMap<Long,Boolean> hashLiked = new HashMap<>();
+
+        HashMap<Long,List<Comment>> hashComment = new HashMap<>();
+        HashMap<Long,Integer> hashSlgComment = new HashMap<>();
+
+        List<Post> lstPost = postService.getPostByIdUser(id);
+        for(Post p:lstPost){
+            long slgLike = likeService.getAllLikeByPostId(p);
+            hashLike.put(p.getId(),slgLike);
+
+            LikeDTO likeDTO = new LikeDTO();
+            likeDTO.setIdUser(principal.getUser().getId());
+            likeDTO.setIdPost(p.getId());
+            Like like = likeService.findLike(likeDTO);
+            if (like != null){
+                hashLiked.put(p.getId(),true);
+            }
+            else{
+                hashLiked.put(p.getId(),false);
+            }
+
+            List<Comment> lstComments = commentService.findCommentByPost(p.getId());
+            hashComment.put(p.getId(), lstComments);
+            hashSlgComment.put(p.getId(),lstComments.size());
+
+
+        }
+
+        model.addAttribute("hashSlgComment",hashSlgComment);
+        model.addAttribute("hashComment",hashComment);
+
+        model.addAttribute("hashSlgLike",hashLike);
+        model.addAttribute("hashLiked",hashLiked);
         model.addAttribute("isCurrentUser", isCurrentUser);
-        model.addAttribute("lsPost",postService.getPostByIdUser(id));
+        model.addAttribute("lsPost",lstPost);
+
         return "profile";
     }
 
