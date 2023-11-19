@@ -56,3 +56,23 @@ async function declineFriendRequest(id_user) {
   console.log(data1)
 
 }
+
+
+async function acceptFriendRequest(button) {
+  let inputValue = button.previousElementSibling.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/acceptFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+  if (status === 200){
+    location.reload()
+  }
+}
