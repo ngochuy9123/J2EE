@@ -111,64 +111,24 @@
         </div>
         <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
           <div class="recently">Notification</div>
-            <li><a class="dropdown-item" href="#">
-            
-              <i class="user">
-                <img
-                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                  alt=""
-                />
-               <span class="detail-noti">  <strong>
 
-                John Doe
-              </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-               
-                </i>
-              </a></li>
-              <li><a class="dropdown-item" href="#">
-            
-                <i class="user">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  />
-                 <span class="detail-noti">  <strong>
-  
-                  John Doe
-                </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                 
-                  </i>
-                </a></li>
-                <li><a class="dropdown-item" href="#">
-            
-                  <i class="user">
-                    <img
-                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                      alt=""
-                    />
-                   <span class="detail-noti">  <strong>
-    
-                    John Doe
-                  </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                   
-                    </i>
-                  </a></li>
-                  <li><a class="dropdown-item" href="#">
-            
+                  <li th:each="announce:${lstAnnounce}" ><a class="dropdown-item" href="#">
+
                     <i class="user">
                       <img
-                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                        th:src="${announce.getUserFrom().getAvatar()}"
                         alt=""
                       />
                      <span class="detail-noti">  <strong>
-      
-                      John Doe
-                    </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                     
-                      </i>
+                      <span th:text="${announce.getUserFrom().getUsername()}"></span>
+                    </strong>
+                      <span th:if="${announce.getEAnnounceType().toString() == 'LIKE'}"> đã like bài viết của bạn </span>
+                       <span th:if="${announce.getEAnnounceType().toString() == 'COMMENT'}"> đã bình luận trong bài viết của bạn </span>
+                     </span>
+                    </i>
                     </a></li>
-         
-           
+
+
         </ul>
    
    
@@ -241,15 +201,8 @@
       <div class="outlet">
         <!-- HOME -->
         <div id="home" style="margin-top: 20px;">
-          <div class="stories" id="stories-container">
-            <div class="story">
-              <img
-                th:src="${user.getAvatar()}"
-                alt="CurrentUserProfilePic"
-              />
-              <span>John Doe</span>
-              <button>+</button>
-            </div>
+          <div class="stories" id="stories-container" style="display: none">
+
           </div>
         </div>
 <!--Create Post  START-->

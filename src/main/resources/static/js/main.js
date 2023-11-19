@@ -67,7 +67,7 @@ async function showMoreComments(postId) {
 
                 <div class="container-post" th:id="${'fetch-data-comment-' + postId}">
 
-                 <div class="comment">
+                 <div class="comments">
                  ${postInfo.lstComment.map(cmt => `
                 <div class="comment">
                   <img src="${cmt.avatar}" alt="" />
@@ -206,7 +206,8 @@ function addComment(postId) {
 function toggleLike(postId) {
   // Find the heart icon element based on postId
   const heartIcon = document.querySelector(`#item-${postId} .like-icon i`);
-
+  let slgLike = document.getElementById(`slgLike+${postId}`).innerHTML
+  console.log(slgLike)
   if (heartIcon) {
     heartIcon.classList.toggle("red-heart");
 
@@ -214,9 +215,13 @@ function toggleLike(postId) {
       heartIcon.classList.remove("fa-regular", "fa-heart");
       heartIcon.classList.add("fa-solid", "fa-heart");
       likePost(postId).then(r => console.log("Hello"))
+      slgLike+1
+      document.getElementById(`slgLike+${postId}`).innerHTML = slgLike
     } else {
       heartIcon.classList.remove("fa-solid", "fa-heart");
       heartIcon.classList.add("fa-regular", "fa-heart");
+      slgLike-1
+      document.getElementById(`slgLike+${postId}`).innerHTML = slgLike
       dislikePost(postId)
     }
   }
@@ -585,11 +590,37 @@ async function fetDataComment(item){
 
     }
 
+    // fetch like
+    const respLike = await fetch("/countLikeIdPost",
+        {
+          method: "POST",
+          body: data
+        })
+
+    let slgLike = await respLike.text();
+
+    const respLiked = await fetch("/postLiked",
+        {
+          method: "POST",
+          body: data
+        })
+
+    let liked = await respLiked.json();
+    console.log(liked)
+
+    let htmlHeart = ""
+    if (liked){
+      htmlHeart = `<span class="like-icon"><i class="fa-solid fa-heart"></i></span>`
+    }
+    else{
+      htmlHeart = `<span class="like-icon"><i class="fa-regular fa-heart"></i></span>`
+    }
     info.innerHTML = `
-  <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
-  12 Likes
-    <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
     
+  <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
+  <span id="slgLike+${post_id}">${slgLike} </span>Likes
+  
+   `+ htmlHeart+`
   </div>
   <div class="item" onclick="toggleComments(${post_id})">
     <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>

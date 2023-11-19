@@ -36,12 +36,14 @@ public class UserController {
     private final LikeService likeService;
     private final CommentService commentService;
     private final UserInfoService userInfoService;
+    private final AnnounceService announceService;
 
 
     public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
     public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
     public static final String pathImg = "/uploads/";
-    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService, CommentService commentService, UserInfoService userInfoService) {
+
+    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService, CommentService commentService, UserInfoService userInfoService, AnnounceService announceService) {
         this.userService = userService;
         this.emailService = emailService;
         this.postService = postService;
@@ -49,6 +51,7 @@ public class UserController {
         this.likeService = likeService;
         this.commentService = commentService;
         this.userInfoService = userInfoService;
+        this.announceService = announceService;
     }
 
 
@@ -61,18 +64,45 @@ public class UserController {
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
 
         List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
-        HashMap<Long,Integer> hashLike = new HashMap<Long,Integer>();
 
-        for (Post p: lstPost) {
-            List<Like> lstLike = likeService.getAllEmoteByPostID(p);
-            if (lstLike.isEmpty()){
-                hashLike.put(p.getId(),0);
+
+
+        HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
+        HashMap<Long,Boolean> hashLiked = new HashMap<>();
+
+        HashMap<Long,List<Comment>> hashComment = new HashMap<>();
+        HashMap<Long,Integer> hashSlgComment = new HashMap<>();
+
+        for(Post p:lstPost){
+            long slgLike = likeService.getAllLikeByPostId(p);
+            hashLike.put(p.getId(),slgLike);
+
+            LikeDTO likeDTO = new LikeDTO();
+            likeDTO.setIdUser(principal.getUser().getId());
+            likeDTO.setIdPost(p.getId());
+            Like like = likeService.findLike(likeDTO);
+            if (like != null){
+                hashLiked.put(p.getId(),true);
             }
-            else {
-                hashLike.put(p.getId(),lstLike.size());
+            else{
+                hashLiked.put(p.getId(),false);
             }
+
+            List<Comment> lstComments = commentService.findCommentByPost(p.getId());
+            hashComment.put(p.getId(), lstComments);
+            hashSlgComment.put(p.getId(),lstComments.size());
+
 
         }
+
+        List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
+
+        model.addAttribute("lstAnnounce",lstAnnounce);
+        model.addAttribute("hashSlgComment",hashSlgComment);
+        model.addAttribute("hashComment",hashComment);
+
+        model.addAttribute("hashSlgLike",hashLike);
+        model.addAttribute("hashLiked",hashLiked);
 
         model.addAttribute("posts",lstPost);
         model.addAttribute("user",principal.getUser());
@@ -237,6 +267,9 @@ public class UserController {
             String friendRequest = eFriendRequest.toString();
             model.addAttribute("friend_request", friendRequest);
         }
+
+        List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
+
         HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
         HashMap<Long,Boolean> hashLiked = new HashMap<>();
 
@@ -273,6 +306,7 @@ public class UserController {
         model.addAttribute("hashLiked",hashLiked);
         model.addAttribute("isCurrentUser", isCurrentUser);
         model.addAttribute("lsPost",lstPost);
+        model.addAttribute("lst_friend_request",list_friend_request);
 
         return "profile";
     }
