@@ -12,12 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Upload file
-// Function to trigger the file input when the "Image" icon is clicked
 
-document.getElementById("upload-image").addEventListener("click", function () {
-  document.getElementById("file-input").click();
-});
 
 // Function to handle the file upload
 function handleFileUpload(input) {

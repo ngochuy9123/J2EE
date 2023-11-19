@@ -105,7 +105,7 @@ public class UserController {
         model.addAttribute("hashLiked",hashLiked);
 
         model.addAttribute("posts",lstPost);
-        model.addAttribute("user",principal.getUser());
+        model.addAttribute("user",userService.getUserById(principal.getUser().getId()));
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         return "index";
@@ -298,6 +298,10 @@ public class UserController {
 
 
         }
+
+        List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
+
+        model.addAttribute("lstAnnounce",lstAnnounce);
 
         model.addAttribute("hashSlgComment",hashSlgComment);
         model.addAttribute("hashComment",hashComment);
