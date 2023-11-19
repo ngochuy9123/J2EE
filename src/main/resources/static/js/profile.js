@@ -29,20 +29,19 @@ function handleFileUpload(input) {
 }
 
 
-var avatarChanged = false;
-var backgroundChanged = false;
+let avatarChanged = false;
+let backgroundChanged = false;
 
 
-var avatarInput = document.getElementById('edit_avatar');
-
+let avatarInput = document.getElementById('edit_avatar');
 
 function chooseAvatarImg(){
   avatarInput.addEventListener('change', function(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
+    let file = event.target.files[0];
+    let reader = new FileReader();
 
     reader.onload = function() {
-      var imgElement = document.querySelector('.avt-img');
+      let imgElement = document.querySelector('.avt-img');
       imgElement.src = reader.result;
       avatarChanged = true
     }
@@ -51,16 +50,15 @@ function chooseAvatarImg(){
   });
 }
 
-var backgroundInput = document.getElementById('edit_background');
-
+let backgroundInput = document.getElementById('edit_background');
 
 function chooseBackgroundImg(){
   backgroundInput.addEventListener('change', function(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
+    let file = event.target.files[0];
+    let reader = new FileReader();
 
     reader.onload = function() {
-      var imgElement = document.querySelector('.cover-img');
+      let imgElement = document.querySelector('.cover-img');
       imgElement.src = reader.result;
       avatarChanged = true
     }
@@ -181,13 +179,13 @@ async function dislikePost(postId) {
 
 
 async function testCmt(button) {
-  var postId = button.getAttribute("data-post-id");
+  let postId = button.getAttribute("data-post-id");
   const commentInput = document.getElementById('cmt'+postId);
   const commentText = commentInput.value.trim();
   // Lấy giá trị từ các trường input
 
   // Dữ liệu cần gửi
-  var data = {
+  let data = {
     id: postId,
     content: commentText
   };
@@ -202,22 +200,22 @@ async function testCmt(button) {
   let userId = document.getElementById("idUser").value
   let username = document.getElementById("username").value
   const d = new Date();
-  let time = d.getTime();
+  let time = d.getDate();
 
   let lstComment = document.getElementById("lstComment"+postId)
   let htmlCmt = `
     <div class="comment" id="'lstComment' + ${postId}">
-      <img th:src="${avatar}" alt="">
+      <img src="${avatar}" alt="">
       <div class="info">
-        <span th:text="${username}"></span>
-        <p th:text="${commentText}"></p>
+        <span >${username}</span>
+        <p >${commentText}</p>
       </div>
-      <span class="date" th:text="${time}"></span>
+      <span class="date" >${time}</span>
     </div>
   `
-  if (status === 201 ){
-    lstComment.textContent = htmlCmt
-  }
+
+  lstComment.innerHTML = htmlCmt
+
   commentInput.value = "";
 }
 

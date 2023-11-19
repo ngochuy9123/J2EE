@@ -66,11 +66,7 @@ public class PostServiceImpl implements PostService {
             List<Post> lsTemp = postRepository.findByUserAndVisibleOrderByCreatedAtDesc(user1, EPostVisibility.FRIENDS);
             lstPostFriend.addAll(lsTemp);
         }
-//        System.out.println(lstPostFriend.size());
-//        for (Post p:lstPostFriend
-//             ) {
-//            System.out.println(p.getContent());
-//        }
+
         List<Post> lstPostPublic = postRepository.findByVisibleOrderByCreatedAtDesc(EPostVisibility.PUBLIC);
         lstPostPublic.addAll(lstPostFriend);
         lstPostPublic.sort(Comparator.comparing(Post::getCreatedAt).reversed());
@@ -78,7 +74,7 @@ public class PostServiceImpl implements PostService {
         List<Post> lstPostCurrentUser = postRepository.findByUserOrderByCreatedAtDesc(user);
         lstPostPublic.addAll(lstPostCurrentUser);
 
-        lstPostPublic.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+        lstPostPublic.sort(Comparator.comparing(Post::getId).reversed());
 
         return lstPostPublic;
     }

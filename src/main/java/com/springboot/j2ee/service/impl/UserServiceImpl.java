@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
                 ,userDTO.getEmail(),passwordEncoder.encode( userDTO.getPassword()),userDTO.getPhone(),"User",timestamp,timestamp);
         user.setAvatar(userDTO.getAvatar());
         user.setBackground(userDTO.getBackground());
+        user.setUsername(userDTO.getUsername());
         user.setOtpConfirm(false);
         generateOTP(user);
         return userRepository.save(user);
