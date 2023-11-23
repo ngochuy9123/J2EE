@@ -11,10 +11,13 @@ async function showMoreComments(postId) {
   let postInfo = await getInfoPost(postId)
   console.log("test", postInfo)
 
-
+  function formatTime(time){
+    return  moment(time).fromNow();
+  }
   const modalTitle = document.getElementById("modalTitle");
   const modalContent = document.getElementById("modalContent");
   modalTitle.textContent = `This is Huy's post`;
+
   modalContent.innerHTML = `
      <div class="post">
        <div class="container container-cmt">
@@ -75,7 +78,8 @@ async function showMoreComments(postId) {
                     <span>${cmt.email}</span>
                     <p>${cmt.contentComment}</p>
                   </div>
-                  <span class="date">${cmt.create_at}</span>
+                  
+                  <span class="date">${formatTime(cmt.create_at)}</span>
                   
                 </div>
                 </br>
@@ -97,7 +101,6 @@ async function showMoreComments(postId) {
 
   // Loop through the posts and append them to the container
 
-  // Trigger the modal
 
 
   // console.log("comment",comment,currentUser,postId);
