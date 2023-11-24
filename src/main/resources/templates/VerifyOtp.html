@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/login.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="login">
+      <div class="card">
+        <div class="left">
+          <h1>Hello World.</h1>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
+            alias totam numquam ipsa exercitationem dignissimos, error nam,
+            consequatur.
+          </p>
+          <span>Don't you have an account?</span>
+          <a th:href="@{/register}">
+            <button>Register</button>
+          </a>
+        </div>
+        <div class="right">
+          <h1>Verify OTP</h1>
+          <form id="loginForm" th:action="@{/userLogin}" method="post">
+            <input type="text" placeholder="Your OTP" id="username" name="username" />
+         
+            <button id="loginButton">Verify</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>
