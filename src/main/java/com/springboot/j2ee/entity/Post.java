@@ -1,5 +1,6 @@
 package com.springboot.j2ee.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.j2ee.enums.EPostVisibility;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -132,5 +133,6 @@ public class Post {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 
 }

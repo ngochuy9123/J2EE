@@ -24,10 +24,13 @@
         </div>
         <div class="right">
           <h1>Login</h1>
-          <form id="loginForm" th:action="@{/userLogin}" method="post">
-            <input type="text" placeholder="Username" id="username" name="username" />
-            <input type="password" placeholder="Password" id="password" name="password" />
+          <form id="loginForm" th:action="@{/userLogin}" method="post" onsubmit="return validateForm(event)">
+            <input type="text" placeholder="Username" id="username" name="username"/>
+            <span id="usernameError" style="color: red;"></span>
+            <input type="password" placeholder="Password" id="password" name="password"/>
+            <span id="passwordError" style="color: red;"></span>
             <button id="loginButton">Login</button>
+
           </form>
         </div>
       </div>
@@ -35,3 +38,37 @@
   </body>
 
 </html>
+<script>
+  function validateForm(event) {
+    // event.preventDefault();
+    var username = document.getElementById("username");
+    var password = document.getElementById("password");
+    var usernameError = document.getElementById("usernameError");
+    var passwordError = document.getElementById("passwordError");
+
+    // Remove existing error classes and error messages
+    username.classList.remove('error');
+    password.classList.remove('error');
+    usernameError.textContent = "";
+    passwordError.textContent = "";
+
+    if (username.value === "") {
+      username.focus();
+      username.classList.add('error');
+      usernameError.textContent = "Username cannot be blank.";
+      return false;
+    }
+
+    if (password.value === "") {
+      password.focus();
+      password.classList.add('error');
+      passwordError.textContent = "Password cannot be blank.";
+      return false;
+    }
+
+    return true;
+  }
+
+  // var loginForm = document.getElementById("loginForm");
+  // loginForm.addEventListener("submit", validateForm);
+</script>

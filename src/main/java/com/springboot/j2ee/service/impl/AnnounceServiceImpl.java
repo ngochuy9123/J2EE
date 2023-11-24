@@ -13,6 +13,7 @@ import com.springboot.j2ee.service.AnnounceService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -91,7 +92,20 @@ public class AnnounceServiceImpl implements AnnounceService {
     @Override
     public List<Announce> getAnnounceByIdUser(long idUserTo) {
         User userTo = userRepository.findById(idUserTo).get();
-        return announceRepository.findByUserToOrderByCreateAtDesc(userTo);
+
+        List<Announce> lstAnnounce = announceRepository.findByUserToOrderByCreateAtDesc(userTo);
+        List<Announce> lstAnnounceNone = new ArrayList<>();
+        for (Announce a: lstAnnounce) {
+             if (a.getEAnnounceStatus()==EAnnounceStatus.NONE){
+                 lstAnnounceNone.add(a);
+             }
+             else{
+                 break;
+             }
+
+        }
+
+        return lstAnnounceNone;
     }
 
 }

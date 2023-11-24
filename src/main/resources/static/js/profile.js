@@ -262,4 +262,40 @@ async function declineFriendRequest(button) {
 
 }
 
+// Notification
+async function changeStatusNotification(userId) {
 
+  let data = new FormData
+  data.append("userId", userId)
+
+  const resp = await fetch("/changeStatusAnnounce",
+      {
+        method: "POST",
+        body: data
+      })
+  return await resp.text();
+
+
+}
+
+
+// See More Post
+
+async function getPost(id_post) {
+  let data = new FormData
+  data.append("idPost", id_post)
+
+  const resp = await fetch("/getInfoPost",
+      {
+        method: "POST",
+        body: data
+      })
+  return await resp.json();
+
+}
+
+async function seeMorePost(id_post) {
+  let post = await getPost(id_post)
+
+  console.log(post.content)
+}

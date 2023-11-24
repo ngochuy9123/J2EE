@@ -1,12 +1,10 @@
 package com.springboot.j2ee.service.impl;
 
 import com.springboot.j2ee.dto.CommentDetailDTO;
+import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostInfoDTO;
 import com.springboot.j2ee.dto.UserDTO;
-import com.springboot.j2ee.entity.Comment;
-import com.springboot.j2ee.entity.Friend;
-import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.entity.*;
 import com.springboot.j2ee.enums.EPostVisibility;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
@@ -92,9 +90,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostInfoDTO getOnePost(Long id) {
-        List<Comment> lstCmt = commentService.findCommentByPost(id);
+    public PostInfoDTO getOnePost(Long id, Long idUser) {
         PostInfoDTO postInfoDTO = new PostInfoDTO();
+
+//       Get Da like hay chua like
+        LikeDTO likeDTO = new LikeDTO();
+        likeDTO.setIdUser(idUser);
+        likeDTO.setIdPost(id);
+        Like like = likeService.findLike(likeDTO);
+        if (like != null){
+            postInfoDTO.setLiked(true);
+        }
+        else{
+            postInfoDTO.setLiked(false);
+        }
+
+
+
+//       List Comment
+        List<Comment> lstCmt = commentService.findCommentByPost(id);
+
         List<CommentDetailDTO> lstCommentDetailDTO = new ArrayList<>();
         for (Comment cmt:lstCmt) {
             CommentDetailDTO commentDetailDTO =new CommentDetailDTO();
