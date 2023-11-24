@@ -30,19 +30,10 @@ public class PostAPI {
 
 
     @PostMapping("getInfoPost")
-    public PostInfoDTO getInfoPost(@RequestParam Long idPost){
-        PostInfoDTO postInfoDTO = postService.getOnePost(idPost);
+    public PostInfoDTO getInfoPost(@RequestParam Long idPost,@AuthenticationPrincipal CustomUser principal){
+        PostInfoDTO postInfoDTO = postService.getOnePost(idPost,principal.getUser().getId());
         return postInfoDTO;
     }
-
-    @GetMapping("helloPost")
-    public PostInfoDTO helloPost(){
-        Long idPost = 24L;
-        PostInfoDTO postInfoDTO = postService.getOnePost(idPost);
-        System.out.println(postInfoDTO.getUser());
-        return postInfoDTO;
-    }
-
 
 
 }

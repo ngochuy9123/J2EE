@@ -107,7 +107,7 @@
       
       <div class="dropdown">
         <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-          <i class="fa-regular fa-bell">
+          <i th:onclick="'changeStatusNotification('  + ${user.getId()} +  ');'" class="fa-regular fa-bell">
             <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
           </i>
         </div>
@@ -378,10 +378,6 @@
                 <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
                 12 Comments
               </div>
-              <div class="item">
-                <span class="share-icon"><i class="fa-solid fa-share"></i></span>
-                Share
-              </div>
             </div>
 <!--            Comment Post-->
             <div class=" comments" th:id="${post.getId()}" >
@@ -395,14 +391,6 @@
 
                 <div class="container-post" th:id="${'fetch-data-comment-'+post.getId()}">
 
-<!--                  <div class="comment">-->
-<!--                    <img src="https://khoinguonsangtao.vn/wp-content/uploads/2022/07/avatar-gau-cute.jpg" alt="" />-->
-<!--                    <div class="info">-->
-<!--                      <span>Hello Huy</span>-->
-<!--                      <p>Hahahah HIhihihih</p>-->
-<!--                    </div>-->
-<!--                    <span class="date">1 hour ago</span>-->
-<!--                  </div>-->
                 </div>
             </div>
           </div>

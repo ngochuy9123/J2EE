@@ -22,7 +22,7 @@ public class SpringSecurity {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/register","/css/**","/js/**","/assets/**","/img/**","/signin","/confrimOTP").permitAll()
+                        .requestMatchers("/register","/css/**","/js/**","/assets/**","/img/**","/signin","/confrimOTP","forgotPass").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

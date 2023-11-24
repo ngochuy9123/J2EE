@@ -370,7 +370,17 @@
               </div>
 
 
-                <div th:each="cmt:${hashComment.get(post.getId())}" class="comment" th:id="'lstComment' + ${post.getId()}">
+                <div th:if="${hashComment.get(post.getId()).size()>2}" th:each="i : ${#numbers.sequence(0, 2)}" class="comment" th:id="'lstComment' + ${post.getId()}">
+                  <img th:src="${hashComment.get(post.getId()).get(i).getUser().getAvatar()}" alt="">
+                  <div class="info">
+                    <span th:text="${hashComment.get(post.getId()).get(i).getUser().getUsername()}"></span>
+                    <p th:text="${hashComment.get(post.getId()).get(i).getContent()}"></p>
+                  </div>
+                  <span class="date" th:text="${hashComment.get(post.getId()).get(i).getCreatedAt()}"></span>
+                </div>
+
+
+                <div th:if="${hashComment.get(post.getId()).size()<=2}"  th:each="cmt:${hashComment.get(post.getId())}" class="comment" th:id="'lstComment' + ${post.getId()}">
                   <img th:src="${cmt.getUser().getAvatar()}" alt="">
                   <div class="info">
                     <span th:text="${cmt.getUser().getEmail()}"></span>
@@ -378,8 +388,9 @@
                   </div>
                   <span class="date" th:text="${cmt.getCreatedAt()}"></span>
                 </div>
-              </div>
 
+              </div>
+              <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'" th:if="${hashComment.get(post.getId()).size()}>2">See More</a>
 
 
             </div>

@@ -125,6 +125,10 @@ public class UserController {
     public String showSignUpForm(){
         return "register";
     }
+    @GetMapping("forgotPass")
+    public String showForgotPass(){
+        return "forgotpassword";
+    }
 
     @PostMapping("register")
     public String registerUserAccount(@Valid @ModelAttribute("user") UserDTO registrationDTO, HttpSession session, BindingResult bindingResult){
