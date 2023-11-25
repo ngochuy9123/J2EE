@@ -1,5 +1,6 @@
 package com.springboot.j2ee.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.j2ee.enums.EPostVisibility;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -72,7 +73,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "postLike",
+            mappedBy = "postEmote",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},
             fetch = FetchType.LAZY
@@ -132,5 +133,6 @@ public class Post {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 
 }

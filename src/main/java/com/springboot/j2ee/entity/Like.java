@@ -25,7 +25,7 @@ public class Like {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "post_like_fk")
     )
-    private Post postLike;
+    private Post postEmote;
 
     @ManyToOne
     @JoinColumn(name = "user_id",
@@ -33,7 +33,7 @@ public class Like {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "user_like_fk")
     )
-    private User userLike;
+    private User userEmote;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

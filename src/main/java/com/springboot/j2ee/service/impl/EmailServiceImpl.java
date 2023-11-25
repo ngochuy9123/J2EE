@@ -16,11 +16,16 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     @Override
-    public void sendSimpleEmail(String email) {
+    public void sendSimpleEmail(String email,String otp) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(sender);
         mailMessage.setTo(email);
-        mailMessage.setText("Chuc mung ban da dang ki thanh cong");
+
+        String content = "Ban da hoan tat thu tuc dang ki. De co the dang nhan ban can xac nhan ma OTP: \n"+otp;
+
+
+        mailMessage.setText(content);
+
         mailMessage.setSubject("Thong bao Dang ki thanh cong");
 
         javaMailSender.send(mailMessage);

@@ -45,9 +45,7 @@
   color: var(--light-textColor);
 
   /* Media queries for responsive design */
-  @media (max-width: 768px) {
-    display: none;
-  }
+
 
   @media (max-width: 1024px) {
     width: 200px;
@@ -61,11 +59,10 @@
   display: flex;
   align-items: center;
   gap: 20px;
-
   /* Hide the entire right section on mobile */
-  @media (max-width: 768px) {
-    display: none;
-  }
+  /*@media (max-width: 768px) {*/
+  /*  display: none;*/
+  /*}*/
 }
 .leftBar .container .menu .shortcuts,
 .leftBar .container .menu .others {
@@ -133,6 +130,7 @@
   /* Hide on mobile */
   @media (max-width: 768px) {
     display: none;
+
   }
 
   /* Hide scrollbar */
@@ -224,11 +222,92 @@ a {
   overflow: scroll;
   background-color: var(--bgSoft);
 }
-
+.form-select {
+  width: 25% !important;
+}
 @media screen and (max-width: 768px) {
   .rightBar {
     display: none;
   }
+  .other-chose{
+    display: none !important;
+  }
+  .other-chose.image-upload{
+    display: flex !important;
+  }
+  .user .userInfo{
+    margin-right: 6px !important;
+  }
+  .form-select{
+    width: 120px !important;
+    font-size: 16px !important;
+  }
+  .profile .profileContainer .uInfo .center .info{
+    display: none !important;
+  }
+  .profile .profileContainer .uInfo .left{
+    display: none;
+  }
+  .profile .profileContainer .uInfo .center span{
+    width: 130px;
+    font-size: 20px;
+  }
+  .profile .profileContainer .uInfo .right{
+    margin-top: 20px;
+  margin-right: 50px;
+  }
+  .profile .images .profilePic{
+    width: 160px;
+    height: 160px;
+  }
+  .profile .profileContainer{
+    padding: 12px 0;
+  }
+  .profile .profileContainer .uInfo{
+    padding: 30px;
+    flex-direction: column;
+
+
+  }
+  .navbar .right .user{
+    display: block;
+  }
+  .profile .profileContainer .uInfo .center{
+    flex-direction: row;
+    text-align: center;
+  }
+
+  .drop-noti.dropdown-menu-end[data-bs-popper]{
+    right: -84px !important;
+  }
+  .drop-friend.dropdown-menu-end[data-bs-popper]{
+    right: -160px !important;
+  }
+  .navbar .left .search .input{
+width: 100%;
+  }
+  .form-search{
+    width: 100%;
+  }
+  .dropdown.search-user{
+    position: absolute;
+    bottom: 2px;
+    left: 0px;
+
+    width: 100%;
+  }
+  .search-user{
+
+  }
+  .navbar .left .search{
+
+  }
+  .navbar{
+    padding:16px 16px 40px !important;
+
+  }
+
+
 }
 
 @media screen and (max-width: 1024px) {
@@ -436,7 +515,7 @@ a {
 .container-coverimg,
 .container-avt {
   display: flex;
-  justify-content: space-between;
+  /*justify-content: space-between;*/
   align-items: center;
   flex-direction: row;
 }
@@ -651,9 +730,7 @@ a {
   width: 40%;
   flex-direction: column;
 }
-.form-select {
-  width: 25% !important;
-}
+
 .input-post {
   margin: 20px 0px;
   font-size: 18px;
@@ -713,6 +790,7 @@ a {
 
 .avatar-user {
   cursor: pointer;
+  margin-left: 6px;
 }
 
 .dropdown-item.active,
@@ -809,4 +887,92 @@ a {
 }
 .redidect-listfriend:hover {
   text-decoration: underline !important;
+}
+.accept-btn,
+.dismiss-btn {
+  padding: 10px 26px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.accept-btn:hover,
+.dismiss-btn:hover {
+  opacity: 0.9;
+}
+.accept-btn {
+  background-color: #5271ff;
+  color: white;
+}
+.dismiss-btn {
+  background-color: #f0544f;
+  color: white;
+}
+.wrap-btn {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-top: 12px;
+}
+.drop-friend {
+  max-height: 90vh !important;
+  overflow-y: hidden !important;
+}
+.redidect-listfriend {
+  text-decoration: none;
+  color: blue !important;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  width: 100% !important;
+  display: block;
+}
+.redidect-listfriend:hover {
+  text-decoration: underline !important;
+}
+
+.more-cmt{
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+#modalTitle{
+  font-weight: 500 !important;
+  /* text-align: center !important;
+   */
+  margin-left:40% !important ;
+  /* margin: auto !important; */
+}
+.container-cmt{
+  margin-top: -10px !important;
+  max-height: 600px !important;
+  overflow-y: scroll !important;
+}
+.post .content-cmt img{
+  /* width: 80% !important; */
+  height: 300px !important;
+}
+@media (max-width: 768px) {
+  .post {
+
+    margin: 0 10px;
+  }
+  .post .container{
+    width: 100% !important;
+  }
+}
+@media (min-width: 576px) {
+  .container,
+  .container-sm {
+    max-width: none !important; /* or max-width: initial; */
+  }
+}
+
+@media (max-width: 1024px) {
+  width: 200px;
+}
+.modal-body{
+
 }

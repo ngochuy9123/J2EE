@@ -7,10 +7,15 @@
       name="description"
       content="Web site created using create-react-app"
     />
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
 
     <link rel="stylesheet" href="./css/main.css" />
     <link rel="stylesheet" href="./css/style.css" />
     <link rel="stylesheet" href="./css/profile.css" />
+
+<!--    <link rel="stylesheet" href="../static/css/main.css">-->
+<!--    <link rel="stylesheet" href="../static//css/style.css">-->
+<!--    <link rel="stylesheet" href="../static/css/profile.css">-->
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -43,14 +48,12 @@
         </a>
         <a href="/home"><i class="fa-solid fa-house"></i></a>
 
-        <i class="fa-regular fa-moon"></i>
-        <i class="fa-solid fa-table-cells-large"></i>
         
-        <div class="dropdown">
-          <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="dropdown search-user">
+          <div class="avatar-user search-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <div class="search">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <form action="/search" method="get">
+          <form action="/search" method="get" class="form-search">
             <input type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()" autocomplete="off"/>
           </form>
         </div>
@@ -94,7 +97,7 @@
         </ul>
 
       </div>
-     
+
       <a href="chat">
         <i class="fa-regular fa-envelope">
           <div class="notice-message">2</div>
@@ -104,70 +107,30 @@
       
       <div class="dropdown">
         <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-          <i class="fa-regular fa-bell">
-            <div class="notice-notifi">2</div>
+          <i th:onclick="'changeStatusNotification('  + ${user.getId()} +  ');'" class="fa-regular fa-bell">
+            <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
           </i>
         </div>
         <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
           <div class="recently">Notification</div>
-            <li><a class="dropdown-item" href="#">
-            
-              <i class="user">
-                <img
-                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                  alt=""
-                />
-               <span class="detail-noti">  <strong>
 
-                John Doe
-              </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-               
-                </i>
-              </a></li>
-              <li><a class="dropdown-item" href="#">
-            
-                <i class="user">
-                  <img
-                    src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                    alt=""
-                  />
-                 <span class="detail-noti">  <strong>
-  
-                  John Doe
-                </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                 
-                  </i>
-                </a></li>
-                <li><a class="dropdown-item" href="#">
-            
-                  <i class="user">
-                    <img
-                      src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                      alt=""
-                    />
-                   <span class="detail-noti">  <strong>
-    
-                    John Doe
-                  </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                   
-                    </i>
-                  </a></li>
-                  <li><a class="dropdown-item" href="#">
-            
+                  <li th:each="announce:${lstAnnounce}" ><a class="dropdown-item" href="#">
+
                     <i class="user">
                       <img
-                        src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                        th:src="${announce.getUserFrom().getAvatar()}"
                         alt=""
                       />
                      <span class="detail-noti">  <strong>
-      
-                      John Doe
-                    </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                     
-                      </i>
+                      <span th:text="${announce.getUserFrom().getUsername()}"></span>
+                    </strong>
+                      <span th:if="${announce.getEAnnounceType().toString() == 'LIKE'}"> đã like bài viết của bạn </span>
+                       <span th:if="${announce.getEAnnounceType().toString() == 'COMMENT'}"> đã bình luận trong bài viết của bạn </span>
+                     </span>
+                    </i>
                     </a></li>
-         
-           
+
+
         </ul>
    
    
@@ -193,12 +156,11 @@
                   th:src="${user.getAvatar()}"
                   alt=""
                 />
-                John Doe
+                <span th:text="${user.getUsername()}"></span>
                 </i>
               </a></li>
-            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Setting</a></li>
             <hr>
-            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
+            <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
         </ul>
    
    
@@ -208,6 +170,7 @@
       </div>
       
     </div>
+
     </div>
 
     <!-- Content -->
@@ -240,15 +203,8 @@
       <div class="outlet">
         <!-- HOME -->
         <div id="home" style="margin-top: 20px;">
-          <div class="stories" id="stories-container">
-            <div class="story">
-              <img
-                th:src="${user.getAvatar()}"
-                alt="CurrentUserProfilePic"
-              />
-              <span>John Doe</span>
-              <button>+</button>
-            </div>
+          <div class="stories" id="stories-container" style="display: none">
+
           </div>
         </div>
 <!--Create Post  START-->
@@ -302,7 +258,7 @@
                         ></textarea>
                       </div>
                       <div id="image-container"></div>
-                      <div class="other-chose">
+                      <div class="other-chose image-upload">
 
                         <div id="upload-image">
                           <i class="fa-regular fa-image"></i>
@@ -368,13 +324,27 @@
         </form>
         <div id="post-container"></div>
         <!-- Include Posts content here -->
+        <div class="modal fade" id="modalComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Modal Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="modalContent">
+                <!-- Modal content will be dynamically generated here -->
+              </div>
+
+            </div>
+          </div>
+        </div>
         <div th:each="post:${posts}" class="post">
           <div class="container">
             <div class="user">
               <div class="userInfo">
                 <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
                 <div class="details">
-                  <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
+                  <a href="${post.userId}" style="text-decoration: none; color: inherit;">
                     <span class="name" th:text="${post.getUser().getLastName()+' '+post.getUser().getFirstName()}"></span>
                   </a>
                   <span class="date" th:text="${post.getCreatedFormat()}"></span>
@@ -391,22 +361,22 @@
             </div>
             <div class="content">
               <p th:text="${post.getContent()}"></p>
-              <div th:if="${post.getImageUrl()!=null}">
-                <img th:src="${post.getImageUrl()}"  alt="Post Image">
+              <div th:if="${post.getImageUrl() !=null}">
+                <img th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}"  alt="Post Image">
               </div>
             </div>
+
+
+
             <div class="info">
               <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
                 <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-                12 Likes
+                <p th:text="${hashLike.get(post.getId())}"></p>
+
               </div>
               <div class="item" onclick="toggleComments(${post.id})">
                 <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
                 12 Comments
-              </div>
-              <div class="item">
-                <span class="share-icon"><i class="fa-solid fa-share"></i></span>
-                Share
               </div>
             </div>
 <!--            Comment Post-->
@@ -451,6 +421,8 @@
     </div>
   </body>
   <script src="./js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

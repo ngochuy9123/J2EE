@@ -12,12 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Upload file
-// Function to trigger the file input when the "Image" icon is clicked
 
-document.getElementById("upload-image").addEventListener("click", function () {
-  document.getElementById("file-input").click();
-});
 
 // Function to handle the file upload
 function handleFileUpload(input) {
@@ -29,20 +24,19 @@ function handleFileUpload(input) {
 }
 
 
-var avatarChanged = false;
-var backgroundChanged = false;
+let avatarChanged = false;
+let backgroundChanged = false;
 
 
-var avatarInput = document.getElementById('edit_avatar');
-
+let avatarInput = document.getElementById('edit_avatar');
 
 function chooseAvatarImg(){
   avatarInput.addEventListener('change', function(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
+    let file = event.target.files[0];
+    let reader = new FileReader();
 
     reader.onload = function() {
-      var imgElement = document.querySelector('.avt-img');
+      let imgElement = document.querySelector('.avt-img');
       imgElement.src = reader.result;
       avatarChanged = true
     }
@@ -51,16 +45,15 @@ function chooseAvatarImg(){
   });
 }
 
-var backgroundInput = document.getElementById('edit_background');
-
+let backgroundInput = document.getElementById('edit_background');
 
 function chooseBackgroundImg(){
   backgroundInput.addEventListener('change', function(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
+    let file = event.target.files[0];
+    let reader = new FileReader();
 
     reader.onload = function() {
-      var imgElement = document.querySelector('.avt-img');
+      let imgElement = document.querySelector('.cover-img');
       imgElement.src = reader.result;
       avatarChanged = true
     }
@@ -69,40 +62,17 @@ function chooseBackgroundImg(){
   });
 }
 
-
-
-let imgBackground = null
-document.getElementById('edit_background').addEventListener('click', function() {
-  backgroundChanged = true;
-
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function(event) {
-    var file = event.target.files[0];
-    imgBackground=file
-    var reader = new FileReader();
-    reader.onload = function() {
-      var imgElement = document.querySelector('.cover-img');
-      imgElement.src = reader.result;
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  input.click();
-});
 
 
 document.getElementById('save_changes').addEventListener('click', async function () {
   if (backgroundChanged) {
     console.log('Người dùng đã thay đổi background');
-    let avatar = avatarInput.files[0]
+    let background = backgroundInput.files[0]
 
     let data = new FormData
-    data.append('image', avatar)
+    data.append('image', background)
     // fetch
-    const resp = await fetch("/editAvatar",
+    const resp = await fetch("/editBackground",
         {
           method: "POST",
           body: data
@@ -133,8 +103,117 @@ document.getElementById('save_changes').addEventListener('click', async function
     avatarChanged = false
 
   }
+
+  let data = new FormData
+  data.append("location",document.getElementsByName("location")[0].value)
+  data.append("github",document.getElementsByName("github")[0].value)
+  data.append("twitter",document.getElementsByName("twitter")[0].value)
+  data.append("instagram",document.getElementsByName("instagram")[0].value)
+
+  let resp = await fetch("/editInfoUser",
+      {
+        method: "POST",
+        body: data
+      })
+
+  if (resp.status === 200){
+    alert("thay doi thanh cong")
+  }
+
   location.reload()
 });
+
+function toggleLike(postId) {
+
+  // Find the heart icon element based on postId
+  const heartIcon = document.getElementById("like"+postId);
+
+  if (heartIcon) {
+    heartIcon.classList.toggle("red-heart");
+
+    if (heartIcon.classList.contains("fa-regular")) {
+      heartIcon.classList.remove("fa-regular", "fa-heart");
+      heartIcon.classList.add("fa-solid", "fa-heart");
+      likePost(postId).then(r => console.log("Hello"))
+    } else {
+      heartIcon.classList.remove("fa-solid", "fa-heart");
+      heartIcon.classList.add("fa-regular", "fa-heart");
+      dislikePost(postId).then(r => console.log("Dislike"))
+    }
+  }
+}
+
+
+async function likePost(postId) {
+  let data = new FormData
+  data.append("idPost", postId)
+  const resp = await fetch("/likePost",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+}
+
+async function dislikePost(postId) {
+  let data = new FormData
+  data.append("idPost", postId)
+  const resp = await fetch("/dislikePost",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+}
+
+
+async function testCmt(button) {
+  let postId = button.getAttribute("data-post-id");
+  const commentInput = document.getElementById('cmt'+postId);
+  const commentText = commentInput.value.trim();
+  // Lấy giá trị từ các trường input
+
+  // Dữ liệu cần gửi
+  let data = {
+    id: postId,
+    content: commentText
+  };
+
+  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
+  let status = resp.status;
+  const data1 = await resp.text();
+
+  let post_container = document.getElementById("fetch-data-comment-"+postId);
+
+  let avatar = document.getElementById("avatar").value
+  let userId = document.getElementById("idUser").value
+  let username = document.getElementById("username").value
+  const d = new Date();
+  let time = d.getDate();
+
+  let lstComment = document.getElementById("lstComment"+postId)
+  let htmlCmt = `
+    <div class="comment" id="'lstComment' + ${postId}">
+      <img src="${avatar}" alt="">
+      <div class="info">
+        <span >${username}</span>
+        <p >${commentText}</p>
+      </div>
+      <span class="date" >${time}</span>
+    </div>
+  `
+
+  lstComment.innerHTML = htmlCmt
+
+  commentInput.value = "";
+}
+
 
 
 // Friends
@@ -169,8 +248,7 @@ async function acceptFriendRequest(button) {
   }
 }
 async function declineFriendRequest(button) {
-  let hiddenInput = button.parentElement.querySelector('.accept-input');
-  let inputValue = hiddenInput.value;
+  let inputValue = button.previousElementSibling.value;
   let data = new FormData
   data.append("userToId",inputValue)
 
@@ -182,4 +260,42 @@ async function declineFriendRequest(button) {
   const data1 = await resp.text();
   console.log(data1)
 
+}
+
+// Notification
+async function changeStatusNotification(userId) {
+
+  let data = new FormData
+  data.append("userId", userId)
+
+  const resp = await fetch("/changeStatusAnnounce",
+      {
+        method: "POST",
+        body: data
+      })
+  return await resp.text();
+
+
+}
+
+
+// See More Post
+
+async function getPost(id_post) {
+  let data = new FormData
+  data.append("idPost", id_post)
+
+  const resp = await fetch("/getInfoPost",
+      {
+        method: "POST",
+        body: data
+      })
+  return await resp.json();
+
+}
+
+async function seeMorePost(id_post) {
+  let post = await getPost(id_post)
+
+  console.log(post.content)
 }

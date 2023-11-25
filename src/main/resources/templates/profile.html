@@ -30,301 +30,49 @@
     <!-- NAVBAR -->
     <div class="navbar">
       <div class="left">
-        <a href="/" style="text-decoration: none">
+        <a href="/home" style="text-decoration: none">
           <span>Social</span>
         </a>
-        <a href="/">
+        <a href="/home">
           <i class="fa-solid fa-house"></i>
         </a>
 
-        <i class="fa-regular fa-moon"></i>
-        <i class="fa-solid fa-table-cells-large"></i>
-        <div class="dropdown">
-          <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <div class="search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Search..." />
-        </div>
-          </div>
-          <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger">
-            <div class="recently">Recently</div>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-                    th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
 
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-              
-                <div class="user-search">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    John Doe
-
-                    <span class="location-search">Sai Gon</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>
-          </ul>
-      </div>
       </div>
       <div class="right">
         <div class="dropdown">
           <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-        
-          <i class="fa-regular fa-user">
-            <div class="notice-addfr">4</div>
-          </i>
+
+            <i class="fa-regular fa-user">
+              <div th:if="${lst_friend_request.size()>0}" class="notice-addfr" th:text="${lst_friend_request.size()}"></div>
+            </i>
         </div>
-        <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
-          <div class="recently">Friend request</div>
-            <li><a class="dropdown-item" href="#">
+          <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
+            <div class="recently">Friend request</div>
+
+            <li th:each="friend_req:${lst_friend_request}" >
+              <a class="dropdown-item" th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
+              ></a>
               <i class="user">
                 <img
-                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                  alt=""
+                        th:src="${friend_req.getUserFrom().getAvatar()}"
+                        alt=""
                 />
-               <span class="detail-noti">  <strong>
+                <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
 
-                John Doe
+
               </strong>đã gửi cho bạn lời mời kết bạn
-              <div>1 tuần trước</div>
+              <div th:text="${friend_req.getCreatedAt()}"></div>
               <div class="wrap-btn">
-                <button class="accept-btn">Accept</button>
-                <button class="dismiss-btn">Dismiss</button>
+                <input type="hidden" th:value="${friend_req.getUserFrom().getId()}" class="accept-input"/>
+                <button onclick="acceptFriendRequest(this)" class="accept-btn">Accept</button>
+                <button onclick="declineFriendRequest(this)" class="dismiss-btn">Dismiss</button>
               </div>
             </span>
-               
-              
-                </i>
-                
-               
-                
-              </a></li>
-            
-              <li><a class="dropdown-item" href="#">
-                <i class="user">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  />
-                 <span class="detail-noti">  <strong>
-  
-                  John Doe
-                </strong>đã gửi cho bạn lời mời kết bạn
-                <div>1 tuần trước</div>
-                <div class="wrap-btn">
-                  <button class="accept-btn">Accept</button>
-                  <button class="dismiss-btn">Dismiss</button>
-                </div>
-              </span>
-                 
-                
-                  </i>
-                  
-                 
-                  
-                </a></li>
-                <li><a class="dropdown-item" href="#">
-                  <i class="user">
-                    <img
-  th:src="${user.getAvatar()}"
-                      alt=""
-                    />
-                   <span class="detail-noti">  <strong>
-    
-                    John Doe
-                  </strong>đã gửi cho bạn lời mời kết bạn
-                  <div>1 tuần trước</div>
-                  <div class="wrap-btn">
-                    <button class="accept-btn">Accept</button>
-                    <button class="dismiss-btn">Dismiss</button>
-                  </div>
-                </span>
-                   
-                  
-                    </i>
-                    
-                   
-                    
-                  </a></li>
-                  <li><a class="dropdown-item" href="#">
-                    <i class="user">
-                      <img
-    th:src="${user.getAvatar()}"
-                        alt=""
-                      />
-                     <span class="detail-noti">  <strong>
-      
-                      John Doe
-                    </strong>đã gửi cho bạn lời mời kết bạn
-                    <div>1 tuần trước</div>
-                    <div class="wrap-btn">
-                      <button class="accept-btn">Accept</button>
-                      <button class="dismiss-btn">Dismiss</button>
-                    </div>
-                  </span>
-                     
-                    
-                      </i>
-                      
-                     
-                      
-                    </a></li>
-                    <li><a class="dropdown-item" href="#">
-                      <i class="user">
-                        <img
-      th:src="${user.getAvatar()}"
-                          alt=""
-                        />
-                       <span class="detail-noti">  <strong>
-        
-                        John Doe
-                      </strong>đã gửi cho bạn lời mời kết bạn
-                      <div>1 tuần trước</div>
-                      <div class="wrap-btn">
-                        <button class="accept-btn">Accept</button>
-                        <button class="dismiss-btn">Dismiss</button>
-                      </div>
-                    </span>
-                       
-                      
-                        </i>
-                        
-                       
-                        
-                      </a></li>
-                      <a href="" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
-   
-        </ul>
+              </i>
+            </li>
+            <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
+          </ul>
 
       </div>
      
@@ -336,69 +84,28 @@ th:src="${user.getAvatar()}"
       <div class="dropdown">
         <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
           <i class="fa-regular fa-bell">
-            <div class="notice-notifi">2</div>
+            <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
           </i>
         </div>
         <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
           <div class="recently">Notification</div>
-            <li><a class="dropdown-item" href="#">
-            
-              <i class="user">
-                <img
-                  src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                  alt=""
-                />
-               <span class="detail-noti">  <strong>
-
-                John Doe
-              </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-               
-                </i>
-              </a></li>
-              <li><a class="dropdown-item" href="#">
-            
-                <i class="user">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt=""
-                  />
-                 <span class="detail-noti">  <strong>
-  
-                  John Doe
-                </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                 
-                  </i>
-                </a></li>
-                <li><a class="dropdown-item" href="#">
+                <li th:each="announce:${lstAnnounce}"><a class="dropdown-item" href="#">
             
                   <i class="user">
                     <img
-  th:src="${user.getAvatar()}"
+                      th:src="${announce.getUserFrom().getAvatar()}"
                       alt=""
                     />
                    <span class="detail-noti">  <strong>
     
-                    John Doe
-                  </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
+                    <span th:text="${announce.getUserFrom().getUsername()}"></span>
+                    </strong>
+                      <span th:if="${announce.getEAnnounceType().toString() == 'LIKE'}"> đã like bài viết của bạn </span>
+                       <span th:if="${announce.getEAnnounceType().toString() == 'COMMENT'}"> đã bình luận trong bài viết của bạn </span>
+                     </span>
                    
                     </i>
                   </a></li>
-                  <li><a class="dropdown-item" href="#">
-            
-                    <i class="user">
-                      <img
-    th:src="${user.getAvatar()}"
-                        alt=""
-                      />
-                     <span class="detail-noti">  <strong>
-      
-                      John Doe
-                    </strong>đã nhắc đến bạn và những người khác ở một bình luận trong </span>
-                     
-                      </i>
-                    </a></li>
-         
-           
         </ul>
    
    
@@ -410,7 +117,7 @@ th:src="${user.getAvatar()}"
         <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="user">
           <img
-            src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+            th:src="${user.getAvatar()}"
             alt=""
           />
           
@@ -420,15 +127,14 @@ th:src="${user.getAvatar()}"
           
             <i class="user">
               <img
-                src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                th:src="${user.getAvatar()}"
                 alt=""
               />
-              John Doe
+              <span th:text="${user.getUsername()}"></span>
               </i>
             </a></li>
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Setting</a></li>
           <hr>
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
+          <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
       </ul>
  
     </div>
@@ -443,13 +149,13 @@ th:src="${user.getAvatar()}"
           <div class="menu">
             <div class="user">
               <img
-                src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                th:src="${user.getAvatar()}"
                 alt=""
               />
-              <span>John Doe</span>
+              <span th:text="${user.getEmail()}"></span>
             </div>
             <div class="item">
-              <a href="/friends/index.html">
+              <a href="/friend">
                 <img src="../assets/1.png" alt="" />
                 <span>Friends</span>
               </a>
@@ -459,59 +165,9 @@ th:src="${user.getAvatar()}"
               <img src="../assets/2.png" alt="" />
               <span>Groups</span>
             </div>
-            <div class="item">
-              <img src="../assets/3.png" alt="" />
-              <span>Marketplace</span>
-            </div>
-            <div class="item">
-              <img src="../assets/4.png" alt="" />
-              <span>Watch</span>
-            </div>
-            <div class="item">
-              <img src="../assets/5.png" alt="" />
-              <span>Memories</span>
-            </div>
+
           </div>
-          <hr />
-          <div class="menu">
-            <span class="shortcuts">Your shortcuts</span>
-            <div class="item">
-              <img src="../assets/6.png" alt="" />
-              <span>Events</span>
-            </div>
-            <div class="item">
-              <img src="../assets/7.png" alt="" />
-              <span>Gaming</span>
-            </div>
-            <div class="item">
-              <img src="../assets/8.png" alt="" />
-              <span>Gallery</span>
-            </div>
-            <div class="item">
-              <img src="../assets/9.png" alt="" />
-              <span>Videos</span>
-            </div>
-            <div class="item">
-              <img src="../assets/10.png" alt="" />
-              <span>Messages</span>
-            </div>
-          </div>
-          <hr />
-          <div class="menu">
-            <span class="others">Others</span>
-            <div class="item">
-              <img src="../assets/11.png" alt="" />
-              <span>Fundraiser</span>
-            </div>
-            <div class="item">
-              <img src="../assets/12.png" alt="" />
-              <span>Tutorials</span>
-            </div>
-            <div class="item">
-              <img src="../assets/13.png" alt="" />
-              <span>Courses</span>
-            </div>
-          </div>
+
         </div>
       </div>
       <!-- OUTLET -->
@@ -554,18 +210,17 @@ th:src="${user.getAvatar()}"
                 <div class="info">
                   <div class="item">
                     <i class="material-icons">place</i>
-                    <span>USA</span>
+                    <span th:text="${user.getUserInfo().getLocation()}"></span>
                   </div>
-                  <div class="item">
-                    <i class="material-icons">language</i>
-                    <span>social.dev</span>
-                  </div>
+
                 </div>
+<!--                ???-->
                 <button>Add Friend</button>
               </div>
               <div class="right">
-                <i class="material-icons">email</i>
+
                 <!-- Edit Profile div -->
+
 
   <div th:if="${isCurrentUser}" class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">
    
@@ -575,8 +230,15 @@ th:src="${user.getAvatar()}"
   <div th:unless="${isCurrentUser}">
     <!-- Hiển thị giao diện của người dùng khác -->
     <input type="hidden" name="idUserToHidden" th:value="${user.getId()}">
-    <button onclick="addFriend()"  class="sendFriendRequestBtn">ADD FRIEND</button>
+    <button th:if="${friend_request == 'NONE'}" onclick="addFriend()"  class="sendFriendRequestBtn">ADD FRIEND</button>
+    <button th:if="${friend_request == 'SEND'}" onclick="declineFriendRequest(this)"  class="sendFriendRequestBtn">XÓA LỜI MỜI</button>
+    <button th:if="${friend_request == 'RECEIVE'}" onclick="acceptFriendRequest(this)"  class="sendFriendRequestBtn">CHẤP NHẬN</button>
+    <button th:if="${friend_request == 'FRIEND'}" onclick="declineFriendRequest(this)" class="sendFriendRequestBtn">FRIEND</button>
+
+
   </div>
+
+
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -595,13 +257,13 @@ th:src="${user.getAvatar()}"
               </div>
               <img id="avt_img" th:src="${user.getAvatar()}" alt="" class="avt-img">
             </div>
+
             <div class="coverimg-editprofile ">
               <div class="container-coverimg">
                 <div class="title-edit">Cover image</div>
-                <input type="file" class="textEdit" id="edit_background" onclick="chooseAvatarImg()">
-                <a href="#" class="textEdit" >Edit</a>
+                <input type="file" class="textEdit" id="edit_background" onclick="chooseBackgroundImg()">
               </div>
-              <img th:src="${user.getBackground()}" alt="" class="cover-img">
+              <img id="cover_img" th:src="${user.getBackground()}" alt="" class="cover-img">
             </div>
             <div class="information-editprofile ">
               <div class="container-information">
@@ -610,34 +272,22 @@ th:src="${user.getAvatar()}"
                 
               </div>
               <div class="group-information">
-                <span class="username-infor"><span>User Name:</span> <input id="userNameInput" value="John Doe"  /></span>
-               <span class="location"><span>Location: </span><input value="Ho Chi Minh"/></span>
+                <span class="username-infor"><span>User Name:</span> <input id="userNameInput" th:value="${user.getFirstName()+' '+user.getLastName()}"  /></span>
+               <span class="location"><span>Location: </span><input name="location" th:value="${infoUser.getLocation()}"/></span>
                <div class="group-otherlink">
                 <span class="username-infor"><span>Other Network</span> </span>
                 
                 <span class="otherlink"> 
-                  <div class="group-social">
+
                     
-                    <i class="fa-brands fa-github"></i
-                      > Github
-                  </div>
-                  <i class="fa-solid fa-xmark"></i>
+                  <span class="location"><span>Github: </span><input name="github" th:value="${infoUser.getGithub()}"/></span>
+
                 </span>
                 <span class="otherlink"> 
-                  <div class="group-social">
-                    <i class="fa-brands fa-instagram"></i>
-                    
-                    Instagram
-                  </div>
-                  <i class="fa-solid fa-xmark"></i>
+                  <span class="location"><span>Instagram: </span><input name="instagram" th:value="${infoUser.getInstagram()}"/></span>
                 </span>
                 <span class="otherlink"> 
-                  <div class="group-social">
-                    
-                    <i class="fa-brands fa-twitter"></i
-                      >Twitter
-                  </div>
-                  <i class="fa-solid fa-xmark"></i>
+                  <span class="location"><span>Twitter: </span><input name="twitter" th:value="${infoUser.getTwitter()}"/></span>
                 </span>
                   
                </div>
@@ -658,98 +308,17 @@ th:src="${user.getAvatar()}"
             </div>
           </div>
         </div>
-        <div id="up-post">
-     
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Post</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="info-post">
-          <div class="userInfo">
-            <img
-              src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-              alt="User Profile Pic"
-            />
-            
-              <span class="name-user">John Deap</span>
-              
-              <select class="form-select" id="postVisibility">
-                <option selected>Public</option>
-                <option value="friends">Friends</option>
-                <option value="only-me">Only Me</option>
-              </select>
-           
-            
 
-          </div>
-          <div class="input-post">
-            <textarea name="" id="" cols="52" rows="10" placeholder="Enter your message here..."></textarea>
-          </div>
-          <div class="other-chose">
-            <div>
-              <i class="fa-solid fa-video"></i>
-              <span>Stream</span>
-            </div>
-            <div id="upload-image">
-              <i class="fa-regular fa-image" ></i>
-              <span>Image</span>
-              <!-- Hidden file input -->
-              <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="handleFileUpload(this)">
-            </div>
-            <div>
-              <i class="fa-regular fa-face-smile"></i>
-              <span>Icon</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        
-        <button type="button" class="btn btn-primary">Post</button>
-      </div>
-    </div>
-  </div>
-</div>
-       
-          <div class="post">
-            <div class="container">
-              <div class="user">
-                <div class="userInfo">
-                  <img
-th:src="${user.getAvatar()}"
-                    alt="User Profile Pic"
-                  />
-                </div>
-                <div class="input-uppost">
-                  <input type="text" placeholder="Up post" id="openModalInput" />
-                </div>
-              </div>
-              <hr class="line" />
-              <div class="other-chose">
-                <div>
-                  <i class="fa-solid fa-video"></i>
-                  <span>Stream</span>
-                </div>
-                <div>
-                  <i class="fa-regular fa-image"></i>
-                  <span>Image</span>
-                </div>
-                <div>
-                  <i class="fa-regular fa-face-smile"></i>
-                  <span>Icon</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <input type="hidden" id="idUser" th:value="${user.getId()}">
+        <input type="hidden" id="avatar" th:value="${user.getAvatar()}">
+        <input type="hidden" id="username" th:value="${user.getEmail()}">
+
         <div id="post-container">
 
 
           <div th:each="post:${lsPost}" class="post">
+
             <div class="container">
               <div class="user">
                 <div class="userInfo">
@@ -777,22 +346,53 @@ th:src="${user.getAvatar()}"
                 </div>
               </div>
               <div class="info">
-                <div class="item" id="item-${post.id}" th:onclick="toggleComments(${post.getId()})">
-                  <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-                  12 Likes
+                <input type="hidden" th:value="${post.getId()}" th:id="'post'+${post.getId()}">
+                <div class="item" id="item-${post.id}" th:onclick="'javascript:toggleLike(\''+ ${post.getId()} +'\');'">
+                  <span class="like-icon">
+                    <i th:if="${hashLiked.get(post.getId())}" class="fa-solid fa-heart" th:id="'like'+${post.getId()}" ></i>
+                    <i th:if="${hashLiked.get(post.getId()) }== false" class="fa-regular fa-heart" th:id="'like'+${post.getId()}"  ></i>
+                  </span>
+                  <span th:text="${hashSlgLike.get(post.getId()) +' LIKES'}"> </span>
                 </div>
                 <div class="item" th:onclick="toggleComments(${post.getId()})" >
                   <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                  12 Comments
+                  <span th:text="${hashSlgComment.get(post.getId())} + ' Comments'"></span>
                 </div>
-                <div class="item">
-                  <span class="share-icon"><i class="fa-solid fa-share"></i></span>
-                  Share
-                </div>
+
               </div>
+<!--              chuc nang comment-->
               <div class=" comments" id="comments-container-${post.id}" >
                 <!-- Comments section, replace with your comments -->
+                <div class="write">
+                <img th:src="${user.getAvatar()}" alt="">
+                <input type="text" placeholder="write a comment" th:id="'cmt'+${post.getId()}">
+                <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
               </div>
+
+
+                <div th:if="${hashComment.get(post.getId()).size()>2}" th:each="i : ${#numbers.sequence(0, 2)}" class="comment" th:id="'lstComment' + ${post.getId()}">
+                  <img th:src="${hashComment.get(post.getId()).get(i).getUser().getAvatar()}" alt="">
+                  <div class="info">
+                    <span th:text="${hashComment.get(post.getId()).get(i).getUser().getUsername()}"></span>
+                    <p th:text="${hashComment.get(post.getId()).get(i).getContent()}"></p>
+                  </div>
+                  <span class="date" th:text="${hashComment.get(post.getId()).get(i).getCreatedAt()}"></span>
+                </div>
+
+
+                <div th:if="${hashComment.get(post.getId()).size()<=2}"  th:each="cmt:${hashComment.get(post.getId())}" class="comment" th:id="'lstComment' + ${post.getId()}">
+                  <img th:src="${cmt.getUser().getAvatar()}" alt="">
+                  <div class="info">
+                    <span th:text="${cmt.getUser().getEmail()}"></span>
+                    <p th:text="${cmt.getContent()}"></p>
+                  </div>
+                  <span class="date" th:text="${cmt.getCreatedAt()}"></span>
+                </div>
+
+              </div>
+              <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'" th:if="${hashComment.get(post.getId()).size()}>2">See More</a>
+
+
             </div>
           </div>
 
@@ -804,102 +404,10 @@ th:src="${user.getAvatar()}"
       <!-- RIGHT BAR -->
       <div class="rightBar">
         <div class="container">
-          <div class="item">
-            <span>Suggestions For You</span>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <span>Jane Doe</span>
-              </div>
-              <div class="buttons">
-                <button>follow</button>
-                <button>dismiss</button>
-              </div>
-            </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <span>Jane Doe</span>
-              </div>
-              <div class="buttons">
-                <button>follow</button>
-                <button>dismiss</button>
-              </div>
-            </div>
+
           </div>
-          <div class="item">
-            <span>Latest Activities</span>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p><span>Jane Doe</span> changed their cover picture</p>
-              </div>
-              <span>1 min ago</span>
-            </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p><span>Jane Doe</span> changed their cover picture</p>
-              </div>
-              <span>1 min ago</span>
-            </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p><span>Jane Doe</span> changed their cover picture</p>
-              </div>
-              <span>1 min ago</span>
-            </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p><span>Jane Doe</span> changed their cover picture</p>
-              </div>
-              <span>1 min ago</span>
-            </div>
-          </div>
-          <div class="item">
-            <span>Online Friends</span>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <div class="online"></div>
-                <span>Jane Doe</span>
-              </div>
-            </div>
-            <div class="user">
-              <div class="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <div class="online"></div>
-                <span>Jane Doe</span>
-              </div>
-            </div>
-            <!-- Repeat the above user elements for additional online friends -->
-          </div>
+
+
 
 
 
@@ -908,215 +416,8 @@ th:src="${user.getAvatar()}"
       </div>
     </div>
   </body>
-  <script>
-    function generatePostHTML(post) {
-      return `
-      <div class="post">
-        <div class="container">
-          <div class="user">
-            <div class="userInfo">
-              <img src="${post.profilePic}" alt="User Profile Pic">
-              <div class="details">
-                <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
-                  <span class="name">${post.name}</span>
-                </a>
-                <span class="date">1 min ago</span>
-              </div>
-            </div>
-            <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span>...</span>
-      </div>
-      <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
-          <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
-        
-      </ul>
-          </div>
 
-
-
-          <div class="content">
-            <p>${post.desc}</p>
-            <img src="${post.img}" alt="Post Image">
-          </div>
-          <div class="info">
-            <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
-  <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-  12 Likes
-</div>
-            <div class="item" onclick="toggleComments(${post.id})">
-              <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-              12 Comments
-            </div>
-            <div class="item">
-              <span class="share-icon"><i class="fa-solid fa-share"></i></span>
-              Share
-            </div>
-          </div>
-          <div class=" comments" id="comments-container-${post.id}" >
-            <!-- Comments section, replace with your comments -->
-          </div>
-        </div>
-      </div>
-    `;
-    }
-    const posts = [
-      {
-        id: 1,
-        name: "John Doe",
-        userId: 1,
-        profilePic:
-          "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-        img: "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        userId: 2,
-        profilePic:
-          "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        desc: "Post 2 Tenetur iste voluptates dolorem rem commodi voluptate pariatur, voluptatum, laboriosam consequatur enim nostrum cumque! Maiores a nam non adipisci minima modi tempore.",
-        img: "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      },
-    ];
-    const comments = [
-      {
-        id: 1,
-        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-        name: "John Doe",
-        userId: 1,
-        profilePicture:
-          "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      },
-      {
-        id: 2,
-        desc: "coment 22222 Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-        name: "Jane Doe",
-        userId: 2,
-        profilePicture:
-          "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      },
-    ];
-    function generateCommentsHTML(comments, currentUser, postId) {
-      let commentsHTML = `
-        <div class="comments" id="comments-container-${postId}">
-          <div class="write">
-            <img src="${currentUser.profilePic}" alt="" />
-            <input type="text" placeholder="write a comment" id="comment-input-${postId}" />
-            <button onclick="addComment(${postId})">Send</button>
-          </div>
-      `;
-
-      commentsHTML += comments
-        .map(
-          (comment) => `
-            <div class="comment">
-              <img src="${comment.profilePicture}" alt="" />
-              <div class="info">
-                <span>${comment.name}</span>
-                <p>${comment.desc}</p>
-              </div>
-              <span class="date">1 hour ago</span>
-            </div>
-          `
-        )
-        .join("");
-
-      commentsHTML += `</div>`;
-      return commentsHTML;
-    }
-
-    const currentUser = {
-      profilePic:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    };
-
-    // const commentsContainer = document.querySelectorAll("#comments-container");
-    // Get the container where you want to include the posts
-    const postContainer = document.getElementById("post-container");
-    // Loop through the posts and append them to the container
-    posts.forEach((post) => {
-      const postHTML = generatePostHTML(post);
-      postContainer.innerHTML += postHTML;
-      const commentsContainer = document.getElementById(
-        `comments-container-${post.id}`
-      );
-      console.log(commentsContainer);
-      if (commentsContainer) {
-        const commentsHTML = generateCommentsHTML(
-          comments,
-          currentUser,
-          post.id
-        );
-        commentsContainer.innerHTML = commentsHTML;
-      }
-    });
-    // for (const element of commentsContainer) {
-    //   console.log(element);
-    //   element.innerHTML = generateCommentsHTML(comments, currentUser);
-    // }
-    // commentsContainer.innerHTML = generateCommentsHTML(comments, currentUser);
-    function toggleComments(postId) {
-      console.log(postId);
-
-      // Select the comments container based on postId
-      const commentsContainer = document.getElementById(
-        `comments-container-${postId}`
-      );
-
-      if (commentsContainer) {
-        // Toggle the "hidden" class on the selected comments container
-        commentsContainer.classList.toggle("hidden");
-      }
-    }
-    function addComment(postId) {
-      const commentInput = document.getElementById(`comment-input-${postId}`);
-      const commentText = commentInput.value.trim();
-
-      if (commentText !== "") {
-        const newComment = {
-          id: comments.length + 1,
-          desc: commentText,
-          name: "Your Name",
-          userId: comments.length + 1,
-          profilePicture:
-            "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        };
-
-        comments.push(newComment);
-        const commentsContainer = document.getElementById(
-          `comments-container-${postId}`
-        );
-        console.log(commentsContainer);
-        commentsContainer.innerHTML = generateCommentsHTML(
-          comments,
-          currentUser,
-          postId
-        );
-
-        // Clear the comment input field
-        commentInput.value = "";
-      }
-    }
-    function toggleLike(postId) {
-      // Find the heart icon element based on postId
-      const heartIcon = document.querySelector(`#item-${postId} .like-icon i`);
-
-      if (heartIcon) {
-        heartIcon.classList.toggle("red-heart");
-
-        if (heartIcon.classList.contains("fa-regular")) {
-          heartIcon.classList.remove("fa-regular", "fa-heart");
-          heartIcon.classList.add("fa-solid", "fa-heart");
-        } else {
-          heartIcon.classList.remove("fa-solid", "fa-heart");
-          heartIcon.classList.add("fa-regular", "fa-heart");
-        }
-      }
-    }
-  </script>
-  <script src="../main.js"></script>
+<!--  <script src="../main.js"></script>-->
 
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
