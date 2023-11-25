@@ -75,5 +75,27 @@ public class CommentAPI {
         return ds;
     }
 
+    @PostMapping("getComment")
+    @ResponseBody
+    public List<CommentDTO> test(@RequestParam(name = "idPost") Long postid){
+
+        List<Comment> lstCmt = commentService.getCommentByPost(postid);
+        List<CommentDTO> ds = new ArrayList<>();
+        for (Comment cmt:lstCmt) {
+             CommentDTO commentDTO = new CommentDTO();
+            commentDTO.setUser_id(cmt.getId());
+            commentDTO.setUser_avatar(cmt.getUser().getAvatar());
+            commentDTO.setUser_name(cmt.getUser().getUsername());
+            commentDTO.setPost_id(postid);
+            commentDTO.setCreateAt(cmt.getCreatedAt());
+            commentDTO.setContent(cmt.getContent());
+
+            ds.add(commentDTO);
+        }
+        return ds;
+    }
+
+
+
 
 }

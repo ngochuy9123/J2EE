@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +22,7 @@ public class CommentDTO {
     private String content;
     private String user_avatar;
     private String user_name;
+    private Timestamp createAt;
 
     public CommentDTO(Comment comment){
         id = comment.getId();

@@ -1,64 +1,76 @@
 <!DOCTYPE html >
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/profile.css" />
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="./css/main.css" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="./css/profile.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+    <link rel="stylesheet" href="./css/main.css"/>
     <!-- Include the Material Icons CSS library -->
     <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
     />
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+            integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      crossorigin="anonymous"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
     />
     <title>Profile</title>
-  </head>
-  
-    <!-- NAVBAR -->
-    <div class="navbar">
-      <div class="left">
+</head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function formatTime(time){
+        console.log(time)
+        return  moment(time).fromNow();
+    }
+    /*]]>*/
+</script>
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="left">
         <a href="/home" style="text-decoration: none">
-          <span>Social</span>
+            <span>Social</span>
         </a>
         <a href="/home">
-          <i class="fa-solid fa-house"></i>
+            <i class="fa-solid fa-house"></i>
         </a>
 
 
-      </div>
-      <div class="right">
+    </div>
+    <div class="right">
         <div class="dropdown">
-          <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 data-bs-auto-close="outside" aria-expanded="false">
 
-            <i class="fa-regular fa-user">
-              <div th:if="${lst_friend_request.size()>0}" class="notice-addfr" th:text="${lst_friend_request.size()}"></div>
-            </i>
-        </div>
-          <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
-            <div class="recently">Friend request</div>
+                <i class="fa-regular fa-user">
+                    <div th:if="${lst_friend_request.size()>0}" class="notice-addfr"
+                         th:text="${lst_friend_request.size()}"></div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
+                <div class="recently">Friend request</div>
 
-            <li th:each="friend_req:${lst_friend_request}" >
-              <a class="dropdown-item" th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
-              ></a>
-              <i class="user">
-                <img
-                        th:src="${friend_req.getUserFrom().getAvatar()}"
-                        alt=""
-                />
-                <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
+                <li th:each="friend_req:${lst_friend_request}">
+                    <a class="dropdown-item"
+                       th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
+                    ></a>
+                    <i class="user">
+                        <img
+                                th:src="${friend_req.getUserFrom().getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
 
 
               </strong>đã gửi cho bạn lời mời kết bạn
@@ -69,244 +81,264 @@
                 <button onclick="declineFriendRequest(this)" class="dismiss-btn">Dismiss</button>
               </div>
             </span>
-              </i>
-            </li>
-            <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
-          </ul>
+                    </i>
+                </li>
+                <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
+            </ul>
 
-      </div>
-     
-      <a href="../chat/index.html">
-        <i class="fa-regular fa-envelope">
-          <div class="notice-message">2</div>
-        </i>
-      </a>
-      <div class="dropdown">
-        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-          <i class="fa-regular fa-bell">
-            <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
-          </i>
         </div>
-        <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
-          <div class="recently">Notification</div>
+
+        <a href="../chat/index.html">
+            <i class="fa-regular fa-envelope">
+                <div class="notice-message">2</div>
+            </i>
+        </a>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fa-regular fa-bell">
+                    <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                <div class="recently">Notification</div>
                 <li th:each="announce:${lstAnnounce}"><a class="dropdown-item" href="#">
-            
-                  <i class="user">
-                    <img
-                      th:src="${announce.getUserFrom().getAvatar()}"
-                      alt=""
-                    />
-                   <span class="detail-noti">  <strong>
+
+                    <i class="user">
+                        <img
+                                th:src="${announce.getUserFrom().getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
     
                     <span th:text="${announce.getUserFrom().getUsername()}"></span>
                     </strong>
                       <span th:if="${announce.getEAnnounceType().toString() == 'LIKE'}"> đã like bài viết của bạn </span>
                        <span th:if="${announce.getEAnnounceType().toString() == 'COMMENT'}"> đã bình luận trong bài viết của bạn </span>
                      </span>
-                   
+
                     </i>
-                  </a></li>
-        </ul>
-   
-   
-   
-   
-   
-      </div>
-      <div class="dropdown">
-        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <div class="user">
-          <img
-            th:src="${user.getAvatar()}"
-            alt=""
-          />
-          
-        </div>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
-          <li><a class="dropdown-item" href="#">
-          
-            <i class="user">
-              <img
-                th:src="${user.getAvatar()}"
-                alt=""
-              />
-              <span th:text="${user.getUsername()}"></span>
-              </i>
-            </a></li>
-          <hr>
-          <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
-      </ul>
- 
-    </div>
-    </div>
-      </div>
-    </div>
-    <!-- CONTENT -->
-    <div class="container-content">
-      <!-- LEFT BAR -->
-      <div class="leftBar">
-        <div class="container">
-          <div class="menu">
-            <div class="user">
-              <img
-                th:src="${user.getAvatar()}"
-                alt=""
-              />
-              <span th:text="${user.getEmail()}"></span>
-            </div>
-            <div class="item">
-              <a href="/friend">
-                <img src="../assets/1.png" alt="" />
-                <span>Friends</span>
-              </a>
-             
-            </div>
-            <div class="item">
-              <img src="../assets/2.png" alt="" />
-              <span>Groups</span>
-            </div>
+                </a></li>
+            </ul>
 
-          </div>
 
         </div>
-      </div>
-      <!-- OUTLET -->
-      <div class="outlet">
-        <!-- PROFILE -->
-        <div class="profile">
-          <div class="images">
-            <img
-                    th:src="${user.getBackground()}"
-              alt=""
-              class="cover"
-            />
-            <img
-                    th:src="${user.getAvatar()}"
-              alt=""
-              class="profilePic"
-            />
-          </div>
-          <div class="profileContainer">
-            <div class="uInfo">
-              <div class="left">
-                <a href="http://facebook.com"
-                  ><i class="fa-brands fa-facebook"></i
-                ></a>
-                <a href="http://facebook.com"
-                  ><i class="fa-brands fa-instagram"></i
-                ></a>
-                <a href="http://facebook.com"
-                  ><i class="fa-brands fa-twitter"></i
-                ></a>
-                <a href="http://facebook.com"
-                  ><i class="fa-brands fa-linkedin"></i
-                ></a>
-                <a href="http://facebook.com"
-                  ><i class="fa-brands fa-github"></i
-                ></a>
-              </div>
-              <div class="center">
-                <span th:text="${user.getEmail()}"></span>
-                <div class="info">
-                  <div class="item">
-                    <i class="material-icons">place</i>
-                    <span th:text="${user.getUserInfo().getLocation()}"></span>
-                  </div>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 aria-expanded="false">
+                <div class="user">
+                    <img
+                            th:src="${user.getAvatar()}"
+                            alt=""
+                    />
 
                 </div>
-<!--                ???-->
-                <button>Add Friend</button>
-              </div>
-              <div class="right">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                    <li><a class="dropdown-item" href="#">
 
-                <!-- Edit Profile div -->
+                        <i class="user">
+                            <img
+                                    th:src="${user.getAvatar()}"
+                                    alt=""
+                            />
+                            <span th:text="${user.getUsername()}"></span>
+                        </i>
+                    </a></li>
+                    <hr>
+                    <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>
+                        Logout </a></li>
+                </ul>
 
-
-  <div th:if="${isCurrentUser}" class="edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-   
-    <i class="fa-solid fa-pen"></i>Edit Profile
-
-  </div>
-  <div th:unless="${isCurrentUser}">
-    <!-- Hiển thị giao diện của người dùng khác -->
-    <input type="hidden" name="idUserToHidden" th:value="${user.getId()}">
-    <button th:if="${friend_request == 'NONE'}" onclick="addFriend()"  class="sendFriendRequestBtn">ADD FRIEND</button>
-    <button th:if="${friend_request == 'SEND'}" onclick="declineFriendRequest(this)"  class="sendFriendRequestBtn">XÓA LỜI MỜI</button>
-    <button th:if="${friend_request == 'RECEIVE'}" onclick="acceptFriendRequest(this)"  class="sendFriendRequestBtn">CHẤP NHẬN</button>
-    <button th:if="${friend_request == 'FRIEND'}" onclick="declineFriendRequest(this)" class="sendFriendRequestBtn">FRIEND</button>
-
-
-  </div>
-
-
-
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
         </div>
-        <div class="modal-body">
-            <!-- Add your form or content for editing the profile here -->
-            <div class="avatar-editprofile">
-              <div class="container-avt">
-                <div class="title-edit">Avatar</div>
-                <input type="file" class="textEdit" id="edit_avatar" onclick="chooseAvatarImg()">
-              </div>
-              <img id="avt_img" th:src="${user.getAvatar()}" alt="" class="avt-img">
+    </div>
+</div>
+<!-- CONTENT -->
+<div class="container-content">
+    <!-- LEFT BAR -->
+    <div class="leftBar">
+        <div class="container">
+            <div class="menu">
+                <div class="user">
+                    <img
+                            th:src="${user.getAvatar()}"
+                            alt=""
+                    />
+                    <span th:text="${user.getEmail()}"></span>
+                </div>
+                <div class="item">
+                    <a href="/friend">
+                        <img src="../assets/1.png" alt=""/>
+                        <span>Friends</span>
+                    </a>
+
+                </div>
+                <div class="item">
+                    <img src="../assets/2.png" alt=""/>
+                    <span>Groups</span>
+                </div>
+
             </div>
 
-            <div class="coverimg-editprofile ">
-              <div class="container-coverimg">
-                <div class="title-edit">Cover image</div>
-                <input type="file" class="textEdit" id="edit_background" onclick="chooseBackgroundImg()">
-              </div>
-              <img id="cover_img" th:src="${user.getBackground()}" alt="" class="cover-img">
+        </div>
+    </div>
+    <!-- OUTLET -->
+    <div class="outlet">
+        <!-- PROFILE -->
+        <div class="profile">
+            <div class="images">
+                <img
+                        th:src="${user.getBackground()}"
+                        alt=""
+                        class="cover"
+                />
+                <img
+                        th:src="${user.getAvatar()}"
+                        alt=""
+                        class="profilePic"
+                />
             </div>
-            <div class="information-editprofile ">
-              <div class="container-information">
-                <div class="title-edit">Information</div>
-                
-                
-              </div>
-              <div class="group-information">
-                <span class="username-infor"><span>User Name:</span> <input id="userNameInput" th:value="${user.getFirstName()+' '+user.getLastName()}"  /></span>
-               <span class="location"><span>Location: </span><input name="location" th:value="${infoUser.getLocation()}"/></span>
-               <div class="group-otherlink">
-                <span class="username-infor"><span>Other Network</span> </span>
-                
-                <span class="otherlink"> 
+            <div class="profileContainer">
+                <div class="uInfo">
+                    <div class="left">
+                        <a href="http://facebook.com"
+                        ><i class="fa-brands fa-facebook"></i
+                        ></a>
+                        <a href="http://facebook.com"
+                        ><i class="fa-brands fa-instagram"></i
+                        ></a>
+                        <a href="http://facebook.com"
+                        ><i class="fa-brands fa-twitter"></i
+                        ></a>
+                        <a href="http://facebook.com"
+                        ><i class="fa-brands fa-linkedin"></i
+                        ></a>
+                        <a href="http://facebook.com"
+                        ><i class="fa-brands fa-github"></i
+                        ></a>
+                    </div>
+                    <div class="center">
+                        <span th:text="${user.getEmail()}"></span>
+                        <div class="info">
+                            <div class="item">
+                                <i class="material-icons">place</i>
+                                <span th:text="${user.getUserInfo().getLocation()}"></span>
+                            </div>
+
+                        </div>
+                        <!--                ???-->
+                        <button>Add Friend</button>
+                    </div>
+                    <div class="right">
+
+                        <!-- Edit Profile div -->
+
+
+                        <div th:if="${isCurrentUser}" class="edit-profile" data-bs-toggle="modal"
+                             data-bs-target="#editProfileModal">
+
+                            <i class="fa-solid fa-pen"></i>Edit Profile
+
+                        </div>
+                        <div th:unless="${isCurrentUser}">
+                            <!-- Hiển thị giao diện của người dùng khác -->
+                            <input type="hidden" name="idUserToHidden" th:value="${user.getId()}">
+                            <button th:if="${friend_request == 'NONE'}" onclick="addFriend()"
+                                    class="sendFriendRequestBtn">ADD FRIEND
+                            </button>
+                            <button th:if="${friend_request == 'SEND'}" onclick="declineFriendRequest(this)"
+                                    class="sendFriendRequestBtn">XÓA LỜI MỜI
+                            </button>
+                            <button th:if="${friend_request == 'RECEIVE'}" onclick="acceptFriendRequest(this)"
+                                    class="sendFriendRequestBtn">CHẤP NHẬN
+                            </button>
+                            <button th:if="${friend_request == 'FRIEND'}" onclick="declineFriendRequest(this)"
+                                    class="sendFriendRequestBtn">FRIEND
+                            </button>
+
+
+                        </div>
+
+
+                        <!-- Bootstrap Modal -->
+                        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Add your form or content for editing the profile here -->
+                                        <div class="avatar-editprofile">
+                                            <div class="container-avt">
+                                                <div class="title-edit">Avatar</div>
+                                                <input type="file" class="textEdit" id="edit_avatar"
+                                                       onclick="chooseAvatarImg()">
+                                            </div>
+                                            <img id="avt_img" th:src="${user.getAvatar()}" alt="" class="avt-img">
+                                        </div>
+
+                                        <div class="coverimg-editprofile ">
+                                            <div class="container-coverimg">
+                                                <div class="title-edit">Cover image</div>
+                                                <input type="file" class="textEdit" id="edit_background"
+                                                       onclick="chooseBackgroundImg()">
+                                            </div>
+                                            <img id="cover_img" th:src="${user.getBackground()}" alt=""
+                                                 class="cover-img">
+                                        </div>
+                                        <div class="information-editprofile ">
+                                            <div class="container-information">
+                                                <div class="title-edit">Information</div>
+
+
+                                            </div>
+                                            <div class="group-information">
+                                                <span class="username-infor"><span>User Name:</span> <input
+                                                        id="userNameInput"
+                                                        th:value="${user.getFirstName()+' '+user.getLastName()}"/></span>
+                                                <span class="location"><span>Location: </span><input name="location"
+                                                                                                     th:value="${infoUser.getLocation()}"/></span>
+                                                <div class="group-otherlink">
+                                                    <span class="username-infor"><span>Other Network</span> </span>
+
+                                                    <span class="otherlink">
 
                     
                   <span class="location"><span>Github: </span><input name="github" th:value="${infoUser.getGithub()}"/></span>
 
                 </span>
-                <span class="otherlink"> 
-                  <span class="location"><span>Instagram: </span><input name="instagram" th:value="${infoUser.getInstagram()}"/></span>
+                                                    <span class="otherlink">
+                  <span class="location"><span>Instagram: </span><input name="instagram"
+                                                                        th:value="${infoUser.getInstagram()}"/></span>
                 </span>
-                <span class="otherlink"> 
-                  <span class="location"><span>Twitter: </span><input name="twitter" th:value="${infoUser.getTwitter()}"/></span>
+                                                    <span class="otherlink">
+                  <span class="location"><span>Twitter: </span><input name="twitter"
+                                                                      th:value="${infoUser.getTwitter()}"/></span>
                 </span>
-                  
-               </div>
-              
-              </div>
-              
-             
+
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <button id="save_changes" type="button" class="btn btn-primary">Save changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button id="save_changes" type="button" class="btn btn-primary">Save changes</button>
-        </div>
-    </div>
-</div>
-</div>
-              </div>
-            </div>
-          </div>
         </div>
 
 
@@ -315,115 +347,151 @@
         <input type="hidden" id="username" th:value="${user.getEmail()}">
 
         <div id="post-container">
+            <div class="modal fade" id="modalComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle">Modal Title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="modalContent">
+                            <!-- Modal content will be dynamically generated here -->
+                        </div>
 
-
-          <div th:each="post:${lsPost}" class="post">
-
-            <div class="container">
-              <div class="user">
-                <div class="userInfo">
-                  <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
-                  <div class="details">
-                    <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
-                      <span class="name" th:text="${post.getUser().getEmail()}"></span>
-                    </a>
-                    <span class="date" th:text="${post.getCreatedFormat()}"></span>
-                  </div>
+                    </div>
                 </div>
-                <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span>...</span>
-                </div>
-                <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
-                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
-
-                </ul>
-              </div>
-              <div class="content">
-                <p th:text="${post.getContent()}"></p>
-                <div th:if="${post.getImageUrl()!=null}">
-                  <img th:src="${post.getImageUrl()}"  alt="Post Image">
-                </div>
-              </div>
-              <div class="info">
-                <input type="hidden" th:value="${post.getId()}" th:id="'post'+${post.getId()}">
-                <div class="item" id="item-${post.id}" th:onclick="'javascript:toggleLike(\''+ ${post.getId()} +'\');'">
-                  <span class="like-icon">
-                    <i th:if="${hashLiked.get(post.getId())}" class="fa-solid fa-heart" th:id="'like'+${post.getId()}" ></i>
-                    <i th:if="${hashLiked.get(post.getId()) }== false" class="fa-regular fa-heart" th:id="'like'+${post.getId()}"  ></i>
-                  </span>
-                  <span th:text="${hashSlgLike.get(post.getId()) +' LIKES'}"> </span>
-                </div>
-                <div class="item" th:onclick="toggleComments(${post.getId()})" >
-                  <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                  <span th:text="${hashSlgComment.get(post.getId())} + ' Comments'"></span>
-                </div>
-
-              </div>
-<!--              chuc nang comment-->
-              <div class=" comments" id="comments-container-${post.id}" >
-                <!-- Comments section, replace with your comments -->
-                <div class="write">
-                <img th:src="${user.getAvatar()}" alt="">
-                <input type="text" placeholder="write a comment" th:id="'cmt'+${post.getId()}">
-                <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
-              </div>
-
-
-                <div th:if="${hashComment.get(post.getId()).size()>2}" th:each="i : ${#numbers.sequence(0, 2)}" class="comment" th:id="'lstComment' + ${post.getId()}">
-                  <img th:src="${hashComment.get(post.getId()).get(i).getUser().getAvatar()}" alt="">
-                  <div class="info">
-                    <span th:text="${hashComment.get(post.getId()).get(i).getUser().getUsername()}"></span>
-                    <p th:text="${hashComment.get(post.getId()).get(i).getContent()}"></p>
-                  </div>
-                  <span class="date" th:text="${hashComment.get(post.getId()).get(i).getCreatedAt()}"></span>
-                </div>
-
-
-                <div th:if="${hashComment.get(post.getId()).size()<=2}"  th:each="cmt:${hashComment.get(post.getId())}" class="comment" th:id="'lstComment' + ${post.getId()}">
-                  <img th:src="${cmt.getUser().getAvatar()}" alt="">
-                  <div class="info">
-                    <span th:text="${cmt.getUser().getEmail()}"></span>
-                    <p th:text="${cmt.getContent()}"></p>
-                  </div>
-                  <span class="date" th:text="${cmt.getCreatedAt()}"></span>
-                </div>
-
-              </div>
-              <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'" th:if="${hashComment.get(post.getId()).size()}>2">See More</a>
-
-
             </div>
-          </div>
+
+            <div th:each="post:${lsPost}" th:id="'postInfot'+${post.getId()}" class="post">
+
+                <div class="container">
+                    <div class="user">
+                        <div class="userInfo">
+                            <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
+                            <div class="details">
+                                <a href="/profile/${post.userId}" style="text-decoration: none; color: inherit;">
+                                    <span class="name" th:text="${post.getUser().getEmail()}"></span>
+                                </a>
+                                <span class="date" th:text="${post.getCreatedFormat()}"></span>
+                            </div>
+                        </div>
+                        <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                             aria-expanded="false">
+                            <span>...</span>
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="content">
+                        <p th:text="${post.getContent()}"></p>
+                        <div th:if="${post.getImageUrl()!=null}">
+                            <img th:src="${post.getImageUrl()}" alt="Post Image">
+                        </div>
+                    </div>
+                    <div class="info">
+                        <input type="hidden" th:value="${post.getId()}" th:id="'post'+${post.getId()}">
+                        <div class="item" id="item-${post.id}"
+                             th:onclick="'javascript:toggleLike(\''+ ${post.getId()} +'\');'">
+                  <span class="like-icon">
+                    <i th:if="${hashLiked.get(post.getId())}" class="red-heart fa-solid fa-heart"
+                       th:id="'like'+${post.getId()}"></i>
+                    <i th:if="${hashLiked.get(post.getId()) }== false" class="red-heart fa-regular fa-heart"
+                       th:id="'like'+${post.getId()}"></i>
+                  </span>
+                            <span th:id="'txtLike'+${post.getId()}"
+                                  th:text="${hashSlgLike.get(post.getId()) +' LIKES'}"> </span>
+                        </div>
+                        <div class="item" th:onclick="toggleComments(${post.getId()})">
+                            <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+                            <span th:text="${hashSlgComment.get(post.getId())} + ' Comments'"></span>
+                        </div>
+
+                    </div>
+                    <!--              chuc nang comment-->
+                    <div class=" comments">
+                        <!-- Comments section, replace with your comments -->
+                        <div class="write">
+                            <img th:src="${user.getAvatar()}" alt="">
+                            <input type="text" placeholder="write a comment" th:id="'cmt'+${post.getId()}">
+                            <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
+                        </div>
+
+                        <div th:id="'lstComment' + ${post.getId()}">
+                            <div th:if="${hashComment.get(post.getId()).size()>2}"
+                                 th:each="i : ${#numbers.sequence(0, 1)}" class="comment">
+                                <img th:src="${hashComment.get(post.getId()).get(i).getUser().getAvatar()}" alt="">
+                                <div class="info">
+                                    <span th:text="${hashComment.get(post.getId()).get(i).getUser().getUsername()}"></span>
+                                    <p th:text="${hashComment.get(post.getId()).get(i).getContent()}"></p>
+                                </div>
+                                <span class="date"
+                                      th:utext="'<script>document.write(formatTime(\'' + ${hashComment.get(post.getId()).get(i).getCreatedAt()} + '\'))</script>'"
+                                ></span>
+
+                            </div>
+
+
+                            <div th:if="${hashComment.get(post.getId()).size()<=2}"
+                                 th:each="cmt:${hashComment.get(post.getId())}" class="comment"
+                                 >
+                                <img th:src="${cmt.getUser().getAvatar()}" alt="">
+                                <div class="info">
+                                    <span th:text="${cmt.getUser().getEmail()}"></span>
+                                    <p th:text="${cmt.getContent()}"></p>
+                                </div>
+                                <span th:utext="'<script>document.write(formatTime(\'' + ${cmt.getCreatedAt()} + '\'))</script>'"></span>
+
+                            </div>
+
+                        </div>
+
+                        <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'"
+                           th:if="${hashComment.get(post.getId()).size()}>2"
+                            th:id="'seeMore'+${post.getId()}"
+
+                        >SEE MORE</a>
+                        <a th:if="${hashComment.get(post.getId()).size()}<2"
+                           th:id="'seeMore'+${post.getId()}"
+                        ></a>
+
+                    </div>
+                </div>
+            </div>
 
 
         </div>
         <!-- Include Posts content here -->
-      </div>
+    </div>
 
-      <!-- RIGHT BAR -->
-      <div class="rightBar">
+    <!-- RIGHT BAR -->
+    <div class="rightBar">
         <div class="container">
 
-          </div>
-
-
-
-
-
-
         </div>
-      </div>
+
+
     </div>
-  </body>
+</div>
+</div>
+</body>
 
 <!--  <script src="../main.js"></script>-->
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"
-  ></script>
-  
-  <script src="./js/profile.js"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"
+></script>
+<script>
+    function formatTime(time){
+        return  moment(time).fromNow();
+    }
+
+</script>
+<script src="./js/profile.js"></script>
 </html>

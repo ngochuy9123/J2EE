@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   // Get a reference to the input element
   const openModalInput = document.getElementById("openModalInput");
@@ -55,7 +56,7 @@ function chooseBackgroundImg(){
     reader.onload = function() {
       let imgElement = document.querySelector('.cover-img');
       imgElement.src = reader.result;
-      avatarChanged = true
+      backgroundChanged = true
     }
 
     reader.readAsDataURL(file);
@@ -79,9 +80,6 @@ document.getElementById('save_changes').addEventListener('click', async function
         })
     const data1 = await resp.text();
     console.log(data1)
-
-    avatarChanged = false
-
 
     backgroundChanged = false
   }
@@ -134,13 +132,33 @@ function toggleLike(postId) {
     if (heartIcon.classList.contains("fa-regular")) {
       heartIcon.classList.remove("fa-regular", "fa-heart");
       heartIcon.classList.add("fa-solid", "fa-heart");
-      likePost(postId).then(r => console.log("Hello"))
+      likePost(postId).then(r => updateLikeUI(postId))
     } else {
       heartIcon.classList.remove("fa-solid", "fa-heart");
       heartIcon.classList.add("fa-regular", "fa-heart");
-      dislikePost(postId).then(r => console.log("Dislike"))
+      dislikePost(postId).then(r => updateLikeUI(postId))
     }
   }
+
+}
+
+// post
+
+function taoGiaoDienLike(idPost,slgLike){
+  let htmlLike = document.getElementById("txtLikem"+idPost)
+  if (htmlLike == null){
+    htmlLike = document.getElementById("txtLike"+idPost)
+  }
+  htmlLike.innerHTML = `${slgLike} LIKES`
+
+}
+
+
+
+
+async function updateLikeUI(postId) {
+  let post = await getPost(postId)
+  taoGiaoDienLike(postId,post.numLikes)
 }
 
 
@@ -175,10 +193,18 @@ async function dislikePost(postId) {
 
 async function testCmt(button) {
   let postId = button.getAttribute("data-post-id");
-  const commentInput = document.getElementById('cmt'+postId);
+  let commentInput = document.getElementById('cmtm'+postId)
+  let more = true
+  if (commentInput == null){
+    more = false
+    commentInput= document.getElementById('cmt'+postId)
+  }
+
+
+
   const commentText = commentInput.value.trim();
   // Lấy giá trị từ các trường input
-
+  console.log(commentText)
   // Dữ liệu cần gửi
   let data = {
     id: postId,
@@ -189,7 +215,7 @@ async function testCmt(button) {
   let status = resp.status;
   const data1 = await resp.text();
 
-  let post_container = document.getElementById("fetch-data-comment-"+postId);
+
 
   let avatar = document.getElementById("avatar").value
   let userId = document.getElementById("idUser").value
@@ -197,21 +223,57 @@ async function testCmt(button) {
   const d = new Date();
   let time = d.getDate();
 
+  let comments = await getListComment(postId);
+  console.log(comments)
+  let htmlCmt = ``
   let lstComment = document.getElementById("lstComment"+postId)
-  let htmlCmt = `
-    <div class="comment" id="'lstComment' + ${postId}">
-      <img src="${avatar}" alt="">
-      <div class="info">
-        <span >${username}</span>
-        <p >${commentText}</p>
-      </div>
-      <span class="date" >${time}</span>
-    </div>
-  `
+
+  let slgMaxCmt = 2
+  if (more === true){
+    console.log("trong see more")
+    slgMaxCmt = comments.length
+  }
+  for (let i = 0; i < comments.length; i++) {
+    let cmt = comments[i];
+    if (i < slgMaxCmt ) { // Check if the index is less than 2
+        htmlCmt += `
+        <div class="comment">
+          <img src="${cmt.user_avatar}" alt="">
+          <div class="info">
+            <span>${cmt.user_name}</span>
+            <p>${cmt.content}</p>
+          </div>
+          <span class="date"> ${formatTime(cmt.createAt)}</span>
+        </div>
+      `;
+    }
+
+
+  }
+
+  if (comments.length>2){
+    let htmlSeeMore = document.getElementById("seeMore"+postId)
+    htmlSeeMore.innerHTML = `<a onclick="seeMorePost(${postId})" id="seeMore${postId}">See More</a>`
+  }
 
   lstComment.innerHTML = htmlCmt
 
   commentInput.value = "";
+}
+
+
+
+
+async function getListComment(postId) {
+  let data = new FormData();
+  data.append("idPost", postId);
+
+  const resp = await fetch("/getComment", {
+    method: "POST",
+    body: data,
+  });
+
+  return await resp.json();
 }
 
 
@@ -278,7 +340,9 @@ async function changeStatusNotification(userId) {
 
 }
 
-
+function formatTime(time){
+  return  moment(time).fromNow();
+}
 // See More Post
 
 async function getPost(id_post) {
@@ -296,6 +360,106 @@ async function getPost(id_post) {
 
 async function seeMorePost(id_post) {
   let post = await getPost(id_post)
-
+  showMoreComments(post);
   console.log(post.content)
 }
+
+async function showMoreComments(postInfo) {
+console.log("post",postInfo)
+
+  const modalTitle = document.getElementById("modalTitle");
+  const modalContent = document.getElementById("modalContent");
+  modalTitle.textContent = `This is ${postInfo.user.username} post`;
+  modalContent.innerHTML = `
+     <div class="post">
+       <div class="container container-cmt">
+         <div class="user">
+           <div class="userInfo">
+             <img src="${postInfo.user.avatar}" alt="User Profile Pic">
+             <div class="details">
+               <a href="/profile/" style="text-decoration: none; color: inherit;">
+                 <span class="name">${postInfo.user.email}</span>
+               </a>
+               <span class="date">${postInfo.created_at}</span>
+             </div>
+           </div>
+           <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             <span>...</span>
+           </div>
+           <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i>Delete</a></li>
+             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
+           </ul>
+         </div>
+         <div class="content content-cmt">
+           <p>${postInfo.content}</p>
+           
+          ${postInfo.image !== "" ? `<img src="${postInfo.image}" alt="Post Image">` : ''}
+  
+         </div>
+         <div class="info">
+            <input type="hidden" value="${postInfo.id}" id="post${postInfo.id}">
+           <div class="item" id="item-" onclick="toggleLike(${postInfo.id})">
+             <span class="like-icon">
+                <i class="${postInfo.liked ? ' fa-solid' : 'fa-regular'} red-heart  fa-heart" ></i>
+             </span>
+             <span id="txtLikem${postInfo.id}">${postInfo.numLikes} LIKES</span>
+           </div>
+           <div class="item" onclick="toggleComments(1)">
+             <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+             ${postInfo.lstComment.length} Comments
+           </div>
+         </div>
+        <div class=" comments">
+              <!-- Comments section, replace with your comments -->
+
+                <div class="write">
+                  <img src="${postInfo.image}" alt="" />
+                  <input type="text" placeholder="write a comment" id="cmtm${postInfo.id}" />
+                  <button onclick="testCmt(this,1)" data-post-id="${postInfo.id}">Send</button>
+                </div>
+
+                <div class="container-post" id="lstComment${postInfo.id}">
+
+                 <div class="comments">
+                 ${postInfo.lstComment.map(cmt => `
+                <div class="comment">
+                  <img src="${cmt.avatar}" alt="" />
+                  <div class="info">
+                    <span>${cmt.email}</span>
+                    <p>${cmt.contentComment}</p>
+                  </div>
+                  <span class="date"> ${ formatTime(cmt.create_at) }</span>
+                  
+                </div>
+                </br>
+              `).join('')}
+                 </div>
+                </div>
+            </div>
+          </div>
+        </div>
+     </div>
+   `;
+
+  // Loop through the posts and append them to the container
+
+  // Trigger the modal
+
+
+  // console.log("comment",comment,currentUser,postId);
+  // generateCommentsHTML(comment,currentUser,postId);
+
+  const modal = document.getElementById("modalComment");
+  const modalInstance = new bootstrap.Modal(modal);
+  modalInstance.show();
+
+}
+
+function dislike(){
+  console.log("dislike")
+}
+function like(){
+  console.log("like")
+}
+
