@@ -170,26 +170,26 @@ function toggleComments(postId) {
 
 
 
-function toggleLike(postId) {
+async function toggleLike(postId) {
     // Find the heart icon element based on postId
     const heartIcon = document.querySelector(`#item-${postId} .like-icon i`);
-    let slgLike = document.getElementById(`slgLike+${postId}`).innerHTML
-    console.log(slgLike)
+    let slgLike = document.getElementById(`slgLike+${postId}`)
     if (heartIcon) {
         heartIcon.classList.toggle("red-heart");
 
+        // Like
         if (heartIcon.classList.contains("fa-regular")) {
-            heartIcon.classList.remove("fa-regular", "fa-heart");
-            heartIcon.classList.add("fa-solid", "fa-heart");
-            likePost(postId).then(r => console.log("Hello"))
-            slgLike + 1
-            document.getElementById(`slgLike+${postId}`).innerHTML = slgLike
-        } else {
-            heartIcon.classList.remove("fa-solid", "fa-heart");
-            heartIcon.classList.add("fa-regular", "fa-heart");
-            slgLike - 1
-            document.getElementById(`slgLike+${postId}`).innerHTML = slgLike
-            dislikePost(postId)
+            heartIcon.classList.remove("fa-regular");
+            heartIcon.classList.add("fa-solid",);
+            slgLike.textContent = (Number.parseInt(slgLike.textContent.replace("Likes","")) + 1) + " Likes";
+            await likePost(postId);
+        }
+        // Huy like
+        else {
+            heartIcon.classList.remove("fa-solid");
+            heartIcon.classList.add("fa-regular");
+            slgLike.textContent = (Number.parseInt(slgLike.textContent.replace("Likes","")) - 1) + " Likes";
+            await dislikePost(postId)
         }
     }
 }
@@ -313,8 +313,6 @@ function handleFileUpload(input) {
 }
 
 async function testCmt(button) {
-
-
     var postId = button.getAttribute("data-post-id");
     const commentInput = document.getElementById('cmt' + postId);
     const commentText = commentInput.value.trim();
@@ -578,22 +576,21 @@ async function fetDataComment(item) {
 
         let htmlHeart = ""
         if (liked) {
-            htmlHeart = `<span class="like-icon"><i class="fa-solid fa-heart"></i></span>`
+            htmlHeart = `<span class="like-icon"><i class="fa-solid fa-heart red-heart"></i></span>`
         } else {
             htmlHeart = `<span class="like-icon"><i class="fa-regular fa-heart"></i></span>`
         }
+
         info.innerHTML = `
-    
-  <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
-  <span id="slgLike+${post_id}">${slgLike} </span>Likes
-  
-   ` + htmlHeart + `
-  </div>
-  <div class="item" onclick="toggleComments(${post_id})">
-    <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-    ${comments.length} Comments
-  </div>
-  `;
+          <div class="item" id="item-${post_id}" onclick="toggleLike(${post_id})">
+          ` + htmlHeart + `
+          <span id="slgLike+${post_id}">${slgLike} Likes</span>
+          </div>
+          <div class="item" onclick="toggleComments(${post_id})">
+            <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+            ${comments.length} Comments
+          </div>
+        `;
     }
 }
 
