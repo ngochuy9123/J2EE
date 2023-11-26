@@ -9,7 +9,7 @@ import java.util.List;
 public interface LikeService {
     Like saveLike(LikeDTO likeDTO);
 
-    void disLike(Long idLike);
+    void disLike(Like like);
     Like findLike(LikeDTO likeDTO);
 
     List<Like> getAllEmoteByPostID(Post post);

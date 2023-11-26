@@ -65,6 +65,7 @@ public class LikeAPI {
         likeDTO.setIdUser(principal.getUser().getId());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Like like = likeService.findLike(likeDTO);
+        likeDTO.setId(like.getId());
 
         Post post = postService.getInfoPost(idPost);
         AnnounceDTO announceDTO = new AnnounceDTO();
@@ -76,7 +77,7 @@ public class LikeAPI {
         announceDTO.setIdUserTo(post.getUser().getId());
 
 //        announceService.removeAnnounce(announceDTO);
-        likeService.disLike(like.getId());
+        likeService.disLike(like);
         return new ResponseEntity<>("Bo Like thanh cong", HttpStatus.CREATED);
     }
 
