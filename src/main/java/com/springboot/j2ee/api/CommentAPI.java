@@ -72,6 +72,7 @@ public class CommentAPI {
         List<Comment> comments = postService.getInfoPost(Long.parseLong(post_id)).getComments();
         List<CommentDTO> ds = new ArrayList<>();
         comments.forEach(item->ds.add(new CommentDTO(item)));
+        ds.sort(Comparator.comparing(CommentDTO::getCreatedAt).reversed());
         return ds;
     }
 

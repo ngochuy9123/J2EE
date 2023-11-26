@@ -110,4 +110,19 @@ public class UserAPI {
         return listUser;
     }
 
+    @PostMapping("findUserById")
+    @ResponseBody
+    public UserDTO searchUser(@RequestParam(name = "user_id") Long user_id,@AuthenticationPrincipal CustomUser principal){
+        User user = userService.getUserById(user_id);
+        UserDTO userDTO = new UserDTO(user);
+        return userDTO;
+    }
+
+    @PostMapping("getInfoUserLogin")
+    @ResponseBody
+    public UserDTO searchUser(@AuthenticationPrincipal CustomUser principal){
+        User user = principal.getUser();
+        UserDTO userDTO = new UserDTO(user);
+        return userDTO;
+    }
 }

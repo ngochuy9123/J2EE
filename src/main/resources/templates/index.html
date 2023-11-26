@@ -1,86 +1,83 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" >
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-
-    <link rel="stylesheet" href="./css/main.css" />
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="./css/profile.css" />
-
-<!--    <link rel="stylesheet" href="../static/css/main.css">-->
-<!--    <link rel="stylesheet" href="../static//css/style.css">-->
-<!--    <link rel="stylesheet" href="../static/css/profile.css">-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Web site created using create-react-app"/>
+    <link rel="stylesheet" href="./css/main.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+    <link rel="stylesheet" href="./css/profile.css"/>
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      crossorigin="anonymous"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
     />
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+            integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
     />
     <title>Social Media</title>
-  </head>
-  <body>
-    <!-- NAVBAR -->
-    <div class="navbar">
-      <div class="left">
+</head>
+<body>
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="left">
         <a href="/home" style="text-decoration: none">
-          <span>Social</span>
+            <span>Social</span>
         </a>
         <a href="/home"><i class="fa-solid fa-house"></i></a>
 
-        
-        <div class="dropdown search-user">
-          <div class="avatar-user search-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <div class="search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <form action="/search" method="get" class="form-search">
-            <input type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()" autocomplete="off"/>
-          </form>
-        </div>
-          </div>
-          <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger" id="fetch-data-search" style="display: none;">
-          </ul>
-      </div>
-      </div>
-      <div class="right">
-        <div class="dropdown">
-          <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-          <i class="fa-regular fa-user">
-            <div th:if="${lst_friend_request.size()>0}" class="notice-addfr" th:text="${lst_friend_request.size()}"></div>
-          </i>
-        </div>
-        <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
-          <div class="recently">Friend request</div>
 
-            <li th:each="friend_req:${lst_friend_request}" >
-              <a class="dropdown-item" th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
-              ></a>
-              <i class="user">
-                <img
-                        th:src="${friend_req.getUserFrom().getAvatar()}"
-                  alt=""
-                />
-               <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
+        <div class="dropdown search-user">
+            <div class="avatar-user search-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 aria-expanded="false">
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <form action="/search" method="get" class="form-search">
+                        <input type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()"
+                               autocomplete="off"/>
+                    </form>
+                </div>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger"
+                id="fetch-data-search" style="display: none;">
+            </ul>
+        </div>
+    </div>
+    <div class="right">
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fa-regular fa-user">
+                    <div th:if="${lst_friend_request.size()>0}" class="notice-addfr"
+                         th:text="${lst_friend_request.size()}"></div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end drop-friend" aria-labelledby="dropdownTrigger">
+                <div class="recently">Friend request</div>
+
+                <li th:each="friend_req:${lst_friend_request}">
+                    <a class="dropdown-item"
+                       th:href="@{|/profile?id=${#strings.concat(friend_req.getUserFrom().getId())}|}"
+                    ></a>
+                    <i class="user">
+                        <img
+                                th:src="${friend_req.getUserFrom().getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong th:text="${friend_req.getUserFrom().getEmail()}">
 
 
               </strong>đã gửi cho bạn lời mời kết bạn
@@ -91,342 +88,327 @@
                 <button onclick="declineFriendRequest(this)" class="dismiss-btn">Dismiss</button>
               </div>
             </span>
-              </i>
-              </li>
-          <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
-        </ul>
+                    </i>
+                </li>
+                <a href="/friend" class="redidect-listfriend">Xem tất cả trong Danh sách bạn bè</a>
+            </ul>
 
-      </div>
-
-      <a href="chat">
-        <i class="fa-regular fa-envelope">
-          <div class="notice-message">2</div>
-        </i>
-      </a>
-     
-      
-      <div class="dropdown">
-        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close ="outside"  aria-expanded="false">
-          <i th:onclick="'changeStatusNotification('  + ${user.getId()} +  ');'" class="fa-regular fa-bell">
-            <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
-          </i>
         </div>
-        <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
-          <div class="recently">Notification</div>
 
-                  <li th:each="announce:${lstAnnounce}" ><a class="dropdown-item" href="#">
+        <a href="chat">
+            <i class="fa-regular fa-envelope">
+                <div class="notice-message">2</div>
+            </i>
+        </a>
+
+
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 data-bs-auto-close="outside" aria-expanded="false">
+                <i th:onclick="'changeStatusNotification('  + ${user.getId()} +  ');'" class="fa-regular fa-bell">
+                    <div th:if="${lstAnnounce.size()>0}" th:text="${lstAnnounce.size()}" class="notice-notifi"></div>
+                </i>
+            </div>
+            <ul class="dropdown-menu drop-noti dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                <div class="recently">Notification</div>
+
+                <li th:each="announce:${lstAnnounce}"><a class="dropdown-item" href="#">
 
                     <i class="user">
-                      <img
-                        th:src="${announce.getUserFrom().getAvatar()}"
-                        alt=""
-                      />
-                     <span class="detail-noti">  <strong>
+                        <img
+                                th:src="${announce.getUserFrom().getAvatar()}"
+                                alt=""
+                        />
+                        <span class="detail-noti">  <strong>
                       <span th:text="${announce.getUserFrom().getUsername()}"></span>
                     </strong>
                       <span th:if="${announce.getEAnnounceType().toString() == 'LIKE'}"> đã like bài viết của bạn </span>
                        <span th:if="${announce.getEAnnounceType().toString() == 'COMMENT'}"> đã bình luận trong bài viết của bạn </span>
                      </span>
                     </i>
-                    </a></li>
+                </a></li>
+            </ul>
 
-
-        </ul>
-   
-   
-   
-   
-   
-      </div>
-      <div class="dropdown">
-        <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <div class="user">
-            <img
-              th:src="${user.getAvatar()}"
-              alt=""
-            />
-            
-          </div>
         </div>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
-            <li><a class="dropdown-item" href="profile">
-            
-              <i class="user">
-                <img
-                  th:src="${user.getAvatar()}"
-                  alt=""
-                />
-                <span th:text="${user.getUsername()}"></span>
-                </i>
-              </a></li>
-            <hr>
-            <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>Logout </a></li>
-        </ul>
-   
-   
-   
-   
-   
-      </div>
-      
-    </div>
+        <div class="dropdown">
+            <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 aria-expanded="false">
+                <div class="user">
+                    <img
+                            th:src="${user.getAvatar()}"
+                            alt=""
+                    />
 
-    </div>
-
-    <!-- Content -->
-    <div class="container-content">
-      <!-- LEFT BAR -->
-      <div class="leftBar">
-        <div class="container">
-          <div class="menu">
-            <a class="user" href="profile">
-              <img
-                th:src="${user.getAvatar()}"
-                alt=""
-              />
-              <span th:text="${user.getEmail()}  "></span>
-
-
-            </a>
-            <div class="item">
-              <a href="./friend">
-                <img src="./assets/1.png" alt="" />
-                <span>Friends</span>
-              </a>
+                </div>
             </div>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
+                <li><a class="dropdown-item" href="profile">
 
-          </div>
-
-        </div>
-      </div>
-      <!-- OUTLET -->
-      <div class="outlet">
-        <!-- HOME -->
-        <div id="home" style="margin-top: 20px;">
-          <div class="stories" id="stories-container" style="display: none">
-
-          </div>
-        </div>
-<!--Create Post  START-->
-        <form th:action="@{/create_post}" method="post" enctype="multipart/form-data">
-          <div id="up-post">
-            <div
-              class="modal fade"
-              id="exampleModal"
-              tabindex="-1"
-              aria-labelledby="exampleModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">
-                      Create New Post
-                    </h1>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="info-post">
-                      <div class="userInfo">
+                    <i class="user">
                         <img
                                 th:src="${user.getAvatar()}"
-                          alt="User Profile Pic"
+                                alt=""
                         />
+                        <span th:text="${user.getUsername()}"></span>
+                    </i>
+                </a></li>
+                <hr>
+                <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></i>
+                    Logout </a></li>
+            </ul>
+        </div>
 
-                        <span class="name-user">John Deap</span>
+    </div>
 
-                        <select name="visible" class="form-select" id="postVisibility">
+</div>
 
-                          <option selected value="PRIVATE">PRIVATE</option>
-                          <option value="FRIENDS">FRIENDS</option>
-                          <option value="PUBLIC">PUBLIC</option>
-
-                        </select>
-                      </div>
-                      <div class="input-post">
-                        <textarea
-                          name="content"
-                          id=""
-                          cols="52"
-                          rows="10"
-                          placeholder="Enter your message here..."
-                        ></textarea>
-                      </div>
-                      <div id="image-container"></div>
-                      <div class="other-chose image-upload">
-
-                        <div id="upload-image">
-                          <i class="fa-regular fa-image"></i>
-                          <span>Image</span>
-                          <input
-                            type="file"
-                            id="file-input"
-                            name="image"
-                            style="display: none"
-                            accept="image/*"
-                            onchange="handleFileUpload(this)"
-                            class="form-control-file"
-                          />
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Post</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-<!--create post END-->
-            <div class="post">
-              <div class="container">
-                <div class="user">
-                  <div class="userInfo">
+<!-- Content -->
+<div class="container-content">
+    <!-- LEFT BAR -->
+    <div class="leftBar">
+        <div class="container">
+            <div class="menu">
+                <a class="user" href="profile">
                     <img
-                      th:src="${user.getAvatar()}"
-                      alt="User Profile Pic"
+                            th:src="${user.getAvatar()}"
+                            alt=""
                     />
-                  </div>
-                  <div class="input-uppost">
-                    <input
-                      type="text"
-                      placeholder="Up post"
-                      id="openModalInput"
-                    />
-                  </div>
+                    <span th:text="${user.getUsername()}  "></span>
+                </a>
+                <div class="item">
+                    <a href="./friend">
+                        <img src="./assets/1.png" alt=""/>
+                        <span>Friends</span>
+                    </a>
                 </div>
-                <hr class="line" />
-                <div class="other-chose">
-                  <div>
-                    <i class="fa-solid fa-video"></i>
-                    <span>Stream</span>
-                  </div>
-                  <div>
-                    <i class="fa-regular fa-image"></i>
-                    <span>Image</span>
-                  </div>
-                  <div>
-                    <i class="fa-regular fa-face-smile"></i>
-                    <span>Icon</span>
-                  </div>
-                </div>
-              </div>
+
             </div>
-          </div>
+
+        </div>
+    </div>
+    <!-- OUTLET -->
+    <div class="outlet">
+        <!-- HOME -->
+        <div id="home" style="margin-top: 20px;">
+            <div class="stories" id="stories-container" style="display: none">
+            </div>
+        </div>
+        <!--Create Post  START-->
+        <form th:action="@{/create_post}" method="post" enctype="multipart/form-data">
+            <div id="up-post">
+                <div
+                        class="modal fade"
+                        id="exampleModal"
+                        tabindex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                    Create New Post
+                                </h1>
+                                <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="info-post">
+                                    <div class="userInfo">
+                                        <img
+                                                th:src="${user.getAvatar()}"
+                                                alt="User Profile Pic"
+                                        />
+
+                                        <span class="name-user" th:text="${user.getUsername()}"></span>
+
+                                        <select name="visible" class="form-select" id="postVisibility">
+
+                                            <option selected value="PRIVATE">PRIVATE</option>
+                                            <option value="FRIENDS">FRIENDS</option>
+                                            <option value="PUBLIC">PUBLIC</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="input-post">
+                        <textarea
+                                name="content"
+                                id=""
+                                cols="52"
+                                rows="10"
+                                placeholder="Enter your message here..."
+                        ></textarea>
+                                    </div>
+                                    <div id="image-container"></div>
+                                    <div class="other-chose image-upload">
+
+                                        <div id="upload-image">
+                                            <i class="fa-regular fa-image"></i>
+                                            <span>Image</span>
+                                            <input
+                                                    type="file"
+                                                    id="file-input"
+                                                    name="image"
+                                                    style="display: none"
+                                                    accept="image/*"
+                                                    onchange="handleFileUpload(this)"
+                                                    class="form-control-file"
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--create post END-->
+                <div class="post">
+                    <div class="container">
+                        <div class="user">
+                            <div class="userInfo">
+                                <a href="/profile">
+                                    <img
+                                            th:src="${user.getAvatar()}"
+                                            alt="User Profile Pic"
+                                    />
+                                </a>
+                            </div>
+                            <div class="input-uppost">
+                                <input
+                                        type="text"
+                                        placeholder="Up post"
+                                        id="openModalInput"
+                                />
+                            </div>
+                        </div>
+                        <hr class="line"/>
+                        <div class="other-chose">
+                            <div>
+                                <i class="fa-solid fa-video"></i>
+                                <span>Stream</span>
+                            </div>
+                            <div>
+                                <i class="fa-regular fa-image"></i>
+                                <span>Image</span>
+                            </div>
+                            <div>
+                                <i class="fa-regular fa-face-smile"></i>
+                                <span>Icon</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
         <div id="post-container"></div>
         <!-- Include Posts content here -->
-        <div class="modal fade" id="modalComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Modal Title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body" id="modalContent">
-                <!-- Modal content will be dynamically generated here -->
-              </div>
+        <div class="modal fade" id="modalComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Modal Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modalContent">
+                        <!-- Modal content will be dynamically generated here -->
+                    </div>
 
+                </div>
             </div>
-          </div>
         </div>
         <div th:each="post:${posts}" class="post">
-          <div class="container">
-            <div class="user">
-              <div class="userInfo">
-                <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
-                <div class="details">
-                  <a href="${post.userId}" style="text-decoration: none; color: inherit;">
-                    <span class="name" th:text="${post.getUser().getLastName()+' '+post.getUser().getFirstName()}"></span>
-                  </a>
-                  <span class="date" th:text="${post.getCreatedFormat()}"></span>
+            <div class="container">
+                <div class="user">
+                    <div class="userInfo">
+                        <a th:href="'profile?id='+${post.getUser().getId()}"><img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic"></a>
+                        <div class="details">
+                            <a th:href="'profile?id='+${post.getUser().getId()}" style="text-decoration: none; color: inherit;">
+                                <span class="name"
+                                      th:text="${post.getUser().getUsername()}"></span>
+                            </a>
+                            <span class="date" th:text="${post.getCreatedFormat()}"></span>
+                            <span th:text="${post.getVisible()}"></span>
+                        </div>
+                    </div>
+                    <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                         aria-expanded="false">
+                        <span>...</span>
+                    </div>
                 </div>
-              </div>
-              <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span>...</span>
-              </div>
-              <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
-
-              </ul>
-            </div>
-            <div class="content">
-              <p th:text="${post.getContent()}"></p>
-              <div th:if="${post.getImageUrl() !=null}">
-                <img th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}"  alt="Post Image">
-              </div>
-            </div>
-
-
-
-            <div class="info">
-              <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
-                <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-                <p th:text="${hashLike.get(post.getId())}"></p>
-
-              </div>
-              <div class="item" onclick="toggleComments(${post.id})">
-                <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                12 Comments
-              </div>
-            </div>
-<!--            Comment Post-->
-            <div class=" comments" th:id="${post.getId()}" >
-              <!-- Comments section, replace with your comments -->
-
-                <div class="write">
-                  <img th:src="${user.getAvatar()}" alt="" />
-                  <input type="text" placeholder="write a comment" th:id="'cmt'+${post.getId()}" />
-                  <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
+                <div class="content">
+                    <p th:text="${post.getContent()}"></p>
+                    <div th:if="${post.getImageUrl() !=null}">
+                        <img th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" alt="Post Image">
+                    </div>
                 </div>
+                <div class="info">
+                    <!--                    Tha tim-->
+                    <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
+                        <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+                        <span th:text="${hashLike.get(post.getId())}" id="count-heart-${post.id}"></span>
+                    </div>
+                    <!--                    So luot binh luan-->
+                    <div class="item" onclick="toggleComments(${post.id})">
+                        <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+                        12 Comments
+                    </div>
+                </div>
+                <!--                            Comment Post-->
+                <div class="comments" th:id="${post.getId()}">
+                    <!-- Comments section, replace with your comments -->
 
-                <div class="container-post" th:id="${'fetch-data-comment-'+post.getId()}">
-
+                    <div class="write">
+                        <a href="/profile"><img th:src="${user.getAvatar()}" alt=""/></a>
+                        <input type="text" spellcheck="false" placeholder="write a comment" th:id="'cmt'+${post.getId()}"/>
+                        <button onclick="testCmt(this)" th:attr="data-post-id=${post.getId()}">Send</button>
+                    </div>
+                    <div class="container-post" th:id="${'fetch-data-comment-'+post.getId()}">
+                    </div>
                 </div>
             </div>
-          </div>
         </div>
-<!--      END to INCLUDE POST-->
-      </div>
-      <!-- RIGHT BAR -->
-      <div class="rightBar">
-        <div class="container">
-          <div class="item">
-            <span>List Friend Request</span>
-            <div th:each="friend_req:${lst_friend_request}" class="user">
-              <div class="userInfo">
-                <img
-                        th:src="${friend_req.getUserFrom().getAvatar()}"
-                  alt=""
-                />
-                <span th:text="${friend_req.getUserFrom().getEmail()}"></span>
-              </div>
-              <div class="buttons">
-                <button>ACCEPT</button>
-                <button>DECLINE</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <!--      END to INCLUDE POST-->
     </div>
-  </body>
-  <script src="./js/main.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- RIGHT BAR -->
+    <div class="rightBar">
+        <div class="container">
+            <div class="item">
+                <span>List Friend Request</span>
+                <div th:each="friend_req:${lst_friend_request}" class="user">
+                    <div class="userInfo">
+                        <img
+                                th:src="${friend_req.getUserFrom().getAvatar()}"
+                                alt=""
+                        />
+                        <span th:text="${friend_req.getUserFrom().getEmail()}"></span>
+                    </div>
+                    <div class="buttons">
+                        <button>ACCEPT</button>
+                        <button>DECLINE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="./js/main.js"></script>
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"
+></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </html>
