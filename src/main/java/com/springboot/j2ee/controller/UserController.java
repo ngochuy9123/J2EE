@@ -59,13 +59,9 @@ public class UserController {
     @GetMapping("home")
     public String showHome(@AuthenticationPrincipal CustomUser principal, Authentication auth, Model model){
         String userName = principal.getUsername();
-//        email_md = userName;
-//        user_pub = userService.getInfo(userName);
+
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
-
         List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
-
-
 
         HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
         HashMap<Long,Boolean> hashLiked = new HashMap<>();
@@ -91,8 +87,6 @@ public class UserController {
             List<Comment> lstComments = commentService.findCommentByPost(p.getId());
             hashComment.put(p.getId(), lstComments);
             hashSlgComment.put(p.getId(),lstComments.size());
-
-
         }
 
         List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
@@ -104,10 +98,10 @@ public class UserController {
         model.addAttribute("hashSlgLike",hashLike);
         model.addAttribute("hashLiked",hashLiked);
 
-        model.addAttribute("posts",lstPost);
         model.addAttribute("user",userService.getUserById(principal.getUser().getId()));
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
+        model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
         return "index";
     }
 

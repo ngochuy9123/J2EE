@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+
 import java.sql.Timestamp;
 
 @Data
@@ -22,15 +23,20 @@ public class CommentDTO {
     private String content;
     private String user_avatar;
     private String user_name;
+
     private Timestamp createAt;
+
+    public Timestamp createdAt;
+
 
     public CommentDTO(Comment comment){
         id = comment.getId();
         user_id = comment.getUser().getId();
         post_id = comment.getPost().getId();
         content = comment.getContent();
-        user_name = comment.getUser().getLastName()+" "+comment.getUser().getFirstName();
+        user_name = comment.getUser().getUsername();
         user_avatar = comment.getUser().getAvatar();
+        createdAt = comment.getCreatedAt();
     }
 
     public Long getId() {
@@ -79,5 +85,9 @@ public class CommentDTO {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public Timestamp getCreatedAt(){
+        return createdAt;
     }
 }
