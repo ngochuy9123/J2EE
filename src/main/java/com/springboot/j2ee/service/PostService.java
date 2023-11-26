@@ -14,4 +14,6 @@ public interface PostService {
 
     List<Post> findPost(String filter);
     PostInfoDTO getOnePost(Long id,Long idUser);
+
+    List<Post> getAllPostFilter(Long id, String filter);
 }

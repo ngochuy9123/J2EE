@@ -325,14 +325,13 @@
                 </div>
             </div>
         </div>
-        <h1 th:text="${posts.size()}"></h1>
         <div th:each="post:${posts}" class="post">
             <div class="container">
                 <div class="user">
                     <div class="userInfo">
-                        <img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic">
+                        <a th:href="'profile?id='+${post.getUser().getId()}"><img th:src="${post.getUser().getAvatar()}" alt="User Profile Pic"></a>
                         <div class="details">
-                            <a href="${post.userId}" style="text-decoration: none; color: inherit;">
+                            <a th:href="'profile?id='+${post.getUser().getId()}" style="text-decoration: none; color: inherit;">
                                 <span class="name"
                                       th:text="${post.getUser().getUsername()}"></span>
                             </a>
@@ -344,10 +343,6 @@
                          aria-expanded="false">
                         <span>...</span>
                     </div>
-<!--                    <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">-->
-<!--                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>-->
-<!--                    </ul>-->
                 </div>
                 <div class="content">
                     <p th:text="${post.getContent()}"></p>
@@ -356,18 +351,18 @@
                     </div>
                 </div>
                 <div class="info">
-<!--                    Tha tim-->
+                    <!--                    Tha tim-->
                     <div class="item" id="item-${post.id}" onclick="toggleLike(${post.id})">
                         <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
                         <span th:text="${hashLike.get(post.getId())}" id="count-heart-${post.id}"></span>
                     </div>
-<!--                    So luot binh luan-->
+                    <!--                    So luot binh luan-->
                     <div class="item" onclick="toggleComments(${post.id})">
                         <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
                         12 Comments
                     </div>
                 </div>
-<!--                            Comment Post-->
+                <!--                            Comment Post-->
                 <div class="comments" th:id="${post.getId()}">
                     <!-- Comments section, replace with your comments -->
 

@@ -25,6 +25,6 @@ public class PostInfoDTO {
     private long numLikes;
     private boolean liked;
 
-
+    public String createAtFormat;
 
 }
