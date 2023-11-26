@@ -19,9 +19,8 @@ public interface LikeRepository extends JpaRepository<Like,Long> {
 
     long countByPostEmote(Post post);
 
-    @Modifying
-    @Query(value = "DELETE FROM Like l WHERE l.id = :id")
-    void deleteLikeById(@Param("id") long id);
+
+    void deleteById(Long id);
 
 //    Like findLikeByUserAndPost(@Param("user_id") long user_id,@Param("post_id") long post_id);
 }

@@ -40,9 +40,9 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public void disLike(Long id) {
+    public void disLike(Like like) {
 
-        likeRepository.deleteLikeById(id);
+        likeRepository.deleteById(like.getId());
 
     }
 
