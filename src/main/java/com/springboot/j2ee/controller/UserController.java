@@ -290,7 +290,7 @@ public class UserController {
                 hashLiked.put(p.getId(),false);
             }
 
-            List<Comment> lstComments = commentService.findCommentByPost(p.getId());
+            List<Comment> lstComments = commentService.getCommentByPost(p.getId());
             hashComment.put(p.getId(), lstComments);
             hashSlgComment.put(p.getId(),lstComments.size());
 

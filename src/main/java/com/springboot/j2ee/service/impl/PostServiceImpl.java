@@ -99,6 +99,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostInfoDTO getOnePost(Long id, Long idUser) {
         PostInfoDTO postInfoDTO = new PostInfoDTO();
+        Post post = postRepository.findById(id).get();
 
 //       Get Da like hay chua like
         LikeDTO likeDTO = new LikeDTO();
@@ -113,7 +114,7 @@ public class PostServiceImpl implements PostService {
 
 
 //       List Comment
-        List<Comment> lstCmt = commentService.findCommentByPost(id);
+        List<Comment> lstCmt = commentService.getCommentByPost(id);
 
         List<CommentDetailDTO> lstCommentDetailDTO = new ArrayList<>();
         for (Comment cmt : lstCmt) {
@@ -129,7 +130,7 @@ public class PostServiceImpl implements PostService {
 
         postInfoDTO.setLstComment(lstCommentDetailDTO);
 
-        Post post = postRepository.findById(id).get();
+
 
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(post.getUser().getEmail());
