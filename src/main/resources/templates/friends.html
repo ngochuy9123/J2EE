@@ -39,7 +39,21 @@
         <a href="/home">
             <i class="fa-solid fa-house"></i>
         </a>
-
+        <div class="dropdown search-user">
+            <div class="avatar-user search-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                 aria-expanded="false">
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <form action="/search" method="get" class="form-search">
+                        <input type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()"
+                               autocomplete="off"/>
+                    </form>
+                </div>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end drop-search" aria-labelledby="dropdownTrigger"
+                id="fetch-data-search" style="display: none;">
+            </ul>
+        </div>
 
     </div>
     <div class="right">
@@ -297,15 +311,6 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">All Friends</button>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Same Location</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Liked</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Friends invitation</button>
-                            </li>
                         </ul>
 
                     </div>
@@ -321,8 +326,8 @@
                                 <img th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:src="${friend.getUserTo().getAvatar()}" alt="">
 
                                 <div class="name-friend">
-                                    <span th:if="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserFrom().getEmail()}" th:href="'/profile?id='+${friend.getUserFrom().getId()}" class="username"/>
-                                    <span th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserTo().getEmail()}" th:href="'/profile?id='+${friend.getUserTo().getId()}"  class="username"/>
+                                    <a th:if="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserFrom().getEmail()}" th:href="'/profile?id='+${friend.getUserFrom().getId()}" class="username"/>
+                                    <a th:unless="${friend.getUserFrom().getId() != idCurrentUser}" th:text="${friend.getUserTo().getEmail()}" th:href="'/profile?id='+${friend.getUserTo().getId()}"  class="username"/>
 
                                 </div>
                             </div>

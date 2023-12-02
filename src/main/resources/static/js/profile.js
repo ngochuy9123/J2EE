@@ -1,4 +1,88 @@
 
+// Search
+async function searchFriend() {
+  var inputElement = document.querySelector('.search input');
+  var userInput = inputElement.value;
+
+  var ignoreClickOnMeElement = document.querySelector(".search");
+
+  document.addEventListener('click', function (event) {
+    var isClickInsideElement = ignoreClickOnMeElement.contains(event.target);
+    if (!isClickInsideElement) {
+      document.getElementById("fetch-data-search").style.display = "none";
+    } else {
+      processChange();
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  });
+
+  let data = new FormData
+  data.append("contentSearch", userInput)
+
+  const resp1 = await fetch("/searchUser",
+      {
+        method: "POST",
+        body: data
+      })
+  if (resp1.ok) {
+    let userList = await resp1.json();
+    let strHTML = "";
+
+
+    if (!userInput) {
+      document.getElementById("fetch-data-search").innerHTML = "";
+      document.getElementById("fetch-data-search").style.display = "none";
+    } else {
+      userList.forEach(item => {
+        strHTML += `
+      <li>
+                <a class="dropdown-item" href="profile?id=${item.id}">
+              
+                <div class="user-search">
+                  <img
+                    src="${item.avatar}"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    ${item.lastName} ${item.firstName}
+
+                    <span class="location-search">${item.email}</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>`;
+      });
+      console.log(userList);
+      if (!strHTML) {
+        strHTML = `<li>
+<div class="alart alert-success text-ceter">Không có người dùng nào!</div>
+</li>`;
+      }
+      document.getElementById("fetch-data-search").innerHTML = strHTML;
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  } else {
+    console.error("Lỗi khi truy vấn danh sách người dùng");
+  }
+}
+
+
+function debounce(func, timeout = 500) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+
+const processChange = debounce(() => searchFriend());
+
+
+// cha biet
 document.addEventListener("DOMContentLoaded", function () {
   // Get a reference to the input element
   const openModalInput = document.getElementById("openModalInput");
@@ -125,18 +209,41 @@ function toggleLike(postId) {
 
   // Find the heart icon element based on postId
   const heartIcon = document.getElementById("like"+postId);
+  let heartIconMore = document.getElementById("likeMore"+postId);
 
-  if (heartIcon) {
-    heartIcon.classList.toggle("red-heart");
 
-    if (heartIcon.classList.contains("fa-regular")) {
+  if (heartIconMore){
+    heartIconMore.classList.toggle("red-heart");
+
+    if (heartIconMore.classList.contains("fa-regular")) {
       heartIcon.classList.remove("fa-regular", "fa-heart");
-      heartIcon.classList.add("fa-solid", "fa-heart");
+      heartIcon.classList.add("fa-solid", "fa-heart","red-heart");
+
+      heartIconMore.classList.remove("fa-regular", "fa-heart");
+      heartIconMore.classList.add("fa-solid", "fa-heart","red-heart");
       likePost(postId).then(r => updateLikeUI(postId))
     } else {
       heartIcon.classList.remove("fa-solid", "fa-heart");
-      heartIcon.classList.add("fa-regular", "fa-heart");
+      heartIcon.classList.add("fa-regular", "fa-heart","red-heart");
+
+      heartIconMore.classList.remove("fa-solid", "fa-heart");
+      heartIconMore.classList.add("fa-regular", "fa-heart","red-heart");
       dislikePost(postId).then(r => updateLikeUI(postId))
+    }
+  }
+  else{
+    if (heartIcon) {
+      heartIcon.classList.toggle("red-heart");
+
+      if (heartIcon.classList.contains("fa-regular")) {
+        heartIcon.classList.remove("fa-regular", "fa-heart");
+        heartIcon.classList.add("fa-solid", "fa-heart","red-heart");
+        likePost(postId).then(r => updateLikeUI(postId))
+      } else {
+        heartIcon.classList.remove("fa-solid", "fa-heart");
+        heartIcon.classList.add("fa-regular", "fa-heart","red-heart");
+        dislikePost(postId).then(r => updateLikeUI(postId))
+      }
     }
   }
 
@@ -145,12 +252,15 @@ function toggleLike(postId) {
 // post
 
 function taoGiaoDienLike(idPost,slgLike){
-  let htmlLike = document.getElementById("txtLikem"+idPost)
-  if (htmlLike == null){
-    htmlLike = document.getElementById("txtLike"+idPost)
-  }
+  let htmlLike = document.getElementById("txtLike"+idPost)
+  let htmlMoreLike = document.getElementById("txtLikeMore"+idPost)
+
   htmlLike.innerHTML = `${slgLike} LIKES`
 
+  if (htmlMoreLike != null){
+    htmlMoreLike = document.getElementById("txtLikeMore"+idPost)
+    htmlMoreLike.innerHTML = `${slgLike} LIKES`
+  }
 }
 
 
@@ -211,9 +321,11 @@ async function testCmt(button) {
     content: commentText
   };
 
+  //  them comment
   const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
   let status = resp.status;
   const data1 = await resp.text();
+
 
 
 
@@ -228,11 +340,45 @@ async function testCmt(button) {
   let htmlCmt = ``
   let lstComment = document.getElementById("lstComment"+postId)
 
+
+
+  let tempIdSlgComment = "idSlgCommemt"+postId
+  let slgComment = document.getElementById(tempIdSlgComment)
+
   let slgMaxCmt = 2
   if (more === true){
     console.log("trong see more")
-    slgMaxCmt = comments.length
+    tempIdSlgComment = "idSlgMoreComment"+postId
+    let slgMoreComment = document.getElementById(tempIdSlgComment)
+    slgMoreComment.innerHTML = comments.length+" Comments"
+
+    let htmlMoreComment = ``
+    for (let i = 0; i < comments.length; i++) {
+      let cmt = comments[i];
+      if (i < comments.length ) { // Check if the index is less than 2
+        htmlMoreComment += `
+        <div class="comment">
+          <img src="${cmt.user_avatar}" alt="">
+          <div class="info">
+            <span>${cmt.user_name}</span>
+            <p>${cmt.content}</p>
+          </div>
+          <span class="date"> ${formatTime(cmt.createAt)}</span>
+        </div>
+      `;
+      }
+
+    }
+
+    let lstMoreComment = document.getElementById("lstCommentMore"+postId)
+    lstMoreComment.innerHTML = htmlMoreComment
+
   }
+
+
+  slgComment.innerHTML = comments.length+" Comments"
+
+
   for (let i = 0; i < comments.length; i++) {
     let cmt = comments[i];
     if (i < slgMaxCmt ) { // Check if the index is less than 2
@@ -247,7 +393,6 @@ async function testCmt(button) {
         </div>
       `;
     }
-
 
   }
 
@@ -290,6 +435,10 @@ async function addFriend() {
   let http = resp.status
   let announce = await resp.text()
   console.log(announce)
+  let status = resp.status
+  if (status === 201){
+    location.reload()
+  }
 }
 async function acceptFriendRequest(button) {
   let inputValue = button.previousElementSibling.value;
@@ -310,9 +459,11 @@ async function acceptFriendRequest(button) {
   }
 }
 async function declineFriendRequest(button) {
-  let inputValue = button.previousElementSibling.value;
+  // let inputValue = button.previousElementSibling.value;
+  let inputValue = document.getElementById("inputWithIdUser").value
   let data = new FormData
   data.append("userToId",inputValue)
+  console.log(inputValue)
 
   const resp = await fetch("/declineFriendRequest",
       {
@@ -321,7 +472,10 @@ async function declineFriendRequest(button) {
       })
   const data1 = await resp.text();
   console.log(data1)
-
+  let status = resp.status
+  if (status === 200){
+    location.reload()
+  }
 }
 
 // Notification
@@ -399,15 +553,15 @@ console.log("post",postInfo)
          </div>
          <div class="info">
             <input type="hidden" value="${postInfo.id}" id="post${postInfo.id}">
-           <div class="item" id="item-" onclick="toggleLike(${postInfo.id})">
+           <div class="item" id="itemMore-${postInfo.id}" onclick="toggleLike(${postInfo.id})">
              <span class="like-icon">
-                <i class="${postInfo.liked ? ' fa-solid' : 'fa-regular'} red-heart  fa-heart" ></i>
+                <i class="${postInfo.liked ? ' fa-solid' : 'fa-regular'} red-heart  fa-heart" id="likeMore${postInfo.id}"></i>
              </span>
-             <span id="txtLikem${postInfo.id}">${postInfo.numLikes} LIKES</span>
+             <span id="txtLikeMore${postInfo.id}">${postInfo.numLikes} LIKES</span>
            </div>
            <div class="item" onclick="toggleComments(1)">
              <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-             ${postInfo.lstComment.length} Comments
+             <span id="idSlgMoreComment${postInfo.id}" class="comment-icon">${postInfo.lstComment.length} Comments</span> 
            </div>
          </div>
         <div class=" comments">
@@ -419,7 +573,7 @@ console.log("post",postInfo)
                   <button onclick="testCmt(this,1)" data-post-id="${postInfo.id}">Send</button>
                 </div>
 
-                <div class="container-post" id="lstComment${postInfo.id}">
+                <div class="container-post" id="lstCommentMore${postInfo.id}">
 
                  <div class="comments">
                  ${postInfo.lstComment.map(cmt => `
