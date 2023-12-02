@@ -191,10 +191,6 @@
 
 'use strict';
 
-const startButton = document.getElementById('startButton');
-const hangupButton = document.getElementById('hangupButton');
-hangupButton.disabled = true;
-
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
@@ -212,8 +208,6 @@ const createVideoDiv = (uuid) => {
 }
 
 
-let isAnswerSet = false;
-
 const pcs = {
 
 }
@@ -226,13 +220,33 @@ const alreadyAnswer = []
 const host = new URL(location)
 console.log(host.host)
 
-const signaling = new WebSocket(`ws://${host.host}/call`);
-signaling.onmessage = async message => {
+const id = document.getElementById("roomIdDiv").innerText
+const stompClient = new StompJs.Client({
+    brokerURL: `ws://${host.host}/ws/call`
+});
+
+
+stompClient.onConnect = (frame) => {
+    console.log('Connected: ' + frame);
+    stompClient.subscribe(`/topic/call/${id}`, async (message) => {
+        await handleMessage(message);
+    });
+
+};
+
+
+stompClient.activate()
+
+const handleMessage = async (message) => {
     if (!localStream) {
         console.log('not ready yet');
         return;
     }
-    const data = JSON.parse(message.data);
+    const data = JSON.parse(message.body);
+
+    if (data.id == localUUID) {
+        return
+    }
     console.log(data)
 
     const pc = pcs[data.id]
@@ -259,20 +273,16 @@ signaling.onmessage = async message => {
             console.log('unhandled', data);
             break;
     }
-};
+}
 
-startButton.onclick = async () => {
+const start = async () => {
     localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
     localVideo.srcObject = localStream;
-
-
-    startButton.disabled = true;
-    hangupButton.disabled = false;
 
     send({type: 'ready', id: localUUID});
 };
 
-hangupButton.onclick = async () => {
+const stop = async () => {
     hangup();
     send({type: 'bye', id: localUUID});
 };
@@ -290,7 +300,7 @@ async function hangup() {
 
 function createPeerConnection(data) {
     let pc = new RTCPeerConnection(null);
-    const div = createVideoDiv(data.id)
+    const div = remoteVideo
 
     pc.onicecandidate = e => {
         const message = {
@@ -379,5 +389,10 @@ async function handleCandidate(candidate) {
 }
 
 function send(message) {
-    signaling.send(JSON.stringify(message));
+    stompClient.publish({
+        destination: `/app/call/${id}`,
+        body: JSON.stringify(message)
+    })
 }
+
+start()

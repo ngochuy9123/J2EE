@@ -3,6 +3,7 @@ package com.springboot.j2ee.dto;
 import com.springboot.j2ee.entity.Message;
 import com.springboot.j2ee.entity.Room;
 import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.enums.EMessageType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class MessageDTO {
 
     private Long roomId;
     private String avatar;
+    private EMessageType messageType;
 
     private Timestamp timeSend;
 
@@ -29,6 +31,7 @@ public class MessageDTO {
         this.avatar = message.getUser().getAvatar();
         this.roomId = message.getRoom().getId();
         this.timeSend = message.getTimeSend();
+        this.messageType = message.getMessageType();
     }
 
     public MessageDTO(String message, Long userId, Long roomId, Timestamp timeSend) {

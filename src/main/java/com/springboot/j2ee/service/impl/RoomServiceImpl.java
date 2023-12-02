@@ -69,6 +69,8 @@ public class RoomServiceImpl implements RoomService {
         room.setRoomType(roomType);
         room.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 
+        room.setCreatedBy(mainUser);
+
         List<User> users = new java.util.ArrayList<>(others.stream().map(id -> userService.getUserById(id)).toList());
         users.add(userService.getUserById(mainUser.getId()));
         room.setParticipants(users);
@@ -113,6 +115,20 @@ public class RoomServiceImpl implements RoomService {
         }
 
 
+        return true;
+    }
+
+    @Override
+    public boolean changeUser(Long roomId, List<Long> users) {
+        var room = roomRepository.findRoomById(roomId);
+        var participants = room.getParticipants();
+        participants.clear();
+        for (var u : users) {
+            var user = userService.getUserById(u);
+            participants.add(user);
+        }
+
+        roomRepository.save(room);
         return true;
     }
 }

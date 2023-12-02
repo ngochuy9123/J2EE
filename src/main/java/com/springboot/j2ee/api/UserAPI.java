@@ -80,11 +80,19 @@ public class UserAPI {
     }
 
 
+
     @GetMapping("/api/user")
     public ResponseEntity<List<UserDTO>> getUser(@DestinationVariable String email, @DestinationVariable int limit) {
        var users = userService.getUserByEmailLimitBy(email, limit);
        var userDTOs = users.stream().map(UserDTO::new).toList();
        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/userById")
+    public ResponseEntity<UserDTO> getUser(@DestinationVariable Long id) {
+        var user = userService.getUserById(id);
+        var userDTO = new UserDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
 }

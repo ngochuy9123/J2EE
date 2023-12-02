@@ -5,6 +5,7 @@ import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import com.github.shyiko.mysql.binlog.event.TableMapEventData;
 import com.github.shyiko.mysql.binlog.event.UpdateRowsEventData;
 import com.github.shyiko.mysql.binlog.event.WriteRowsEventData;
+import com.springboot.j2ee.dto.GenericResponse;
 import com.springboot.j2ee.entity.Message;
 import com.springboot.j2ee.entity.Room;
 import com.springboot.j2ee.entity.User;
@@ -41,7 +42,12 @@ public class CDCBeans extends Thread{
             = new HashMap<>() {
     };
 
-    private final ArrayList<Consumer<Room>> roomSubscribers = new ArrayList<>();
+    private final HashMap<Long,
+            HashMap<UUID,
+                    Consumer<GenericResponse<Room>
+                            >
+                    >
+            > userRoomSubscribers = new HashMap<>();
 
     public CDCBeans() {
 
@@ -57,15 +63,26 @@ public class CDCBeans extends Thread{
         eventHandler.put(uuid, consumer);
     }
 
-    public void subscribeToWriteMessageByRoom(Consumer<Room> consumer) {
-        roomSubscribers.add(consumer);
+    public void subscribeToRoom(Long userId, UUID uuid,Consumer<GenericResponse<Room>> consumer) {
+        var eventHandler = userRoomSubscribers.get(userId);
+        if (eventHandler == null) {
+            userRoomSubscribers.put(userId, new HashMap<>());
+            eventHandler = userRoomSubscribers.get(userId);
+
+        }
+
+        eventHandler.put(uuid, consumer);
     }
 
     private void handleWrite(WriteRowsEventData eventData) throws JsonProcessingException {
         if(eventData.getTableId() == tableMap.getOrDefault("message", Long.valueOf("-1"))) {
             handleWriteMessage(eventData);
         }
+
+
     }
+
+
 
     public void handleWriteMessage(WriteRowsEventData eventData) throws JsonProcessingException {
         for (var data: eventData.getRows()) {
@@ -80,8 +97,14 @@ public class CDCBeans extends Thread{
     private void invokeMessageWrite(Long roomId, Long messageId) {
 
         Room room = roomRepository.findRoomById(roomId);
-        for (var roomSubscriber : roomSubscribers) {
-            roomSubscriber.accept(room);
+
+
+        //get User ID = 0 for system to update last updated
+        var systemRoomHandler =  userRoomSubscribers.get(0L);
+        for (var key : systemRoomHandler.keySet()) {
+            var delegate = systemRoomHandler.get(key);
+            var response =  new GenericResponse<Room>("MESSAGE_SENT", room);
+            delegate.accept(response);
         }
 
 
@@ -113,6 +136,17 @@ public class CDCBeans extends Thread{
 //        if(eventData.getTableId() == tableMap.get("user")) {
 //            handleUpdateUser(eventData);
 //        }
+
+        if(eventData.getTableId() == tableMap.getOrDefault("room", Long.valueOf("-1"))) {
+            handleUpdateRoom(eventData);
+        }
+    }
+
+    private void handleUpdateRoom(UpdateRowsEventData eventData) {
+        var a = eventData.getIncludedColumnsBeforeUpdate();
+        var c = eventData.getRows();
+        var b = 2;
+
     }
 
     public void handleUpdateUser(UpdateRowsEventData eventData) throws JsonProcessingException {
@@ -156,6 +190,26 @@ public class CDCBeans extends Thread{
             throw new RuntimeException(e);
         }
         System.out.println("a");
+
+    }
+
+    public void invokeRoomWithType(Long roomId, String type) {
+        Room room = roomRepository.findRoomById(roomId);
+
+        for (var user : room.getParticipants()) {
+            var id = user.getId();
+
+            var delegates = userRoomSubscribers.getOrDefault(id, null);
+            if (delegates == null) {
+                continue;
+            }
+
+            for (var key : delegates.keySet()) {
+                var delegate = delegates.get(key);
+                delegate.accept(new GenericResponse<>(type, room));
+            }
+
+        }
 
     }
 }

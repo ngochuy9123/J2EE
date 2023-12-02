@@ -10,6 +10,7 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Message findMessageById(Long id);
 
+
     List<Message> getMessagesByRoomOrderByTimeSend(Room room);
 
     Integer countMessagesByRoomAndTimeSendGreaterThan(Room room, Timestamp timestamp);

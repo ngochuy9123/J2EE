@@ -16,4 +16,5 @@ public interface FriendRepository extends JpaRepository<Friend,Long> {
     void deleteFriendByUserFromAndUserTo(User userTo, User userFrom);
     void deleteById(Long id);
 
+
 }

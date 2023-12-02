@@ -38,12 +38,11 @@ const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
 let selectedId = 0;
 
-const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws/chat'
-});
+const host = new URL(location)
 
-const stompClient2 = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws/chat'
+
+const stompClient = new StompJs.Client({
+    brokerURL: `ws://${host.host}/ws/chat`
 });
 
 
@@ -53,6 +52,7 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe(`/topic/message/${id}/${uuid}`, async (message) => {
         await showMessage(message);
     });
+
 };
 
 stompClient.onWebSocketError = (error) => {
@@ -79,14 +79,7 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-
-async function showMessage(message) {
-    const data = JSON.parse(message.body)
-    console.log(data)
-    //
-    await updateLifeLine()
-
-
+const handleMessage = async (data) => {
     if (data['roomId'] != selectedId) {
         await updateTotalMissed(data['roomId'])
         return;
@@ -96,6 +89,73 @@ async function showMessage(message) {
     chatHistoryElem.innerHTML += generateChatHtml(data);
 
     chatHistoryElem.scrollTo( 0, chatHistoryElem.scrollHeight )
+
+}
+
+const handleRename = async (data) => {
+    const { id, name } = data
+
+    const roomNameElem = document.getElementById("roomName")
+
+    if (selectedId == id) {
+        roomNameElem.innerText = name
+    }
+
+    const sideDiv = document.getElementById(`r${id}`)
+    if (sideDiv == null) {
+        await setupSidePanel()
+        return;
+    }
+
+    const sideName = sideDiv.querySelector("div.name")
+    sideName.innerText = name
+
+
+};
+
+const handlePhoto = async (data) => {
+    const { id, roomAvatar } = data
+
+    const roomImgElem = document.getElementById("groupAvatar")
+
+    if (selectedId == id) {
+        roomImgElem.src = roomAvatar
+    }
+
+    const sideDiv = document.getElementById(`r${id}`)
+    if (sideDiv == null) {
+        await setupSidePanel()
+        return;
+    }
+
+    const sidePhoto = sideDiv.querySelector("img")
+    sidePhoto.src = roomAvatar
+
+
+};
+
+async function showMessage(message) {
+    const resp = JSON.parse(message.body)
+    console.log(resp)
+    //
+    await updateLifeLine()
+
+    const data = resp["data"]
+
+
+    switch (resp["type"]) {
+        case "MESSAGE":
+            await handleMessage(data)
+            break;
+        case "RENAME":
+            await handleRename(data)
+            break;
+        case "PHOTO":
+            await handlePhoto(data)
+            break
+    }
+
+
 
 }
 
@@ -166,7 +226,7 @@ const setupSidePanel = async () => {
 
     for (const datum of data) {
         const elem = document.getElementById(`r${datum['id']}`);
-        elem.addEventListener("click",()=> setChatPanel(datum))
+        elem.addEventListener("click",()=> setChatPanel(datum['id']))
     }
 }
 
@@ -177,13 +237,16 @@ const getTotalMissedMessages = async (roomId) => {
 
 
 
-const setChatPanel = async (room) => {
-    console.log(room)
+const setChatPanel = async (id) => {
+
+    const roomResp = await fetch(`/api/roomInfo/${id}`)
+    const room = await roomResp.json()
+
     const roomId = room['id']
     const roomImg = room['roomAvatar']
 
-    const resp = await fetch(`/room/${roomId}`)
-    const data = await resp.json();
+    const messageResp = await fetch(`/api/roomMessage/${roomId}`)
+    const messages = await messageResp.json();
 
     const groupImg = document.getElementById("groupAvatar");
     groupImg.src = roomImg
@@ -198,10 +261,10 @@ const setChatPanel = async (room) => {
     await updateTotalMissed(roomId)
 
 
-    console.log(data)
+    console.log(messages)
 
     let html = "";
-    for (const datum of data) {
+    for (const datum of messages) {
         html += generateChatHtml(datum)
     }
 
@@ -213,11 +276,29 @@ const setChatPanel = async (room) => {
     container.scrollTo( 0, container.scrollHeight)
 }
 
+const handleCall = () => {
+    const url = `/call/${selectedId}`
+    window.open(url, '_blank').focus();
+}
+
+
 const generateChatHtml = (data) => {
     const uId = data['userId']
+    const messageType = data['messageType']
     let html = "";
-    const date = new Date(data['timeSend']);
+    const date = getDiffTime(new Date(data['timeSend']));
 
+    let content;
+
+    if (messageType === "MESSAGE") {
+        content = data["message"]
+    }
+    else if (messageType === "PICTURE") {
+        content = `<img src="${data["message"]}" alt="user message" class="messageImage"  />`
+    }
+    else {
+        content = data["message"]
+    }
 
 
     if (uId == id) {
@@ -226,7 +307,7 @@ const generateChatHtml = (data) => {
                 <div class="message-data ">
                     <span class="message-data-time d-flex justify-content-end">${date}</span>
                 </div>
-                <div class="message other-message float-right"> ${data['message']} </div>
+                <div class="message other-message float-right"> ${content} </div>
             </li>
             `
     }
@@ -234,9 +315,9 @@ const generateChatHtml = (data) => {
         return `
            <li class="clearfix">
                 <div class="message-data">
-                    <span class="message-data-time">${date.getUTCDate()}</span>
+                    <span class="message-data-time">${date}</span>
                 </div>
-                <div class="message my-message">${data['message']}</div>
+                <div class="message my-message">${content}</div>
             </li>
         `
     }
@@ -262,10 +343,11 @@ const sendMessage = async (event) => {
         message : event.target[0].value,
         userId : id,
         roomId : selectedId,
-        timeSend : Date.now()
+        timeSend : Date.now(),
+        messageType : "NORMAL"
     };
 
-    const response = await fetch("/message", {
+    const response = await fetch("/api/message", {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, *cors, same-origin
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -278,6 +360,36 @@ const sendMessage = async (event) => {
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
+
+    event.target[0].value = ""
+}
+
+
+const sendPhotoMessage = async () => {
+    if (selectedId === 0) {
+        return;
+    }
+    const data = {
+        message : "",
+        userId : id,
+        roomId : selectedId,
+        timeSend : Date.now(),
+        messageType : "PICTURE"
+    };
+
+    const fileElem = document.getElementById("sendPhotoInput")
+    const form = new FormData();
+    form.append("message", JSON.stringify(data))
+    form.append("value", fileElem.files[0])
+
+
+
+    const response = await fetch("/api/photoMessage", {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        body: form, // body data type must match "Content-Type" header
+    });
+
+    fileElem.value = ""
 }
 
 const setMainChatPanel = (value) => {

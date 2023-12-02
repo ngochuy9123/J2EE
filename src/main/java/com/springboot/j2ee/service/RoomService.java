@@ -22,4 +22,6 @@ public interface RoomService {
     boolean renameRoom(Long roomId, String value);
 
     boolean setRoomAvatar(Long roomId, MultipartFile file);
+
+    boolean changeUser(Long roomId, List<Long> others);
 }

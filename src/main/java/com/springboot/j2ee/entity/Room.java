@@ -26,6 +26,9 @@ public class Room {
     @OneToMany
     private List<Message> messages = new ArrayList<>();
 
+    @ManyToOne
+    private User createdBy;
+
     private Timestamp lastUpdated;
 
     private String roomAvatar;

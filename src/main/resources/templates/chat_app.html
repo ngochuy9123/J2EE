@@ -34,17 +34,31 @@
         }
 
         @media only screen and (max-width: 767px) {
-            .mobile-chat[data-choice = "CHAT"] > div[id='plist'] {
-                display: none;
+            /*.mobile-chat[data-choice = "CHAT"] > div[id='plist'] {*/
+            /*    display: none !important;*/
+            /*}*/
+
+            /*.mobile-chat[data-choice = "SIDE"] > div[id='chat'] {*/
+            /*    display: none !important;*/
+            /*}*/
+
+            /*.mobile-chat[data-choice = "SIDE"] > div[id='plist'] {*/
+            /*    width: 100%;*/
+            /*    height: 80dvh;*/
+            /*}*/
+
+            .mobile-chat[data-hide = "TRUE"] > div[id='chat'] {
+                display: none !important;
+            }
+            .mobile-chat[data-hide = "TRUE"] > div[id='plist'] {
+                flex-grow: 1;
             }
 
-            .mobile-chat[data-choice = "SIDE"] > div[id='chat'] {
-                display: none;
+            .mobile-chat[data-hide = "FALSE"] > div[id='plist'] {
+                display: none !important;
             }
-
-            .mobile-chat[data-choice = "SIDE"] > div[id='plist'] {
-                width: 100%;
-                height: 80dvh;
+            .mobile-chat[data-hide = "FALSE"] > div[id='chat'] {
+                flex-grow: 1;
             }
         }
 
@@ -54,6 +68,17 @@
         .mobile-chat[data-hide = "TRUE"] > div[id='plist'] {
             flex-grow: 1;
         }
+
+
+
+
+
+        .messageImage {
+            width: 300px;
+        }
+
+
+
         /*.mobile-chat > div[id='plist'] {*/
         /*    display: none;*/
         /*}*/
@@ -76,7 +101,7 @@
                         </div>
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
-                    <div class="input-group" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="addFriendClick(event)">
+                    <div class="input-group" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="resetAndAddNewRoom(event)">
                         <div class="input-group-text d-flex justify-content-center btn btn-outline-secondary" style="width: 100%"><i class="bi bi-plus-circle-fill" style="padding: 0.25rem" ></i>Tạo nhóm</div>
                     </div>
                     <ul id="roomList" class="list-unstyled chat-list mt-2 mb-0 flex-grow-1 overflow-auto">
@@ -105,8 +130,9 @@
                                 </div>
                             </div>
                             <div class="">
-                                <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-secondary" onclick="handleCall()"><i class="fa fa-phone"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#sendPhotoModal"><i class="fa fa-image"></i></a>
+                                <a href="#" class="btn btn-outline-primary" onclick="handleChangeUser()" data-bs-toggle="modal" data-bs-target="#changeUserModal"><i class="fa fa-user-friends"></i></a>
                                 <a href="javascript:void(0);" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#renameModal"><i class="fa fa-edit" ></i></a>
                                 <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#removeModal"><i class="fa fa-trash-can"></i></a>
                             </div>
@@ -228,7 +254,61 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="sendPhotoModal"  tabindex="-1" aria-labelledby="sendPhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="sendPhotoModalLabel">Thay đổi tên phòng</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <h3>
+                    Thay đổi tên nhóm thành:
+                </h3>
+                <input type="file" id="sendPhotoInput" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="sendPhotoMessage()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="changeUserModal"  tabindex="-1" aria-labelledby="changeUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changeUserModalLabel">Thay đổi tên phòng</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="height: 100%; align-items: center"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search..." onkeyup="changeUserSearch(event)">
+                </div>
+                <div id="otherRoomContent" class="mb-2" style="border-bottom: black solid 1px; padding-bottom: 0.25rem">
+
+                </div>
+
+                <div id="userRoomContent">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="submitUserChange()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

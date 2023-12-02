@@ -25,11 +25,7 @@ public class MessageController {
     @Autowired
     UserMessageLastSeemService userMessageLastSeemService;
 
-    @PostMapping("/message")
-    public String addMessage(@RequestBody MessageDTO messageDTO) {
-        messageService.save(messageDTO);
-        return "A";
-    }
+
 
 
 
