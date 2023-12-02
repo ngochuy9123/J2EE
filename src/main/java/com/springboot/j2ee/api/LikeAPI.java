@@ -75,8 +75,10 @@ public class LikeAPI {
         announceDTO.setIdPost(idPost);
         announceDTO.setIdUserFrom(principal.getUser().getId());
         announceDTO.setIdUserTo(post.getUser().getId());
+        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()) {
+            announceService.removeAnnounce(announceDTO);
+        }
 
-//        announceService.removeAnnounce(announceDTO);
         likeService.disLike(like);
         return new ResponseEntity<>("Bo Like thanh cong", HttpStatus.CREATED);
     }

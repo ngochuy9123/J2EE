@@ -112,17 +112,16 @@ public class UserController {
 //    }
 
     @GetMapping("signin")
-    public String showSignInForm(){
+    public String showSignInForm(HttpSession session){
+        session.removeAttribute("msgReg");
+        session.removeAttribute("email");
         return "login";
     }
     @GetMapping("register")
     public String showSignUpForm(){
         return "register";
     }
-    @GetMapping("forgotPass")
-    public String showForgotPass(){
-        return "forgotpassword";
-    }
+
 
     @PostMapping("register")
     public String registerUserAccount(@Valid @ModelAttribute("user") UserDTO registrationDTO, HttpSession session, BindingResult bindingResult){
@@ -150,11 +149,18 @@ public class UserController {
 
                 session.setAttribute("msgReg","DANG KI THANH CONG");
                 session.setAttribute("email",registrationDTO.getEmail());
+                return "redirect:/verifyotp";
             }
         }
         return "redirect:/register";
     }
 
+
+
+    @GetMapping("verifyotp")
+    public String verifyOTP(){
+        return "VerifyOtp";
+    }
 
 
     @PostMapping("confrimOTP")
@@ -170,6 +176,22 @@ public class UserController {
         return "redirect:/register";
     }
 
+    @GetMapping("forgotPass")
+    public String showForgotPass(){
+        return "forgotpassword";
+    }
+
+    @PostMapping("forgotPass")
+    public String forgotPass(@RequestParam String email,Model model,HttpSession session){
+        boolean f = userService.checkEmail(email);
+        if (f){
+            return "redirect:/VerifyOtp";
+        }
+        else{
+            System.out.println("Email khong ton tai trong he thong");
+        }
+        return null;
+    }
 
 
     @PostMapping("create_post")
@@ -274,7 +296,7 @@ public class UserController {
         HashMap<Long,List<Comment>> hashComment = new HashMap<>();
         HashMap<Long,Integer> hashSlgComment = new HashMap<>();
 
-        List<Post> lstPost = postService.getPostByIdUser(id);
+        List<Post> lstPost = postService.getAllPostForProfile(id,principal.getUser().getId());
         for(Post p:lstPost){
             long slgLike = likeService.getAllLikeByPostId(p);
             hashLike.put(p.getId(),slgLike);
@@ -303,7 +325,7 @@ public class UserController {
 
         model.addAttribute("hashSlgComment",hashSlgComment);
         model.addAttribute("hashComment",hashComment);
-
+        model.addAttribute("currentUser",userService.getUserById(principal.getUser().getId()));
         model.addAttribute("hashSlgLike",hashLike);
         model.addAttribute("hashLiked",hashLiked);
         model.addAttribute("isCurrentUser", isCurrentUser);

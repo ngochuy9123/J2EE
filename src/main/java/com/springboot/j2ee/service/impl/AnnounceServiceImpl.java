@@ -70,22 +70,18 @@ public class AnnounceServiceImpl implements AnnounceService {
         User userTo = userRepository.findById(announceDTO.getIdUserTo()).get();
         User userFrom = userRepository.findById(announceDTO.getIdUserFrom()).get();
         Post post = postRepository.findById(announceDTO.getIdPost()).get();
-
+        System.out.println("idUserFrom"+userFrom.getId());
+        System.out.println("idUserTo"+userTo.getId());
+        System.out.println("post"+post.getId());
         List<Announce> lstAnnounce = announceRepository.findByUserToAndUserFromAndPost(userTo,userFrom,post);
 
-        for (Announce announce:lstAnnounce
-             ) {
-            System.out.println(announce.getUserFrom().getEmail());
-            System.out.println(announce.getCreateAt());
-            System.out.println(announce.getId());
-            System.out.println(announce.getPost().getContent());
-            System.out.println(announce.getUserTo().getEmail());
-            System.out.println(announce.getEAnnounceType());
+        for (Announce announce:lstAnnounce) {
+            System.out.println("idAnncounce "+ announce.getId());
+            if (announce.getEAnnounceType() == announceDTO.getEAnnounceType()){
+                announceRepository.deleteById(announce.getId());
+                break;
+            }
         }
-
-
-
-        announceRepository.delete(lstAnnounce.get(0));
 
     }
 

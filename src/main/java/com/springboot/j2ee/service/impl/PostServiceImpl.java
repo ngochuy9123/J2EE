@@ -5,6 +5,7 @@ import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostInfoDTO;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.*;
+import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.enums.EPostVisibility;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
@@ -79,6 +80,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getAllPostByIdUserAndVisible(Long idUser,EPostVisibility ePostVisibility) {
+        User user = userRepository.findById(idUser).get();
+        return postRepository.findByUserAndVisibleOrderByCreatedAtDesc(user,ePostVisibility);
+    }
+
+    @Override
     public List<Post> getAllPostHome(Long id) {
         return null;
     }
@@ -136,6 +143,7 @@ public class PostServiceImpl implements PostService {
         userDTO.setEmail(post.getUser().getEmail());
         userDTO.setAvatar(post.getUser().getAvatar());
         userDTO.setId(post.getUser().getId());
+        userDTO.setUsername(post.getUser().getUsername());
 
         postInfoDTO.setUser(userDTO);
         postInfoDTO.setContent(post.getContent());
@@ -185,6 +193,35 @@ public class PostServiceImpl implements PostService {
         postList.sort(Comparator.comparing(Post::getCreatedAt).reversed());
 
         return postList;
+    }
+
+    @Override
+    public List<Post> getAllPostForProfile(Long idUser, Long idCurrentUser) {
+
+        if (!Objects.equals(idCurrentUser, idUser)){
+//            Xac dinh xem co phai la ban be hay khong
+
+            EFriendRequest  eFriendRequest = friendService.checkFriendRequest(idUser,idCurrentUser);
+//            Neu la ban be thi lay tat cac bai post o che do friend va public
+            if (eFriendRequest == EFriendRequest.FRIEND){
+                List<Post> lstFriendPost = getAllPostByIdUserAndVisible(idUser,EPostVisibility.FRIENDS);
+                List<Post> lstPublicPost = getAllPostByIdUserAndVisible(idUser,EPostVisibility.PUBLIC);
+                lstFriendPost.addAll(lstPublicPost);
+//                Sap xep bai post
+                lstFriendPost.sort(Comparator.comparing(Post::getId).reversed());
+                lstFriendPost.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+                return lstFriendPost;
+            }
+//            Neu khong thi chi lay bai post o che do public
+            else{
+                return getAllPostByIdUserAndVisible(idUser,EPostVisibility.PUBLIC);
+            }
+
+        }
+        else{
+            return getPostByIdUser(idUser);
+        }
+
     }
 
 

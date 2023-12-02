@@ -26,11 +26,15 @@
         </div>
         <div class="right">
           <h1>Verify OTP</h1>
-          <form id="loginForm" th:action="@{/userLogin}" method="post">
-            <input type="text" placeholder="Your OTP" id="username" name="username" />
-         
-            <button id="loginButton">Verify</button>
+
+          <form id="loginForm" action="confrimOTP" method="post">
+            <label for="otp">Mã OTP:</label>
+            <input type="text" id="otp" name="otp" required>
+            <input type="hidden" name="email" th:value="${session.email}"  >
+            <br>
+            <button type="submit">Xác thực</button>
           </form>
+
         </div>
       </div>
     </div>
