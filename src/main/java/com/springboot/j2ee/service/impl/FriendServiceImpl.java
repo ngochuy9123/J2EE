@@ -3,6 +3,7 @@ package com.springboot.j2ee.service.impl;
 import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.entity.Friend;
 import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.enums.EFriendStatus;
 import com.springboot.j2ee.repository.FriendRepository;
 import com.springboot.j2ee.repository.UserRepository;
@@ -79,5 +80,58 @@ public class FriendServiceImpl implements FriendService {
 
         return friend;
 
+    }
+
+    @Override
+    public EFriendRequest checkFriendRequest(long idUserFrom, long idUserTo) {
+//        Mặc định là current user là idUserTo
+
+        User userFrom = userRepository.findById(idUserFrom).get();
+        User userTo = userRepository.findById(idUserTo).get();
+
+        Friend friend = friendRepository.findByUserToAndUserFrom(userTo,userFrom);
+        Friend friend1 = friendRepository.findByUserToAndUserFrom(userFrom,userTo);
+
+        if (friend!=null){
+            if (friend.getStatus() == EFriendStatus.FRIEND){
+                System.out.println("DA LA BAN BE");
+                return EFriendRequest.FRIEND;
+            }
+            else{
+                if (idUserTo == friend.getUserFrom().getId()){
+                    System.out.println("BAN LA NGUOI GUI LOI MOI");
+                    return EFriendRequest.SEND;
+                }
+                else{
+                    System.out.println("BAN DUOC NHAN LOI MOI KET BAN");
+                    return EFriendRequest.RECEIVE;
+                }
+            }
+        }
+
+        if (friend1!=null){
+            if (friend1.getStatus() == EFriendStatus.FRIEND){
+                System.out.println("DA LA BAN BE");
+                return EFriendRequest.FRIEND;
+            }
+            else{
+                if (idUserFrom == friend1.getUserFrom().getId()){
+                    System.out.println("BAN DUOC NHAN LOI MOI KET BAN");
+                    return EFriendRequest.RECEIVE;
+                }
+                else{
+                    System.out.println("BAN LA NGUOI GUI LOI MOI");
+                    return EFriendRequest.SEND;
+                }
+            }
+        }
+        else{
+            System.out.println("CHUA LA GI CA");
+
+        }
+
+
+
+        return EFriendRequest.NONE;
     }
 }

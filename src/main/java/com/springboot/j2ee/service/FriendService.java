@@ -1,6 +1,8 @@
 package com.springboot.j2ee.service;
 
 import com.springboot.j2ee.entity.Friend;
+import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.enums.EFriendRequest;
 import jdk.jfr.Frequency;
 
 import java.util.List;
@@ -17,5 +19,8 @@ public interface FriendService {
 //    remove khoi table
     Friend declineFriendRequest(long idUserFrom,long idUserTo);
 //    Tim kiem ban
+
+    EFriendRequest checkFriendRequest(long idUserFrom, long idUserTo);
+
 
 }

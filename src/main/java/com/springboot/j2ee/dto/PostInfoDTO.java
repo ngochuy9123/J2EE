@@ -23,7 +23,8 @@ public class PostInfoDTO {
     private Timestamp created_at;
     private List<CommentDetailDTO> lstComment;
     private long numLikes;
+    private boolean liked;
 
-
+    public String createAtFormat;
 
 }

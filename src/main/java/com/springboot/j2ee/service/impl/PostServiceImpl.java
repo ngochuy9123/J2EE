@@ -1,12 +1,11 @@
 package com.springboot.j2ee.service.impl;
 
 import com.springboot.j2ee.dto.CommentDetailDTO;
+import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostInfoDTO;
 import com.springboot.j2ee.dto.UserDTO;
-import com.springboot.j2ee.entity.Comment;
-import com.springboot.j2ee.entity.Friend;
-import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.entity.*;
+import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.enums.EPostVisibility;
 import com.springboot.j2ee.repository.PostRepository;
 import com.springboot.j2ee.repository.UserRepository;
@@ -46,42 +45,51 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAllPost(Long idCurrentUser) {
+//        lấy danh sách ban be
         List<Friend> lstFriend = friendService.displayListFriend(idCurrentUser);
+
+//        Lay ra danh sach id cua ban be
         List<Long> lstIdFriend = new ArrayList<>();
-        User user = userRepository.findById(idCurrentUser).get();
-
-        for (Friend f:lstFriend) {
-             if (!Objects.equals(f.getUserTo().getId(), idCurrentUser)){
-                 lstIdFriend.add(f.getUserTo().getId());
-             }else{
-                 lstIdFriend.add(f.getUserFrom().getId());
-             }
-
+        for (Friend f : lstFriend) {
+            if (!Objects.equals(f.getUserTo().getId(), idCurrentUser)) {
+                lstIdFriend.add(f.getUserTo().getId());
+            } else {
+                lstIdFriend.add(f.getUserFrom().getId());
+            }
         }
-        List<Post> lstPostFriend = new ArrayList<>();
-        for (Long idUser:lstIdFriend
-             ) {
+//      Danh sach bai post duoc hien thi
+        List<Post> postList = new ArrayList<>();
+//        Them nhung bai post la ban be
+        for (Long idUser : lstIdFriend) {
             User user1 = userRepository.findById(idUser).get();
-
-            List<Post> lsTemp = postRepository.findByUserAndVisibleOrderByCreatedAtDesc(user1, EPostVisibility.FRIENDS);
-            lstPostFriend.addAll(lsTemp);
+            List<Post> lsTemp = postRepository.getListUserPostByVisible(user1.getId(), 1, "");
+            postList.addAll(lsTemp);
         }
-//        System.out.println(lstPostFriend.size());
-//        for (Post p:lstPostFriend
-//             ) {
-//            System.out.println(p.getContent());
-//        }
-        List<Post> lstPostPublic = postRepository.findByVisibleOrderByCreatedAtDesc(EPostVisibility.PUBLIC);
-        lstPostPublic.addAll(lstPostFriend);
-        lstPostPublic.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+//      Them nhugn bai post ở chế độ công khai
+        postList.addAll(postRepository.getAllPublicPostOtherUser(idCurrentUser, ""));
 
-        List<Post> lstPostCurrentUser = postRepository.findByUserOrderByCreatedAtDesc(user);
-        lstPostPublic.addAll(lstPostCurrentUser);
+//        Lay nguoi dung hien tai đang đăng nhập
+        User user = userRepository.findById(idCurrentUser).get();
+        postList.addAll(postRepository.getAllPostByUserId(user.getId()));
 
-        lstPostPublic.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+//        Sap xep theo thoi gian tao roi toi Id
+        postList.sort(Comparator.comparing(Post::getId).reversed());
+        postList.sort(Comparator.comparing(Post::getCreatedAt).reversed());
 
-        return lstPostPublic;
+        return postList;
     }
+
+    @Override
+    public List<Post> getAllPostByIdUserAndVisible(Long idUser,EPostVisibility ePostVisibility) {
+        User user = userRepository.findById(idUser).get();
+        return postRepository.findByUserAndVisibleOrderByCreatedAtDesc(user,ePostVisibility);
+    }
+
+    @Override
+    public List<Post> getAllPostHome(Long id) {
+        return null;
+    }
+
 
     @Override
     public List<Post> getPostByIdUser(Long id) {
@@ -96,12 +104,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostInfoDTO getOnePost(Long id) {
-        List<Comment> lstCmt = commentService.findCommentByPost(id);
+    public PostInfoDTO getOnePost(Long id, Long idUser) {
         PostInfoDTO postInfoDTO = new PostInfoDTO();
+        Post post = postRepository.findById(id).get();
+
+//       Get Da like hay chua like
+        LikeDTO likeDTO = new LikeDTO();
+        likeDTO.setIdUser(idUser);
+        likeDTO.setIdPost(id);
+        Like like = likeService.findLike(likeDTO);
+        if (like != null) {
+            postInfoDTO.setLiked(true);
+        } else {
+            postInfoDTO.setLiked(false);
+        }
+
+
+//       List Comment
+        List<Comment> lstCmt = commentService.getCommentByPost(id);
+
         List<CommentDetailDTO> lstCommentDetailDTO = new ArrayList<>();
-        for (Comment cmt:lstCmt) {
-            CommentDetailDTO commentDetailDTO =new CommentDetailDTO();
+        for (Comment cmt : lstCmt) {
+            CommentDetailDTO commentDetailDTO = new CommentDetailDTO();
             commentDetailDTO.setContentComment(cmt.getContent());
             commentDetailDTO.setCreate_at(cmt.getCreatedAt());
             commentDetailDTO.setAvatar(cmt.getUser().getAvatar());
@@ -113,28 +137,91 @@ public class PostServiceImpl implements PostService {
 
         postInfoDTO.setLstComment(lstCommentDetailDTO);
 
-        Post post = postRepository.findById(id).get();
+
 
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(post.getUser().getEmail());
         userDTO.setAvatar(post.getUser().getAvatar());
         userDTO.setId(post.getUser().getId());
+        userDTO.setUsername(post.getUser().getUsername());
 
         postInfoDTO.setUser(userDTO);
         postInfoDTO.setContent(post.getContent());
         postInfoDTO.setId(post.getId());
         postInfoDTO.setNumLikes(likeService.getAllLikeByPostId(post));
         postInfoDTO.setCreated_at(post.getCreatedAt());
+        postInfoDTO.createAtFormat = post.getCreatedFormat();
 
-        if (post.getImageUrl() == null){
+        if (post.getImageUrl() == null) {
             postInfoDTO.setImage("");
-        }
-        else{
+        } else {
             postInfoDTO.setImage(post.getImageUrl());
         }
 
 
         return postInfoDTO;
+    }
+
+    @Override
+    public List<Post> getAllPostFilter(Long idCurrentUser, String filter) {
+        //        lấy danh sách ban be
+        List<Friend> lstFriend = friendService.displayListFriend(idCurrentUser);
+
+//        Lay ra danh sach id cua ban be
+        List<Long> lstIdFriend = new ArrayList<>();
+        for (Friend f : lstFriend) {
+            if (!Objects.equals(f.getUserTo().getId(), idCurrentUser)) {
+                lstIdFriend.add(f.getUserTo().getId());
+            } else {
+                lstIdFriend.add(f.getUserFrom().getId());
+            }
+        }
+//      Danh sach bai post duoc hien thi
+        List<Post> postList = new ArrayList<>();
+//        Them nhung bai post la ban be
+        for (Long idUser : lstIdFriend) {
+            User user1 = userRepository.findById(idUser).get();
+            List<Post> lsTemp = postRepository.getListUserPostByVisible(user1.getId(), 1, filter);
+            postList.addAll(lsTemp);
+        }
+//      Them nhugn bai post ở chế độ công khai
+        postList.addAll(postRepository.getAllPublicPostOtherUser(idCurrentUser, filter));
+
+
+//        Sap xep theo thoi gian tao roi toi Id
+        postList.sort(Comparator.comparing(Post::getId).reversed());
+        postList.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+
+        return postList;
+    }
+
+    @Override
+    public List<Post> getAllPostForProfile(Long idUser, Long idCurrentUser) {
+
+        if (!Objects.equals(idCurrentUser, idUser)){
+//            Xac dinh xem co phai la ban be hay khong
+
+            EFriendRequest  eFriendRequest = friendService.checkFriendRequest(idUser,idCurrentUser);
+//            Neu la ban be thi lay tat cac bai post o che do friend va public
+            if (eFriendRequest == EFriendRequest.FRIEND){
+                List<Post> lstFriendPost = getAllPostByIdUserAndVisible(idUser,EPostVisibility.FRIENDS);
+                List<Post> lstPublicPost = getAllPostByIdUserAndVisible(idUser,EPostVisibility.PUBLIC);
+                lstFriendPost.addAll(lstPublicPost);
+//                Sap xep bai post
+                lstFriendPost.sort(Comparator.comparing(Post::getId).reversed());
+                lstFriendPost.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+                return lstFriendPost;
+            }
+//            Neu khong thi chi lay bai post o che do public
+            else{
+                return getAllPostByIdUserAndVisible(idUser,EPostVisibility.PUBLIC);
+            }
+
+        }
+        else{
+            return getPostByIdUser(idUser);
+        }
+
     }
 
 

@@ -1,3 +1,85 @@
+// Search
+async function searchFriend() {
+  var inputElement = document.querySelector('.search input');
+  var userInput = inputElement.value;
+
+  var ignoreClickOnMeElement = document.querySelector(".search");
+
+  document.addEventListener('click', function (event) {
+    var isClickInsideElement = ignoreClickOnMeElement.contains(event.target);
+    if (!isClickInsideElement) {
+      document.getElementById("fetch-data-search").style.display = "none";
+    } else {
+      processChange();
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  });
+
+  let data = new FormData
+  data.append("contentSearch", userInput)
+
+  const resp1 = await fetch("/searchUser",
+      {
+        method: "POST",
+        body: data
+      })
+  if (resp1.ok) {
+    let userList = await resp1.json();
+    let strHTML = "";
+
+
+    if (!userInput) {
+      document.getElementById("fetch-data-search").innerHTML = "";
+      document.getElementById("fetch-data-search").style.display = "none";
+    } else {
+      userList.forEach(item => {
+        strHTML += `
+      <li>
+                <a class="dropdown-item" href="profile?id=${item.id}">
+              
+                <div class="user-search">
+                  <img
+                    src="${item.avatar}"
+                    alt=""
+                  >
+                  <div class="name-search">
+                    ${item.lastName} ${item.firstName}
+
+                    <span class="location-search">${item.email}</span>
+                  </div>
+                  
+                  <i class="fa-solid fa-xmark time-search"></i>
+                </div>
+                </a>
+              </li>`;
+      });
+      console.log(userList);
+      if (!strHTML) {
+        strHTML = `<li>
+<div class="alart alert-success text-ceter">Không có người dùng nào!</div>
+</li>`;
+      }
+      document.getElementById("fetch-data-search").innerHTML = strHTML;
+      document.getElementById("fetch-data-search").style.display = "block";
+    }
+  } else {
+    console.error("Lỗi khi truy vấn danh sách người dùng");
+  }
+}
+
+
+function debounce(func, timeout = 500) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+
+const processChange = debounce(() => searchFriend());
+
 // document.addEventListener("click", function (event) {
 //   // Hide the tooltip when clicking outside the trigger element
 //   if (event.target !== triggerElement) {
@@ -55,4 +137,24 @@ async function declineFriendRequest(id_user) {
   const data1 = await resp.text();
   console.log(data1)
 
+}
+
+
+async function acceptFriendRequest(button) {
+  let inputValue = button.previousElementSibling.value;
+  let data = new FormData
+  data.append("userToId",inputValue)
+
+  const resp = await fetch("/acceptFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  let status = resp.status
+
+  const data1 = await resp.text();
+  console.log(data1)
+  if (status === 200){
+    location.reload()
+  }
 }

@@ -40,16 +40,15 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public void disLike(Long id) {
+    public void disLike(Like like) {
 
-        likeRepository.deleteById(id);
+        likeRepository.deleteById(like.getId());
 
     }
 
     @Override
     public Like findLike(LikeDTO likeDTO) {
         Post post = postRepository.findById(likeDTO.getIdPost()).get();
-
         User user = userRepository.findById(likeDTO.getIdUser()).get();
         return likeRepository.findByPostEmoteAndUserEmote(post,user);
     }

@@ -43,6 +43,8 @@ public class UserServiceImpl implements UserService {
                 ,userDTO.getEmail(),passwordEncoder.encode( userDTO.getPassword()),userDTO.getPhone(),"User",timestamp,timestamp);
         user.setAvatar(userDTO.getAvatar());
         user.setBackground(userDTO.getBackground());
+        user.setUsername(userDTO.getUsername());
+        user.setOtpConfirm(false);
         generateOTP(user);
         return userRepository.save(user);
     }
@@ -58,12 +60,15 @@ public class UserServiceImpl implements UserService {
     public void clearOTP(User user){
         user.setOtp(null);
         user.setOtpRequestTime(null);
+        user.setOtpConfirm(true);
         userRepository.save(user);
     }
 
     @Override
     public Boolean checkOTP(String email, String otp) {
         User user = userRepository.findByEmail(email);
+//        kiem tra OTP chinh xac va qua thoi gian hay chua
+//        Neu qua thoi gian thi gui lai
         if (user.getOtp().equals(otp)){
 
             if (user.isOTPRequired()){

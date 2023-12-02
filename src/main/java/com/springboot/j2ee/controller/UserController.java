@@ -2,12 +2,11 @@ package com.springboot.j2ee.controller;
 
 
 import com.springboot.j2ee.config.CustomUser;
+import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostDTO;
 import com.springboot.j2ee.dto.UserDTO;
-import com.springboot.j2ee.entity.Friend;
-import com.springboot.j2ee.entity.Like;
-import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.entity.*;
+import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.service.*;
 import com.springboot.j2ee.utils.FileUtils;
 import jakarta.servlet.http.HttpSession;
@@ -39,9 +38,10 @@ public class UserController {
     private final PostService postService;
     private final FriendService friendService;
     private final LikeService likeService;
+    private final CommentService commentService;
+    private final UserInfoService userInfoService;
+    private final AnnounceService announceService;
 
-    public static String email_md ;
-//    public static User user_pub;
 
     @Autowired
     private FileUtils fileUtils;
@@ -53,28 +53,49 @@ public class UserController {
     @GetMapping("home")
     public String showHome(@AuthenticationPrincipal CustomUser principal, Authentication auth, Model model){
         String userName = principal.getUsername();
-//        email_md = userName;
-//        user_pub = userService.getInfo(userName);
+
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
-
         List<Post> lstPost = postService.getAllPost(principal.getUser().getId());
-        HashMap<Long,Integer> hashLike = new HashMap<Long,Integer>();
 
-        for (Post p: lstPost) {
-            List<Like> lstLike = likeService.getAllEmoteByPostID(p);
-            if (lstLike.isEmpty()){
-                hashLike.put(p.getId(),0);
+        HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
+        HashMap<Long,Boolean> hashLiked = new HashMap<>();
+
+        HashMap<Long,List<Comment>> hashComment = new HashMap<>();
+        HashMap<Long,Integer> hashSlgComment = new HashMap<>();
+
+        for(Post p:lstPost){
+            long slgLike = likeService.getAllLikeByPostId(p);
+            hashLike.put(p.getId(),slgLike);
+
+            LikeDTO likeDTO = new LikeDTO();
+            likeDTO.setIdUser(principal.getUser().getId());
+            likeDTO.setIdPost(p.getId());
+            Like like = likeService.findLike(likeDTO);
+            if (like != null){
+                hashLiked.put(p.getId(),true);
             }
-            else {
-                hashLike.put(p.getId(),lstLike.size());
+            else{
+                hashLiked.put(p.getId(),false);
             }
 
+            List<Comment> lstComments = commentService.findCommentByPost(p.getId());
+            hashComment.put(p.getId(), lstComments);
+            hashSlgComment.put(p.getId(),lstComments.size());
         }
 
-        model.addAttribute("posts",lstPost);
-        model.addAttribute("user",principal.getUser());
+        List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
+
+        model.addAttribute("lstAnnounce",lstAnnounce);
+        model.addAttribute("hashSlgComment",hashSlgComment);
+        model.addAttribute("hashComment",hashComment);
+
+        model.addAttribute("hashSlgLike",hashLike);
+        model.addAttribute("hashLiked",hashLiked);
+
+        model.addAttribute("user",userService.getUserById(principal.getUser().getId()));
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
+        model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
         return "index";
     }
 
@@ -85,13 +106,16 @@ public class UserController {
 //    }
 
     @GetMapping("signin")
-    public String showSignInForm(){
+    public String showSignInForm(HttpSession session){
+        session.removeAttribute("msgReg");
+        session.removeAttribute("email");
         return "login";
     }
     @GetMapping("register")
     public String showSignUpForm(){
         return "register";
     }
+
 
     @PostMapping("register")
     public String registerUserAccount(@Valid @ModelAttribute("user") UserDTO registrationDTO, HttpSession session, BindingResult bindingResult){
@@ -108,17 +132,30 @@ public class UserController {
 
             registrationDTO.setAvatar("https://cdn.alongwalk.info/vn/wp-content/uploads/2022/10/14054104/image-100-y-tuong-avatar-cute-doc-dao-an-tuong-nhat-cho-ban-166567566414594.jpg");
             registrationDTO.setBackground("https://c4.wallpaperflare.com/wallpaper/321/512/923/tom-and-jerry-heroes-cartoons-desktop-hd-wallpaper-for-mobile-phones-tablet-and-pc-1920%C3%971200-wallpaper-thumb.jpg");
+            registrationDTO.setUsername(registrationDTO.getFirstName()+" "+registrationDTO.getLastName());
             User u = userService.save(registrationDTO);
             if (u==null){
                 session.setAttribute("msgReg","DANG KI THAT BAI");
             }
             else{
+
+                userInfoService.addInfoUser(u);
+
                 session.setAttribute("msgReg","DANG KI THANH CONG");
                 session.setAttribute("email",registrationDTO.getEmail());
+                return "redirect:/verifyotp";
             }
         }
         return "redirect:/register";
     }
+
+
+
+    @GetMapping("verifyotp")
+    public String verifyOTP(){
+        return "VerifyOtp";
+    }
+
 
     @PostMapping("confrimOTP")
     public String confirmOTP(@RequestParam String otp, @RequestParam String email, Model model,HttpSession session){
@@ -132,6 +169,24 @@ public class UserController {
 
         return "redirect:/register";
     }
+
+    @GetMapping("forgotPass")
+    public String showForgotPass(){
+        return "forgotpassword";
+    }
+
+    @PostMapping("forgotPass")
+    public String forgotPass(@RequestParam String email,Model model,HttpSession session){
+        boolean f = userService.checkEmail(email);
+        if (f){
+            return "redirect:/VerifyOtp";
+        }
+        else{
+            System.out.println("Email khong ton tai trong he thong");
+        }
+        return null;
+    }
+
 
     @PostMapping("create_post")
     public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
@@ -148,6 +203,9 @@ public class UserController {
     }
 
 
+
+
+
     @GetMapping("profile")
     public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model,@AuthenticationPrincipal CustomUser principal){
         if (id == -1){
@@ -159,15 +217,70 @@ public class UserController {
         }
 
         if (isCurrentUser){
+
             User user = userService.getInfoById(principal.getUser().getId());
             model.addAttribute("user",user);
+            model.addAttribute("infoUser", userInfoService.getInfoByIdUser(user));
         }
         else{
+            //            xử lý đã gửi lời mời kết bạn chưa nếu rồi thì có thể xóa lời mời
+//            Xử lý có ai gửi lời mời không nếu có thì có thể hủy lời mời
+//            Kiểm tra đã là bạn bè chưa
             User user = userService.getInfoById(id);
             model.addAttribute("user",user);
+            model.addAttribute("infoUser", userInfoService.getInfoByIdUser(user));
         }
+
+        if (!isCurrentUser){
+            EFriendRequest eFriendRequest = friendService.checkFriendRequest(id,principal.getUser().getId());
+            String friendRequest = eFriendRequest.toString();
+            model.addAttribute("friend_request", friendRequest);
+        }
+
+        List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
+
+        HashMap<Long,Long> hashLike = new HashMap<Long, Long>();
+        HashMap<Long,Boolean> hashLiked = new HashMap<>();
+
+        HashMap<Long,List<Comment>> hashComment = new HashMap<>();
+        HashMap<Long,Integer> hashSlgComment = new HashMap<>();
+
+        List<Post> lstPost = postService.getAllPostForProfile(id,principal.getUser().getId());
+        for(Post p:lstPost){
+            long slgLike = likeService.getAllLikeByPostId(p);
+            hashLike.put(p.getId(),slgLike);
+
+            LikeDTO likeDTO = new LikeDTO();
+            likeDTO.setIdUser(principal.getUser().getId());
+            likeDTO.setIdPost(p.getId());
+            Like like = likeService.findLike(likeDTO);
+            if (like != null){
+                hashLiked.put(p.getId(),true);
+            }
+            else{
+                hashLiked.put(p.getId(),false);
+            }
+
+            List<Comment> lstComments = commentService.getCommentByPost(p.getId());
+            hashComment.put(p.getId(), lstComments);
+            hashSlgComment.put(p.getId(),lstComments.size());
+
+
+        }
+
+        List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
+
+        model.addAttribute("lstAnnounce",lstAnnounce);
+
+        model.addAttribute("hashSlgComment",hashSlgComment);
+        model.addAttribute("hashComment",hashComment);
+        model.addAttribute("currentUser",userService.getUserById(principal.getUser().getId()));
+        model.addAttribute("hashSlgLike",hashLike);
+        model.addAttribute("hashLiked",hashLiked);
         model.addAttribute("isCurrentUser", isCurrentUser);
-        model.addAttribute("lsPost",postService.getPostByIdUser(id));
+        model.addAttribute("lsPost",lstPost);
+        model.addAttribute("lst_friend_request",list_friend_request);
+
         return "profile";
     }
 

@@ -15,5 +15,4 @@ public class CommentDetailDTO {
     private String avatar;
     private String contentComment;
     private Timestamp create_at;
-
 }

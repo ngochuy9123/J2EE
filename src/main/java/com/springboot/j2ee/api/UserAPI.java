@@ -79,20 +79,19 @@ public class UserAPI {
         return listUser;
     }
 
-
-
-    @GetMapping("/api/user")
-    public ResponseEntity<List<UserDTO>> getUser(@DestinationVariable String email, @DestinationVariable int limit) {
-       var users = userService.getUserByEmailLimitBy(email, limit);
-       var userDTOs = users.stream().map(UserDTO::new).toList();
-       return new ResponseEntity<>(userDTOs, HttpStatus.OK);
+    @PostMapping("findUserById")
+    @ResponseBody
+    public UserDTO searchUser(@RequestParam(name = "user_id") Long user_id,@AuthenticationPrincipal CustomUser principal){
+        User user = userService.getUserById(user_id);
+        UserDTO userDTO = new UserDTO(user);
+        return userDTO;
     }
 
-    @GetMapping("/api/userById")
-    public ResponseEntity<UserDTO> getUser(@DestinationVariable Long id) {
-        var user = userService.getUserById(id);
-        var userDTO = new UserDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    @PostMapping("getInfoUserLogin")
+    @ResponseBody
+    public UserDTO searchUser(@AuthenticationPrincipal CustomUser principal){
+        User user = principal.getUser();
+        UserDTO userDTO = new UserDTO(user);
+        return userDTO;
     }
-
 }
