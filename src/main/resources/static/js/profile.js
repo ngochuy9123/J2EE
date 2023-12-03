@@ -1,3 +1,43 @@
+const id = document.getElementById("userIdDiv").innerText;
+const uuid = document.getElementById("UUIDDiv").innerText;
+
+const host = new URL(location)
+
+const stompClient = new StompJs.Client({
+  brokerURL: `ws://${host.host}/ws/general`
+});
+
+stompClient.onConnect = (frame) => {
+  console.log('Connected: ' + frame);
+  stompClient.subscribe(`/topic/general/${uuid}`, async (message) => {
+    await handleMessage(message);
+  });
+
+};
+
+stompClient.onWebSocketError = (error) => {
+  console.error('Error with websocket', error);
+};
+
+stompClient.onStompError = (frame) => {
+  console.error('Broker reported error: ' + frame.headers['message']);
+  console.error('Additional details: ' + frame.body);
+};
+
+
+const handleMessage = async (message) => {
+  const resp = JSON.parse(message.body)
+  const data = resp["data"]
+
+  console.log(resp)
+
+  switch (resp["type"]) {
+    case "COMMENT":
+      await handleComment(data['post_id'])
+      break;
+  }
+}
+stompClient.activate()
 
 // Search
 async function searchFriend() {
@@ -301,9 +341,11 @@ async function dislikePost(postId) {
 }
 
 
-async function testCmt(button) {
-  let postId = button.getAttribute("data-post-id");
-  let commentInput = document.getElementById('cmtm'+postId)
+
+const postComment = async (postId) => {
+  let commentInput = document.getElementById('cmtm' + postId)
+
+
   let more = true
   if (commentInput == null){
     more = false
@@ -315,16 +357,28 @@ async function testCmt(button) {
   const commentText = commentInput.value.trim();
   // Lấy giá trị từ các trường input
   console.log(commentText)
-  // Dữ liệu cần gửi
-  let data = {
-    id: postId,
-    content: commentText
-  };
 
   //  them comment
-  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
-  let status = resp.status;
-  const data1 = await resp.text();
+  if (commentText !== "") {
+    const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
+    let status = resp.status;
+    const data1 = await resp.text();
+  }
+}
+
+
+const handleComment = async (postId) => {
+  let commentInput = document.getElementById('cmtm' + postId)
+
+
+  let more = true
+  if (commentInput == null){
+    more = false
+    commentInput= document.getElementById('cmt'+postId)
+  }
+
+
+
 
 
 
@@ -334,6 +388,7 @@ async function testCmt(button) {
   let username = document.getElementById("username").value
   const d = new Date();
   let time = d.getDate();
+
 
   let comments = await getListComment(postId);
   console.log(comments)
@@ -347,7 +402,6 @@ async function testCmt(button) {
 
   let slgMaxCmt = 2
   if (more === true){
-    console.log("trong see more")
     tempIdSlgComment = "idSlgMoreComment"+postId
     let slgMoreComment = document.getElementById(tempIdSlgComment)
     slgMoreComment.innerHTML = comments.length+" Comments"
@@ -382,7 +436,7 @@ async function testCmt(button) {
   for (let i = 0; i < comments.length; i++) {
     let cmt = comments[i];
     if (i < slgMaxCmt ) { // Check if the index is less than 2
-        htmlCmt += `
+      htmlCmt += `
         <div class="comment">
           <img src="${cmt.user_avatar}" alt="">
           <div class="info">
@@ -401,9 +455,18 @@ async function testCmt(button) {
     htmlSeeMore.innerHTML = `<a onclick="seeMorePost(${postId})" id="seeMore${postId}">See More</a>`
   }
 
+
   lstComment.innerHTML = htmlCmt
 
   commentInput.value = "";
+}
+
+
+
+
+async function testCmt(button) {
+  let postId = button.getAttribute("data-post-id");
+  await postComment(postId)
 }
 
 

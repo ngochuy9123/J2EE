@@ -36,5 +36,10 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByPostOrderByCreatedAtDesc(post);
     }
 
+    @Override
+    public Comment getCommentById(Long commentId) {
+        return commentRepository.findCommentById(commentId);
+    }
+
 
 }

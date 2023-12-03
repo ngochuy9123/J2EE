@@ -6,11 +6,14 @@ import com.github.shyiko.mysql.binlog.event.TableMapEventData;
 import com.github.shyiko.mysql.binlog.event.UpdateRowsEventData;
 import com.github.shyiko.mysql.binlog.event.WriteRowsEventData;
 import com.springboot.j2ee.dto.GenericResponse;
+import com.springboot.j2ee.entity.Comment;
 import com.springboot.j2ee.entity.Message;
 import com.springboot.j2ee.entity.Room;
 import com.springboot.j2ee.entity.User;
+import com.springboot.j2ee.repository.CommentRepository;
 import com.springboot.j2ee.repository.MessageRepository;
 import com.springboot.j2ee.repository.RoomRepository;
+import com.springboot.j2ee.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +34,9 @@ public class CDCBeans extends Thread{
     RoomRepository roomRepository;
 
     @Autowired
+    CommentService commentService;
+
+    @Autowired
     MessageRepository messageRepository;
 
     BinaryLogClient client = new BinaryLogClient("localhost", 3306, "root", "gg");
@@ -49,9 +55,40 @@ public class CDCBeans extends Thread{
                     >
             > userRoomSubscribers = new HashMap<>();
 
+    private final HashMap<UUID,Consumer<Comment>> commentSubscribers
+            = new HashMap<>() {
+    };
+
+
+
+
     public CDCBeans() {
 
     }
+
+    public void subscribeToWriteComment(UUID uuid, Consumer<Comment> consumer) {
+        commentSubscribers.putIfAbsent(uuid, consumer);
+    }
+
+    public void handleWriteComment(WriteRowsEventData eventData) throws JsonProcessingException {
+        for (var data: eventData.getRows()) {
+            var id = Long.valueOf(data[0].toString());
+            invokeWriteComment(id);
+
+        }
+    }
+
+    private void invokeWriteComment(Long commentId) {
+
+        var comment = commentService.getCommentById(commentId);
+
+        //FIXME: Gửi tổng :v
+        for (var id : commentSubscribers.keySet()) {
+            var consumer = commentSubscribers.get(id);
+            consumer.accept(comment);
+        }
+    }
+
 
     public void subscribeToWriteMessage(Long userId, UUID uuid,Consumer<Message> consumer) {
         var eventHandler = messageSubscribers.get(userId);
@@ -78,7 +115,9 @@ public class CDCBeans extends Thread{
         if(eventData.getTableId() == tableMap.getOrDefault("message", Long.valueOf("-1"))) {
             handleWriteMessage(eventData);
         }
-
+        if(eventData.getTableId() == tableMap.getOrDefault("comment", Long.valueOf("-1"))) {
+            handleWriteComment(eventData);
+        }
 
     }
 

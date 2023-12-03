@@ -12,4 +12,6 @@ public interface CommentService {
 
     List<Comment> getCommentByPost(Long idPost);
 
+    Comment getCommentById(Long commentId);
+
 }

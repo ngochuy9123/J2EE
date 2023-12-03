@@ -36,10 +36,10 @@
 
 const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
-let selectedId = 0;
 
 const host = new URL(location)
 
+let selectedId = 0;
 
 const stompClient = new StompJs.Client({
     brokerURL: `ws://${host.host}/ws/chat`

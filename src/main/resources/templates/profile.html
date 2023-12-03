@@ -25,17 +25,24 @@
             crossorigin="anonymous"
     />
     <title>Profile</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function formatTime(time){
+            console.log(time)
+            return moment(time).fromNow();
+        }
+        /*]]>*/
+    </script>
 </head>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    function formatTime(time){
-        console.log(time)
-        return  moment(time).fromNow();
-    }
-    /*]]>*/
-</script>
+<div style="display: none" id="userIdDiv" th:text="${principal.getUser().getId()}"></div>
+<div style="display: none" id="UUIDDiv" th:text="${uuid.toString()}"></div>
+
 <!-- NAVBAR -->
 <div class="navbar">
     <div class="left">

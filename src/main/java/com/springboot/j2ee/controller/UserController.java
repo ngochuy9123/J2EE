@@ -1,10 +1,9 @@
 package com.springboot.j2ee.controller;
 
 
+import com.springboot.j2ee.beans.CDCBeans;
 import com.springboot.j2ee.config.CustomUser;
-import com.springboot.j2ee.dto.LikeDTO;
-import com.springboot.j2ee.dto.PostDTO;
-import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.dto.*;
 import com.springboot.j2ee.entity.*;
 import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.service.*;
@@ -13,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -28,26 +29,48 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 
 @Controller
 @AllArgsConstructor
 public class UserController {
-
+    @Autowired
     private final UserService userService;
+
+    @Autowired
     private final EmailService emailService;
+
+    @Autowired
     private final PostService postService;
+
+    @Autowired
     private final FriendService friendService;
+
+    @Autowired
     private final LikeService likeService;
+
+    @Autowired
     private final CommentService commentService;
+
+    @Autowired
     private final UserInfoService userInfoService;
+
+    @Autowired
     private final AnnounceService announceService;
 
 
     @Autowired
     private FileUtils fileUtils;
 
-    public static final String pathImg = "/uploads/";
+    @Autowired
+    @Qualifier("cdcBeans")
+    private CDCBeans cdcBeans;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    private static final String messageSocket = "/topic/general/";
 
 
     @GetMapping("home")
@@ -281,8 +304,29 @@ public class UserController {
         model.addAttribute("lsPost",lstPost);
         model.addAttribute("lst_friend_request",list_friend_request);
 
+
+        var userName = principal.getUsername();
+        UUID uuid = UUID.randomUUID();
+//        var id = principal.getUser().getId();
+
+        cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+
+        System.out.println("Current Logged in User is: " + userName);
+        model.addAttribute("principal", principal);
+        model.addAttribute("uuid", uuid);
+
+
         return "profile";
     }
+
+
+    private void handleComment(Comment comment, UUID uuid) {
+        var dto = new CommentDTO(comment);
+        var response = new GenericResponse<>("COMMENT", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+
+
 
 
 }
