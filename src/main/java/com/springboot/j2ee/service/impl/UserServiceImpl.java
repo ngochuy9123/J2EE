@@ -90,6 +90,11 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public User forgetPass(String email) {
+        return null;
+    }
+
     public static String taoChuoiNgauNhien(int doDai) {
         String kyTu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder chuoiNgauNhien = new StringBuilder();

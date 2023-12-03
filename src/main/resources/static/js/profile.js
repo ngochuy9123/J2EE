@@ -284,6 +284,11 @@ async function likePost(postId) {
 
   const data1 = await resp.text();
   console.log(data1)
+
+  if (status === 201){
+    const respAnnounce = await fetch(`/addAnnounceLike?idPost=${postId}`);
+    console.log(respAnnounce.status)
+  }
 }
 
 async function dislikePost(postId) {
@@ -298,6 +303,12 @@ async function dislikePost(postId) {
 
   const data1 = await resp.text();
   console.log(data1)
+
+  if (status === 201){
+    const respAnnounce = await fetch(`/removeAnnounceLike?idPost=${postId}`);
+    console.log(respAnnounce.status)
+  }
+
 }
 
 
@@ -326,7 +337,10 @@ async function testCmt(button) {
   let status = resp.status;
   const data1 = await resp.text();
 
-
+  if (status === 201){
+    const respAnnounce = await fetch(`/addAnnounceComment?postId=${postId}`);
+    console.log(respAnnounce.status)
+  }
 
 
   let avatar = document.getElementById("avatar").value

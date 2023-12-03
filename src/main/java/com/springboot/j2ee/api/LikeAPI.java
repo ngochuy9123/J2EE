@@ -42,17 +42,17 @@ public class LikeAPI {
         likeService.saveLike(likeDTO);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        Post post = postService.getInfoPost(idPost);
-        AnnounceDTO announceDTO = new AnnounceDTO();
-        announceDTO.setCreat_at(timestamp);
-        announceDTO.setEAnnounceType(EAnnounceType.LIKE);
-        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
-        announceDTO.setIdPost(idPost);
-        announceDTO.setIdUserFrom(principal.getUser().getId());
-        announceDTO.setIdUserTo(post.getUser().getId());
-        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()){
-            announceService.addAnnounce(announceDTO);
-        }
+//        Post post = postService.getInfoPost(idPost);
+//        AnnounceDTO announceDTO = new AnnounceDTO();
+//        announceDTO.setCreat_at(timestamp);
+//        announceDTO.setEAnnounceType(EAnnounceType.LIKE);
+//        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
+//        announceDTO.setIdPost(idPost);
+//        announceDTO.setIdUserFrom(principal.getUser().getId());
+//        announceDTO.setIdUserTo(post.getUser().getId());
+//        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()){
+//            announceService.addAnnounce(announceDTO);
+//        }
 
 
         return new ResponseEntity<>("LIke thanh cong", HttpStatus.CREATED);
@@ -67,17 +67,17 @@ public class LikeAPI {
         Like like = likeService.findLike(likeDTO);
         likeDTO.setId(like.getId());
 
-        Post post = postService.getInfoPost(idPost);
-        AnnounceDTO announceDTO = new AnnounceDTO();
-        announceDTO.setCreat_at(timestamp);
-        announceDTO.setEAnnounceType(EAnnounceType.LIKE);
-        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
-        announceDTO.setIdPost(idPost);
-        announceDTO.setIdUserFrom(principal.getUser().getId());
-        announceDTO.setIdUserTo(post.getUser().getId());
-        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()) {
-            announceService.removeAnnounce(announceDTO);
-        }
+//        Post post = postService.getInfoPost(idPost);
+//        AnnounceDTO announceDTO = new AnnounceDTO();
+//        announceDTO.setCreat_at(timestamp);
+//        announceDTO.setEAnnounceType(EAnnounceType.LIKE);
+//        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
+//        announceDTO.setIdPost(idPost);
+//        announceDTO.setIdUserFrom(principal.getUser().getId());
+//        announceDTO.setIdUserTo(post.getUser().getId());
+//        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()) {
+//            announceService.removeAnnounce(announceDTO);
+//        }
 
         likeService.disLike(like);
         return new ResponseEntity<>("Bo Like thanh cong", HttpStatus.CREATED);

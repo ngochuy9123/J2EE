@@ -451,6 +451,10 @@ async function getInfoUserLogin() {
 
         let status = resp.status;
 
+        if (status === 201){
+            const respAnnounce = await fetch(`/addAnnounceComment?postId=${postId}`);
+            console.log(respAnnounce.status)
+        }
 
         const data1 = await resp.text();
 

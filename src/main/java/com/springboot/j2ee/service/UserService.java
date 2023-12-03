@@ -24,4 +24,6 @@ public interface UserService {
 
     Boolean checkOTP(String email,String otp);
 
+    User forgetPass(String email);
+
 }

@@ -52,16 +52,16 @@ public class CommentAPI {
 
 //        Tao thong bao comment
 
-        AnnounceDTO announceDTO = new AnnounceDTO();
-        announceDTO.setCreat_at(timestamp);
-        announceDTO.setEAnnounceType(EAnnounceType.COMMENT);
-        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
-        announceDTO.setIdPost(Long.parseLong(postId));
-        announceDTO.setIdUserFrom(principal.getUser().getId());
-        announceDTO.setIdUserTo(post.getUser().getId());
-        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()){
-            announceService.addAnnounce(announceDTO);
-        }
+//        AnnounceDTO announceDTO = new AnnounceDTO();
+//        announceDTO.setCreat_at(timestamp);
+//        announceDTO.setEAnnounceType(EAnnounceType.COMMENT);
+//        announceDTO.setEAnnounceStatus(EAnnounceStatus.NONE);
+//        announceDTO.setIdPost(Long.parseLong(postId));
+//        announceDTO.setIdUserFrom(principal.getUser().getId());
+//        announceDTO.setIdUserTo(post.getUser().getId());
+//        if (announceDTO.getIdUserTo() != announceDTO.getIdUserFrom()){
+//            announceService.addAnnounce(announceDTO);
+//        }
 
         return new ResponseEntity<>("Them Thanh Cong",HttpStatus.CREATED);
     }
