@@ -39,8 +39,8 @@ public class CDCBeans extends Thread{
     @Autowired
     MessageRepository messageRepository;
 
-    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "root", "gg");
-//    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "root", "huy123");
+//    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "root", "gg");
+    BinaryLogClient client = new BinaryLogClient("localhost", 3306, "root", "huy123");
     final Map<String, Long> tableMap = new HashMap<String, Long>();
 
 
