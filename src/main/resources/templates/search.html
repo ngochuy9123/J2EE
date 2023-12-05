@@ -275,11 +275,8 @@
                             <img th:src="${u.getAvatar()}"
                                  alt=""
                             />
-                            <div><span th:text="${u.getLastName()+' '+u.getFirstName()}"></span></div>
-                            <div class="name-search">
-                                tienhaile488@gmail.com
-
-                                <span class="location-search">Sai Gon</span>
+                            <div><span th:text="${u.getFirstName()+' '+u.getLastName()}"></span></div>
+                            <div class="name-search" th:text="${u.getEmail()}">
                             </div>
                         </div>
                     </div></a>

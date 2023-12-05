@@ -132,25 +132,25 @@
                         </div>
                         <div th:unless="${isCurrentUser}">
                             <!-- Hiển thị giao diện của người dùng khác -->
-                            <input type="text" id="inputWithIdUser"  name="idUserToHidden" th:value="${user.getId()}">
+                            <input type="text" id="inputWithIdUser" style="display: none" name="idUserToHidden" th:value="${user.getId()}">
 
                             <button data-bs-toggle="modal"  th:if="${friend_request == 'NONE'}" onclick="addFriend()"
-                                    class="sendFriendRequestBtn edit-profile">ADD FRIEND
+                                    class="sendFriendRequestBtn edit-profile">Thêm bạn bè
                             </button>
                             <button data-bs-toggle="modal" th:if="${friend_request == 'SEND'}" onclick="declineFriendRequestBody(this)"
-                                    class="sendFriendRequestBtn edit-profile">XÓA LỜI MỜI
+                                    class="sendFriendRequestBtn edit-profile">Xóa lời mời
                             </button>
                             <div style="display: flex ; justify-content: space-between; width: 200px"   >
                             <button data-bs-toggle="modal" th:if="${friend_request == 'RECEIVE'}" onclick="acceptFriendRequest(this)"
-                                    class="sendFriendRequestBtn edit-profile">CHẤP NHẬN
+                                    class="sendFriendRequestBtn edit-profile">Chấp nhận
                             </button>
 
                             <button data-bs-toggle="modal"  th:if="${friend_request == 'RECEIVE'}" onclick="declineFriendRequestBody(this)"
-                                    class="sendFriendRequestBtn edit-profile">DELETE
+                                    class="sendFriendRequestBtn edit-profile">Xóa
                             </button>
                             </div>
                             <button data-bs-toggle="modal"  th:if="${friend_request == 'FRIEND'}" onclick="declineFriendRequestBody(this)"
-                                    class="sendFriendRequestBtn edit-profile">UNFRIEND
+                                    class="sendFriendRequestBtn edit-profile">Xóa bạn bè
                             </button>
 
 
