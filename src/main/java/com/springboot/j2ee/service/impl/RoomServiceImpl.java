@@ -58,6 +58,7 @@ public class RoomServiceImpl implements RoomService {
         }
 
         Room room = new Room();
+        room.setRoomAvatar("https://cdn.alongwalk.info/vn/wp-content/uploads/2022/10/14054104/image-100-y-tuong-avatar-cute-doc-dao-an-tuong-nhat-cho-ban-166567566414594.jpg");
 
         ERoomType roomType;
         if (others.size() == 1) {

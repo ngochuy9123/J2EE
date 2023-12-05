@@ -42,6 +42,7 @@ public class FriendController {
         model.addAttribute("infoUser", userInfoService.getInfoByIdUser(user));
         model.addAttribute("lstAnnounce",lstAnnounce);
         model.addAttribute("lst_friend_request",list_friend_request);
+        model.addAttribute("currentUser",principal.getUser());
         model.addAttribute("idCurrentUser",principal.getUser().getId());
         model.addAttribute("lstFriend",lstFriend);
         model.addAttribute("user",userService.getUserById(principal.getUser().getId()));

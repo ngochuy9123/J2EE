@@ -45,27 +45,8 @@
 <!-- Content -->
 <div class="container-content">
     <!-- LEFT BAR -->
-    <div class="leftBar">
-        <div class="container">
-            <div class="menu">
-                <a class="user" href="profile">
-                    <img
-                            th:src="${user.getAvatar()}"
-                            alt=""
-                    />
-                    <span th:text="${user.getUsername()}  "></span>
-                </a>
-                <div class="item">
-                    <a href="./friend">
-                        <img src="./assets/1.png" alt=""/>
-                        <span>Friends</span>
-                    </a>
-                </div>
+    <div th:replace="fragments/leftbar.html"></div>
 
-            </div>
-
-        </div>
-    </div>
     <!-- OUTLET -->
     <div class="outlet">
         <!-- HOME -->
@@ -164,26 +145,12 @@
                             <div class="input-uppost">
                                 <input
                                         type="text"
-                                        placeholder="Up post"
+                                        placeholder="Đăng bài"
                                         id="openModalInput"
                                 />
                             </div>
                         </div>
-                        <hr class="line"/>
-                        <div class="other-chose">
-                            <div>
-                                <i class="fa-solid fa-video"></i>
-                                <span>Stream</span>
-                            </div>
-                            <div>
-                                <i class="fa-regular fa-image"></i>
-                                <span>Image</span>
-                            </div>
-                            <div>
-                                <i class="fa-regular fa-face-smile"></i>
-                                <span>Icon</span>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

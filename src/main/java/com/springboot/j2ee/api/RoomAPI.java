@@ -49,14 +49,11 @@ public class RoomAPI {
         
         var status = roomService.addRoom(user.getUser(), others);
 //        var status = true;
-        if (status) {
-            return new ResponseEntity<>(
-                    "Added Successfully", HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(
-                    "Input Invalid", HttpStatus.BAD_REQUEST);
-        }
+        return status
+                ? new ResponseEntity<>(
+                "Added Successfully", HttpStatus.OK)
+                : new ResponseEntity<>(
+                "Input Invalid", HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/api/room/{id}")

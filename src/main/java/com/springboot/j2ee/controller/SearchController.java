@@ -124,6 +124,7 @@ public class SearchController {
         model.addAttribute("filter",filter);
         model.addAttribute("users",users);
         model.addAttribute("str_user",str_user);
+        model.addAttribute("currentUser", principal.getUser());
 
         UUID uuid = UUID.randomUUID();
         var uid = principal.getUser().getId();

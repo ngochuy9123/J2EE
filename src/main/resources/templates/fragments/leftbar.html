@@ -1,0 +1,24 @@
+<!-- LEFT BAR -->
+<div class="leftBar">
+    <div class="container">
+        <div class="menu">
+            <div class="user">
+                <a href="profile">
+                    <img
+                            th:src="${currentUser.getAvatar()}"
+                            alt=""
+                    />
+                    <span th:text="${user.getUsername()}"></span>
+                </a>
+            </div>
+            <div class="item">
+                <a href="/friend">
+                    <img src="../assets/1.png" alt=""/>
+                    <span>Friends</span>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>

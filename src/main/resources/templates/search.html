@@ -42,27 +42,8 @@
 <!-- Content -->
 <div class="container-content">
     <!-- LEFT BAR -->
-    <div class="leftBar">
-        <div class="container">
-            <div class="menu">
-                <a class="user" href="profile">
-                    <img
-                            th:src="${user.getAvatar()}"
-                            alt=""
-                    />
-                    <span th:text="${user.getUsername()}  "></span>
-                </a>
-                <div class="item">
-                    <a href="./friend">
-                        <img src="./assets/1.png" alt=""/>
-                        <span>Friends</span>
-                    </a>
-                </div>
+    <div th:replace="fragments/leftbar.html"></div>
 
-            </div>
-
-        </div>
-    </div>
     <!-- OUTLET -->
     <div class="outlet">
         <!-- HOME -->

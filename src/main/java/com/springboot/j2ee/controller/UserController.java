@@ -117,6 +117,7 @@ public class UserController {
         model.addAttribute("hashLiked",hashLiked);
 
         model.addAttribute("user",userService.getUserById(principal.getUser().getId()));
+        model.addAttribute("currentUser", principal.getUser());
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
@@ -169,7 +170,7 @@ public class UserController {
 
         boolean f = userService.checkEmail(registrationDTO.getEmail());
         if (f){
-            session.setAttribute("msgReg","Email Da Ton Tai");
+            session.setAttribute("msgReg","Email đã tồn tại");
         }
         else{
 
@@ -178,13 +179,13 @@ public class UserController {
             registrationDTO.setUsername(registrationDTO.getFirstName()+" "+registrationDTO.getLastName());
             User u = userService.save(registrationDTO);
             if (u==null){
-                session.setAttribute("msgReg","DANG KI THAT BAI");
+                session.setAttribute("msgReg","Đăng ký thất bại");
             }
             else{
 
                 userInfoService.addInfoUser(u);
 
-                session.setAttribute("msgReg","DANG KI THANH CONG");
+                session.setAttribute("msgReg","Đăng ký thành công");
                 session.setAttribute("email",registrationDTO.getEmail());
                 return "redirect:/verifyotp";
             }
@@ -206,7 +207,7 @@ public class UserController {
             session.setAttribute("msgReg","DANG KI THANH CONG");
         }
         else{
-            session.setAttribute("msgReg","Ban da nhap sai OTP hoac da qua thoi gian 5 phut");
+            session.setAttribute("msgReg","OTP không chính xác hoặc đã quá 5 phút");
         }
 
 
@@ -225,7 +226,7 @@ public class UserController {
             return "redirect:/VerifyOtp";
         }
         else{
-            System.out.println("Email khong ton tai trong he thong");
+            System.out.println("Email không tồn tại trong hệ thống");
         }
         return null;
     }
@@ -368,10 +369,6 @@ public class UserController {
         simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
     }
 
-    private void handleFriends(Announce announce, UUID uuid) {
-        var dto = new AnnounceDTO(announce);
-        var response = new GenericResponse<>("NOTIFICATION", dto);
-        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
-    }
+
 
 }

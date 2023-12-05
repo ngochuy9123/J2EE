@@ -232,6 +232,7 @@ const setChatPanel = async (id) => {
     }
 
     const chatHistoryElem = document.getElementById("chatHistory");
+    chatHistoryElem.innerHTML = "";
     html.forEach(n => chatHistoryElem.appendChild(n))
     setMainChatPanel("FALSE")
 
