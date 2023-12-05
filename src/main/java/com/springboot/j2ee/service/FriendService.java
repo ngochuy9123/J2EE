@@ -23,4 +23,7 @@ public interface FriendService {
     EFriendRequest checkFriendRequest(long idUserFrom, long idUserTo);
 
 
+    Friend findFriendById(long id);
+
+
 }

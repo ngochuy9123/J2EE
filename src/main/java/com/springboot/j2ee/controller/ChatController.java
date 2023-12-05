@@ -1,8 +1,8 @@
 package com.springboot.j2ee.controller;
 
 import com.springboot.j2ee.beans.CDCBeans;
-import com.springboot.j2ee.config.CDCBeansConfig;
 import com.springboot.j2ee.config.CustomUser;
+import com.springboot.j2ee.dto.GenericResponse;
 import com.springboot.j2ee.dto.MessageDTO;
 import com.springboot.j2ee.dto.RoomDTO;
 import com.springboot.j2ee.entity.Message;
@@ -10,7 +10,6 @@ import com.springboot.j2ee.entity.Room;
 import com.springboot.j2ee.service.MessageService;
 import com.springboot.j2ee.service.RoomService;
 import com.springboot.j2ee.service.UserService;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.security.Principal;
 import java.util.List;
@@ -53,16 +51,42 @@ public class ChatController {
 
     private static final String messageSocket = "/topic/message/";
 
-    @MessageMapping("/{id}/{uuid}")
-    public void receive(Principal principal, String message, @DestinationVariable String id, @DestinationVariable String uuid) throws Exception {
-        System.out.println(message);
-        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid, "Hi");
+//    @MessageMapping("/{id}/{uuid}")
+//    public void receive(Principal principal, String message, @DestinationVariable String id, @DestinationVariable String uuid) throws Exception {
+//        System.out.println(message);
+//        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid, "Hi");
+//
+//    }
 
+
+    @MessageMapping("/call/{roomId}")
+    @SendTo("/topic/call/{roomId}")
+    public String makeOffer(String message) {
+        var a = 2;
+        return message;
     }
+
+
+
+    @GetMapping("/call/{id}")
+    public String call(@AuthenticationPrincipal CustomUser user,@PathVariable Long id, Model model) {
+        model.addAttribute("roomId", id);
+        return "call";
+    }
+
     private void handleMessage(Message message, UUID uuid, CustomUser user) {
         var id = user.getUser().getId();
         var dto = new MessageDTO(message);
-        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid.toString(), dto);
+        var response = new GenericResponse<>("MESSAGE", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid.toString(), response);
+    }
+
+    private void handleRoom(GenericResponse<Room> response, UUID uuid, CustomUser user) {
+        var id = user.getUser().getId();
+        var dto = new RoomDTO(response.data());
+        var roomResponse = new GenericResponse<>(response.type(), dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+id+"/"+uuid.toString(), roomResponse);
+
     }
 
     @GetMapping("/rooms")
@@ -76,13 +100,7 @@ public class ChatController {
 
 
 
-    @GetMapping("/room/{id}")
-    public ResponseEntity<List<MessageDTO>> getAllMessageInRoom(@PathVariable Long id) {
-        var messages = messageService.getMessagesByRoomId(id);
-        var messsageDto = messages.stream().map(MessageDTO::new).toList();
 
-        return new ResponseEntity<>(messsageDto, HttpStatus.OK);
-    }
 
     @PostMapping("/room")
     public void addRoom(Principal principal, @RequestBody String name, @RequestBody String[] userId) {
@@ -98,11 +116,14 @@ public class ChatController {
 
 
         cdcBeans.subscribeToWriteMessage(id, uuid, (message) -> handleMessage(message, uuid, user) );
+        cdcBeans.subscribeToRoom(id, uuid, (room) -> handleRoom(room, uuid, user) );
 
         System.out.println("Current Logged in User is: " + userName);
         model.addAttribute("user", user);
         model.addAttribute("uuid", uuid);
         return "chat_app";
     }
+
+
 
 }

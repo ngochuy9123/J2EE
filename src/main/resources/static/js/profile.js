@@ -1,85 +1,56 @@
+const id = document.getElementById("userIdDiv").innerText;
+const uuid = document.getElementById("UUIDDiv").innerText;
 
-// Search
-async function searchFriend() {
-  var inputElement = document.querySelector('.search input');
-  var userInput = inputElement.value;
+const host = new URL(location)
 
-  var ignoreClickOnMeElement = document.querySelector(".search");
+const stompClient = new StompJs.Client({
+  brokerURL: `ws://${host.host}/ws/general`
+});
 
-  document.addEventListener('click', function (event) {
-    var isClickInsideElement = ignoreClickOnMeElement.contains(event.target);
-    if (!isClickInsideElement) {
-      document.getElementById("fetch-data-search").style.display = "none";
-    } else {
-      processChange();
-      document.getElementById("fetch-data-search").style.display = "block";
-    }
+stompClient.onConnect = (frame) => {
+  console.log('Connected: ' + frame);
+  stompClient.subscribe(`/topic/general/${uuid}`, async (message) => {
+    await handleMessage(message);
   });
 
-  let data = new FormData
-  data.append("contentSearch", userInput)
+};
 
-  const resp1 = await fetch("/searchUser",
-      {
-        method: "POST",
-        body: data
-      })
-  if (resp1.ok) {
-    let userList = await resp1.json();
-    let strHTML = "";
+stompClient.onWebSocketError = (error) => {
+  console.error('Error with websocket', error);
+};
+
+stompClient.onStompError = (frame) => {
+  console.error('Broker reported error: ' + frame.headers['message']);
+  console.error('Additional details: ' + frame.body);
+};
 
 
-    if (!userInput) {
-      document.getElementById("fetch-data-search").innerHTML = "";
-      document.getElementById("fetch-data-search").style.display = "none";
-    } else {
-      userList.forEach(item => {
-        strHTML += `
-      <li>
-                <a class="dropdown-item" href="profile?id=${item.id}">
-              
-                <div class="user-search">
-                  <img
-                    src="${item.avatar}"
-                    alt=""
-                  >
-                  <div class="name-search">
-                    ${item.lastName} ${item.firstName}
+const handleMessage = async (message) => {
+  const resp = JSON.parse(message.body)
+  const data = resp["data"]
 
-                    <span class="location-search">${item.email}</span>
-                  </div>
-                  
-                  <i class="fa-solid fa-xmark time-search"></i>
-                </div>
-                </a>
-              </li>`;
-      });
-      console.log(userList);
-      if (!strHTML) {
-        strHTML = `<li>
-<div class="alart alert-success text-ceter">Không có người dùng nào!</div>
-</li>`;
-      }
-      document.getElementById("fetch-data-search").innerHTML = strHTML;
-      document.getElementById("fetch-data-search").style.display = "block";
-    }
-  } else {
-    console.error("Lỗi khi truy vấn danh sách người dùng");
+  console.log(resp)
+
+  switch (resp["type"]) {
+    case "COMMENT":
+      await handleComment(data['post_id'])
+      break;
+    case "LIKE":
+      await handleLike(data['idPost'])
+      break;
+    case "NOTIFICATION":
+      await handleNotification(data["postId"])
+      break;
   }
 }
+stompClient.activate()
 
-
-function debounce(func, timeout = 500) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
+const handleLike = async (postId) => {
+  await updateLikeUI(postId)
 }
 
-const processChange = debounce(() => searchFriend());
+
+// Search
 
 
 // cha biet
@@ -255,11 +226,11 @@ function taoGiaoDienLike(idPost,slgLike){
   let htmlLike = document.getElementById("txtLike"+idPost)
   let htmlMoreLike = document.getElementById("txtLikeMore"+idPost)
 
-  htmlLike.innerHTML = `${slgLike} LIKES`
+  htmlLike.innerHTML = `${slgLike} Likes`
 
   if (htmlMoreLike != null){
     htmlMoreLike = document.getElementById("txtLikeMore"+idPost)
-    htmlMoreLike.innerHTML = `${slgLike} LIKES`
+    htmlMoreLike.innerHTML = `${slgLike} Likes`
   }
 }
 
@@ -301,9 +272,11 @@ async function dislikePost(postId) {
 }
 
 
-async function testCmt(button) {
-  let postId = button.getAttribute("data-post-id");
-  let commentInput = document.getElementById('cmtm'+postId)
+
+const postComment = async (postId) => {
+  let commentInput = document.getElementById('cmtm' + postId)
+
+
   let more = true
   if (commentInput == null){
     more = false
@@ -315,16 +288,28 @@ async function testCmt(button) {
   const commentText = commentInput.value.trim();
   // Lấy giá trị từ các trường input
   console.log(commentText)
-  // Dữ liệu cần gửi
-  let data = {
-    id: postId,
-    content: commentText
-  };
 
   //  them comment
-  const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
-  let status = resp.status;
-  const data1 = await resp.text();
+  if (commentText !== "") {
+    const resp = await fetch(`/createComment?postId=${postId}&content=${commentText}`);
+    let status = resp.status;
+    const data1 = await resp.text();
+  }
+}
+
+
+const handleComment = async (postId) => {
+  let commentInput = document.getElementById('cmtm' + postId)
+
+
+  let more = true
+  if (commentInput == null){
+    more = false
+    commentInput= document.getElementById('cmt'+postId)
+  }
+
+
+
 
 
 
@@ -334,6 +319,7 @@ async function testCmt(button) {
   let username = document.getElementById("username").value
   const d = new Date();
   let time = d.getDate();
+
 
   let comments = await getListComment(postId);
   console.log(comments)
@@ -347,7 +333,6 @@ async function testCmt(button) {
 
   let slgMaxCmt = 2
   if (more === true){
-    console.log("trong see more")
     tempIdSlgComment = "idSlgMoreComment"+postId
     let slgMoreComment = document.getElementById(tempIdSlgComment)
     slgMoreComment.innerHTML = comments.length+" Comments"
@@ -382,7 +367,7 @@ async function testCmt(button) {
   for (let i = 0; i < comments.length; i++) {
     let cmt = comments[i];
     if (i < slgMaxCmt ) { // Check if the index is less than 2
-        htmlCmt += `
+      htmlCmt += `
         <div class="comment">
           <img src="${cmt.user_avatar}" alt="">
           <div class="info">
@@ -401,9 +386,18 @@ async function testCmt(button) {
     htmlSeeMore.innerHTML = `<a onclick="seeMorePost(${postId})" id="seeMore${postId}">See More</a>`
   }
 
+
   lstComment.innerHTML = htmlCmt
 
   commentInput.value = "";
+}
+
+
+
+
+async function testCmt(button) {
+  let postId = button.getAttribute("data-post-id");
+  await postComment(postId)
 }
 
 
@@ -440,25 +434,7 @@ async function addFriend() {
     location.reload()
   }
 }
-async function acceptFriendRequest(button) {
-  let inputValue = button.previousElementSibling.value;
-  let data = new FormData
-  data.append("userToId",inputValue)
-
-  const resp = await fetch("/acceptFriendRequest",
-      {
-        method: "POST",
-        body: data
-      })
-  let status = resp.status
-
-  const data1 = await resp.text();
-  console.log(data1)
-  if (status === 200){
-    location.reload()
-  }
-}
-async function declineFriendRequest(button) {
+async function declineFriendRequestBody(button) {
   // let inputValue = button.previousElementSibling.value;
   let inputValue = document.getElementById("inputWithIdUser").value
   let data = new FormData
@@ -478,21 +454,6 @@ async function declineFriendRequest(button) {
   }
 }
 
-// Notification
-async function changeStatusNotification(userId) {
-
-  let data = new FormData
-  data.append("userId", userId)
-
-  const resp = await fetch("/changeStatusAnnounce",
-      {
-        method: "POST",
-        body: data
-      })
-  return await resp.text();
-
-
-}
 
 function formatTime(time){
   return  moment(time).fromNow();
@@ -557,7 +518,7 @@ console.log("post",postInfo)
              <span class="like-icon">
                 <i class="${postInfo.liked ? ' fa-solid' : 'fa-regular'} red-heart  fa-heart" id="likeMore${postInfo.id}"></i>
              </span>
-             <span id="txtLikeMore${postInfo.id}">${postInfo.numLikes} LIKES</span>
+             <span id="txtLikeMore${postInfo.id}">${postInfo.numLikes} Likes</span>
            </div>
            <div class="item" onclick="toggleComments(1)">
              <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>

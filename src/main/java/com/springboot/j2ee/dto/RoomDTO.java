@@ -25,6 +25,7 @@ public class RoomDTO {
     private List<MessageDTO> messages = new ArrayList<>();
 
     private Timestamp lastUpdated;
+    private String roomAvatar;
 
     public RoomDTO(Room room) {
         this.id = room.getId();
@@ -38,5 +39,7 @@ public class RoomDTO {
             this.messages.add(new MessageDTO(m));
         }
         this.lastUpdated = room.getLastUpdated();
+
+        this.roomAvatar = room.getRoomAvatar();
     }
 }

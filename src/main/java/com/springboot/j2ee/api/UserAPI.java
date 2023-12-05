@@ -5,6 +5,11 @@ import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.dto.UserDTO;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.UserService;
+import com.springboot.j2ee.utils.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,74 +26,38 @@ public class UserAPI {
 
 
 
-    public final static String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
-    public final static String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
-    public final static String pathImg = "/uploads/";
     private final UserService userService;
+
+    @Autowired
+    FileUtils fileUtils;
 
     public UserAPI(UserService userService) {
         this.userService = userService;
     }
     @PostMapping("editAvatar")
     public String editAvatar(@RequestParam("image") MultipartFile file,@AuthenticationPrincipal CustomUser principal) throws IOException {
-        if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(principal.getUsername());
-            pathTemp = pathTemp.concat("/");
-            pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
-
-            saveImage(file, principal.getUsername());
-            saveImage(file,principal.getUsername());
-
+        if (!file.isEmpty()){
+            var path = fileUtils.saveFile(file, "uploads", "users", principal.getUsername(), "avatar");
             User user = userService.getInfo(principal.getUsername());
-            user.setAvatar(pathTemp);
+            user.setAvatar(path);
             userService.saveUser(user);
 
-
+            return path;
         }
-        return file.getOriginalFilename();
+        return null;
     }
 
     @PostMapping("editBackground")
     public String editBackground(@RequestParam("image") MultipartFile file,@AuthenticationPrincipal CustomUser principal) throws IOException {
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(principal.getUsername());
-            pathTemp = pathTemp.concat("/");
-            pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
-
-            saveImage(file, principal.getUsername());
-            saveImage(file,principal.getUsername());
+            var path = fileUtils.saveFile(file, "uploads", "users", principal.getUsername(), "background");
 
             User user = userService.getInfo(principal.getUsername());
-            user.setBackground(pathTemp);
+            user.setBackground(path);
             userService.saveUser(user);
-
-
+            return path;
         }
-        return file.getOriginalFilename();
-    }
-
-
-    public void saveImage(MultipartFile file,String email) throws IOException {
-        StringBuilder fileNames = new StringBuilder();
-
-        String uploadDirectory = UPLOAD_DIRECTORY.concat(email);
-        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email);
-
-        if (!Files.exists(Path.of(uploadDirectory))) {
-            Files.createDirectories(Path.of(uploadDirectory));
-        }
-        if (!Files.exists(Path.of(uploadDirectoryTarget))) {
-            Files.createDirectories(Path.of(uploadDirectoryTarget));
-        }
-
-        Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
-        Path fileNameAndPathTarget = Paths.get(uploadDirectoryTarget, file.getOriginalFilename());
-
-        fileNames.append(file.getOriginalFilename());
-        Files.write(fileNameAndPath, file.getBytes());
-        Files.write(fileNameAndPathTarget,file.getBytes());
-
-
+        return null;
     }
 
     @PostMapping("searchUser")

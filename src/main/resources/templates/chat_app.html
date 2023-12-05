@@ -8,429 +8,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
-    <style type="text/css">
-        body{
-            background-color: #f4f7f6;
-            margin-top:20px;
-        }
-        .card {
-            background: #fff;
-            transition: .5s;
-            border: 0;
-            margin-bottom: 30px;
-            border-radius: .55rem;
-            position: relative;
-            width: 100%;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
-        }
-        .chat-app .people-list {
-            width: 280px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            padding: 20px;
-            z-index: 7
-        }
 
-        .chat-app .chat {
-            margin-left: 280px;
-            border-left: 1px solid #eaeaea
-        }
+    <link href="/css/chat/main.css" rel="stylesheet">
 
-        .people-list {
-            -moz-transition: .5s;
-            -o-transition: .5s;
-            -webkit-transition: .5s;
-            transition: .5s
-        }
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script th:src="@{/js/chat/main.js}" defer></script>
+    <script th:src="@{/js/chat/group.js}" defer></script>
 
-        .people-list .chat-list li {
-            padding: 10px 15px;
-            list-style: none;
-            border-radius: 3px
+    <style>
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
         }
-
-        .people-list .chat-list li:hover {
-            background: #efefef;
-            cursor: pointer
+        .user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
         }
-
-        .people-list .chat-list li.active {
-            background: #efefef
-        }
-
-        .people-list .chat-list li .name {
-            font-size: 15px
-        }
-
-        .people-list .chat-list img {
-            width: 45px;
-            border-radius: 50%
-        }
-
-        .people-list img {
-            float: left;
-            border-radius: 50%
-        }
-
-        .people-list .about {
-            float: left;
-            padding-left: 8px
-        }
-
-        .people-list .status {
-            color: #999;
-            font-size: 13px
-        }
-
-        .chat .chat-header {
-            padding: 15px 20px;
-            border-bottom: 2px solid #f4f7f6
-        }
-
-        .chat .chat-header img {
-            float: left;
-            border-radius: 40px;
-            width: 40px
-        }
-
-        .chat .chat-header .chat-about {
-            float: left;
-            padding-left: 10px
-        }
-
-        .chat .chat-history {
-            padding: 20px;
-            border-bottom: 2px solid #fff
-        }
-
-        .chat .chat-history ul {
-            padding: 0
-        }
-
-        .chat .chat-history ul li {
-            list-style: none;
-            margin-bottom: 30px
-        }
-
-        .chat .chat-history ul li:last-child {
-            margin-bottom: 0px
-        }
-
-        .chat .chat-history .message-data {
-            margin-bottom: 15px
-        }
-
-        .chat .chat-history .message-data img {
-            border-radius: 40px;
-            width: 40px
-        }
-
-        .chat .chat-history .message-data-time {
-            color: #434651;
-            padding-left: 6px
-        }
-
-        .chat .chat-history .message {
-            color: #444;
-            padding: 18px 20px;
-            line-height: 26px;
-            font-size: 16px;
-            border-radius: 7px;
-            display: inline-block;
-            position: relative
-        }
-
-        .chat .chat-history .message:after {
-            bottom: 100%;
-            left: 7%;
-            border: solid transparent;
-            content: " ";
-            height: 0;
-            width: 0;
-            position: absolute;
-            pointer-events: none;
-            border-bottom-color: #fff;
-            border-width: 10px;
-            margin-left: -10px
-        }
-
-        .chat .chat-history .my-message {
-            background: #efefef
-        }
-
-        .chat .chat-history .my-message:after {
-            bottom: 100%;
-            left: 30px;
-            border: solid transparent;
-            content: " ";
-            height: 0;
-            width: 0;
-            position: absolute;
-            pointer-events: none;
-            border-bottom-color: #efefef;
-            border-width: 10px;
-            margin-left: -10px
-        }
-
-        .chat .chat-history .other-message {
-            background: #e8f1f3;
-            text-align: right
-        }
-
-        .chat .chat-history .other-message:after {
-            border-bottom-color: #e8f1f3;
-            left: 93%
-        }
-
-        .chat .chat-message {
-            padding: 20px
-        }
-
-        .online,
-        .offline,
-        .me {
-            margin-right: 2px;
-            font-size: 8px;
-            vertical-align: middle
-        }
-
-        .online {
-            color: #86c541
-        }
-
-        .offline {
-            color: #e47297
-        }
-
-        .me {
-            color: #1d8ecd
-        }
-
-        .float-right {
-            float: right
-        }
-
-        .clearfix:after {
-            visibility: hidden;
-            display: block;
-            font-size: 0;
-            content: " ";
-            clear: both;
-            height: 0
+        .user span {
+            font-size: 14px;
         }
 
         @media only screen and (max-width: 767px) {
-            .chat-app .people-list {
-                height: 465px;
-                width: 100%;
-                overflow-x: auto;
-                background: #fff;
-                left: -400px;
-                display: none
+
+            .mobile-chat[data-hide = "TRUE"] > div[id='chat'] {
+                display: none !important;
             }
-            .chat-app .people-list.open {
-                left: 0
+            .mobile-chat[data-hide = "TRUE"] > div[id='plist'] {
+                flex-grow: 1;
             }
-            .chat-app .chat {
-                margin: 0
+
+            .mobile-chat[data-hide = "FALSE"] > div[id='plist'] {
+                display: none !important;
             }
-            .chat-app .chat .chat-header {
-                border-radius: 0.55rem 0.55rem 0 0
-            }
-            .chat-app .chat-history {
-                height: 300px;
-                overflow-x: auto
+            .mobile-chat[data-hide = "FALSE"] > div[id='chat'] {
+                flex-grow: 1;
             }
         }
 
-        @media only screen and (min-width: 768px) and (max-width: 992px) {
-            .chat-app .chat-list {
-                height: 650px;
-                overflow-x: auto
-            }
-            .chat-app .chat-history {
-                height: 600px;
-                overflow-x: auto
-            }
+        .mobile-chat[data-hide = "TRUE"] > div[id='chat'] {
+            display: none !important;
+        }
+        .mobile-chat[data-hide = "TRUE"] > div[id='plist'] {
+            flex-grow: 1;
         }
 
-        @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
-            .chat-app .chat-list {
-                height: 480px;
-                overflow-x: auto
-            }
-            .chat-app .chat-history {
-                height: calc(100vh - 350px);
-                overflow-x: auto
-            }
+
+
+
+
+        .messageImage {
+            width: 300px;
         }
+
+
+
+        /*.mobile-chat > div[id='plist'] {*/
+        /*    display: none;*/
+        /*}*/
     </style>
-
-    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-    <script th:src="@{/js/chat/main.js}" defer></script>
-
-    <script>
-
-//        const socket = new SockJS('/room');
-//        let stompClient = StompJs.over(socket);
-//
-//        function connect() {
-//            const socket = new SockJS('/ws');
-//            stompClient = StompJs.over(socket);
-//
-//            stompClient.connect({}, onConnected, onError);
-//        }
-//
-//        const onConnected = () => {
-//
-//        }
-
-
-        // $(function () {
-        //   $("form").on('submit', (e) => e.preventDefault());
-        //   $( "#connect" ).click(() => connect());
-        //   $( "#disconnect" ).click(() => disconnect());
-        //   $( "#send" ).click(() => sendName());
-        // });
-    </script>
-
 </head>
 <body>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div style="display: none" id="userIdDiv" th:text="${user.getUser().getId()}"></div>
 <div style="display: none" id="UUIDDiv" th:text="${uuid.toString()}"></div>
-<!--<div id="main-content" class="container">-->
-<!--    <div class="row">-->
-<!--        <div class="col-md-6">-->
-<!--            <div class="form-group">-->
-<!--                <label for="connect">WebSocket connection:</label>-->
-<!--                <button id="connect" class="btn btn-default" type="submit" onclick="connect()">Connect</button>-->
-<!--                <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled" onclick="disconnect()">Disconnect-->
-<!--                </button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-6">-->
-<!--            <div class="form-group">-->
-<!--                <label for="name">What is your name?</label>-->
-<!--                <input type="text" id="name" class="form-control" placeholder="Your name here...">-->
-<!--            </div>-->
-<!--            <button id="send" class="btn btn-default" type="submit" onclick="sendName()">Send</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="row">-->
-<!--        <div class="col-md-12">-->
-<!--            <table id="conversation" class="table table-striped">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th>Greetings</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody id="greetings">-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <div class="container">
     <div class="row clearfix">
         <div class="col-lg-12">
-            <div class="card chat-app">
-                <div id="plist" class="people-list">
-                    <div class="input-group">
+            <div id="mainChat" class="card chat-app mobile-chat" data-choice="SIDE" style="flex-direction: row; height: 90dvh">
+                <div id="plist" class="people-list d-flex flex-column">
+                    <div class="input-group" >
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <span class="input-group-text" style="height: 100%; align-items: center"><i class="fa fa-search"></i></span>
                         </div>
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
-                    <ul id="roomList" class="list-unstyled chat-list mt-2 mb-0">
-<!--                        <li class="clearfix">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Vincent Porter</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                        <li class="clearfix active">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Aiden Chavez</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle online"></i> online </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                        <li class="clearfix">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Mike Thomas</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle online"></i> online </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                        <li class="clearfix">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Christian Kelly</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                        <li class="clearfix">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Monica Ward</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle online"></i> online </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                        <li class="clearfix">-->
-<!--                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">-->
-<!--                            <div class="about">-->
-<!--                                <div class="name">Dean Henry</div>-->
-<!--                                <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>-->
-<!--                            </div>-->
-<!--                        </li>-->
+                    <div class="input-group" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="resetAndAddNewRoom(event)">
+                        <div class="input-group-text d-flex justify-content-center btn btn-outline-secondary" style="width: 100%"><i class="bi bi-plus-circle-fill" style="padding: 0.25rem" ></i>Tạo nhóm</div>
+                    </div>
+                    <ul id="roomList" class="list-unstyled chat-list mt-2 mb-0 flex-grow-1 overflow-auto">
+
                     </ul>
                 </div>
-                <div class="chat">
+                <div id="chat" class="chat flex-grow-1 d-flex flex-column" style="flex-grow: 1">
                     <div class="chat-header clearfix">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" id="groupAvatar">
+                        <div class="d-flex flex-row justify-content-between gap-1">
+                            <div class="d-flex align-items-center gap-1">
+                                <a href="javascript:void(0);" onclick="hideChatPanel()">
+                                    <i class="fa fa-arrow-left" style="width: 25px; height: 100%;" aria-hidden="true"></i>
                                 </a>
+
+                                <div class="dropdown">
+                                    <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="" alt="avatar" id="groupAvatar">
+                                    </a>
+
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePhotoModal">Thay đổi hình ảnh</a></li>
+                                    </ul>
+                                </div>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0" id="roomName">Aiden Chavez</h6>
-<!--                                    <span class="btn btn-warning"></span>-->
-<!--                                    <small>Last seen: 2 hours ago</small>-->
+                                    <h4 class="m-b-0" id="roomName"></h4>
                                 </div>
                             </div>
-                            <div class="col-lg-6 hidden-sm text-right">
-                                <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
+                            <div class="">
+                                <a href="javascript:void(0);" class="btn btn-outline-secondary" onclick="handleCall()"><i class="fa fa-phone"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#sendPhotoModal"><i class="fa fa-image"></i></a>
+                                <a href="#" class="btn btn-outline-primary" onclick="handleChangeUser()" data-bs-toggle="modal" data-bs-target="#changeUserModal"><i class="fa fa-user-friends"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#renameModal"><i class="fa fa-edit" ></i></a>
+                                <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#removeModal"><i class="fa fa-trash-can"></i></a>
                             </div>
                         </div>
                     </div>
-                    <div class="chat-history">
-                        <ul class="m-b-0" id="chatHistory" style="height: 60dvh; overflow-y: scroll; overflow-x: hidden">
-<!--                            <li class="clearfix">-->
-<!--                                <div class="message-data ">-->
-<!--                                    <span class="message-data-time d-flex justify-content-end">10:10 AM, Today</span>-->
-<!--                                </div>-->
-<!--                                <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>-->
-<!--                            </li>-->
-<!--                            <li class="clearfix">-->
-<!--                                <div class="message-data">-->
-<!--                                    <span class="message-data-time">10:12 AM, Today</span>-->
-<!--                                </div>-->
-<!--                                <div class="message my-message">Are we meeting today?</div>-->
-<!--                            </li>-->
-<!--                            <li class="clearfix">-->
-<!--                                <div class="message-data">-->
-<!--                                    <span class="message-data-time">10:15 AM, Today</span>-->
-<!--                                </div>-->
-<!--                                <div class="message my-message">Project has been already finished and I have results to show you.</div>-->
-<!--                            </li>-->
+                    <div id="chatHistoryContainer" class="chat-history flex-grow-1 overflow-auto">
+                        <ul class="m-b-0 chatContainer" id="chatHistory">
+
                         </ul>
                     </div>
                     <div class="chat-message clearfix">
@@ -450,10 +148,155 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
 
-</script>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Tạo nhóm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="height: 100%; align-items: center"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search..." onkeyup="addRoomSearch(event)">
+                </div>
+                <div id="friendContent">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="saveRoom()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="removeModal"  tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="removeModalLabel">Rời phòng</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <h3>
+                    Bạn có chắc muốn rời khỏi phòng?
+                </h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="removeFromRoom()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="renameModal"  tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="renameModalLabel">Thay đổi tên phòng</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <h3>
+                    Thay đổi tên nhóm thành:
+                </h3>
+                <input type="text" id="renameInput" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="rename()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="changePhotoModal"  tabindex="-1" aria-labelledby="changePhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changePhotoModalLabel">Thay đổi hình ảnh nhóm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <h3>
+                    Thay đổi hình ảnh nhóm:
+                </h3>
+                <input type="file" id="photoInput" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="changePhoto()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="sendPhotoModal"  tabindex="-1" aria-labelledby="sendPhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="sendPhotoModalLabel">Gửi hình ảnh</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <h3>
+                    Gửi hình ảnh:
+                </h3>
+                <input type="file" id="sendPhotoInput" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="sendPhotoMessage()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="changeUserModal"  tabindex="-1" aria-labelledby="changeUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changeUserModalLabel">Thay đổi thành viên</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id  class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="height: 100%; align-items: center"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search..." onkeyup="changeUserSearch(event)">
+                </div>
+                <div id="otherRoomContent" class="mb-2" style="border-bottom: black solid 1px; padding-bottom: 0.25rem">
+
+                </div>
+
+                <div id="userRoomContent">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="submitUserChange()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 </body>
 </html>

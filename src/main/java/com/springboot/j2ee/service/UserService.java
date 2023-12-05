@@ -24,4 +24,8 @@ public interface UserService {
 
     Boolean checkOTP(String email,String otp);
 
+
+    List<User> getUserByEmailLimitBy(String email, int limit);
+
+    List<User> getUserByEmailLimitBy(String email, int start, int count);
 }
