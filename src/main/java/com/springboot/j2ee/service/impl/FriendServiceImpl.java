@@ -134,4 +134,9 @@ public class FriendServiceImpl implements FriendService {
 
         return EFriendRequest.NONE;
     }
+
+    @Override
+    public Friend findFriendById(long id) {
+        return friendRepository.findFriendById(id);
+    }
 }

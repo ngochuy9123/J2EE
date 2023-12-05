@@ -3,7 +3,9 @@ package com.springboot.j2ee.api;
 import com.springboot.j2ee.config.CustomUser;
 import com.springboot.j2ee.controller.UserController;
 import com.springboot.j2ee.dto.FriendDTO;
+import com.springboot.j2ee.dto.FriendRequestDto;
 import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.entity.Friend;
 import com.springboot.j2ee.entity.User;
 import com.springboot.j2ee.service.FriendService;
 import com.springboot.j2ee.service.UserService;
@@ -60,6 +62,13 @@ public class FriendAPI {
                         : new UserDTO(f.getUserTo())
         ).toList();
         return new ResponseEntity<>(userDTOS, HttpStatus.OK);
+    }
+    @GetMapping("/api/friendRequests")
+    public ResponseEntity<List<FriendRequestDto>> getFriendRequests(@AuthenticationPrincipal CustomUser user) {
+        List<Friend> friendRequests = friendService.displayFriendRequest(user.getUser().getId());
+        var friendRequestDto = friendRequests.stream().map(FriendRequestDto::new).toList();
+
+        return new ResponseEntity<>(friendRequestDto, HttpStatus.OK);
     }
 
 

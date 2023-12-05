@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 
 
 @Controller
@@ -119,6 +120,25 @@ public class UserController {
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
+
+
+        //CDC / Socket
+//        var userName = principal.getUsername();
+        UUID uuid = UUID.randomUUID();
+        var id = principal.getUser().getId();
+
+        cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+        cdcBeans.subscribeToWriteEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToRemoveEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToWriteAnnounce(id, uuid, (c) -> handleAnnounce(c, uuid));
+        cdcBeans.subscribeToWriteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        cdcBeans.subscribeToDeleteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        model.addAttribute("principal", principal);
+        model.addAttribute("uuid", uuid);
+
+
         return "index";
     }
 
@@ -307,11 +327,15 @@ public class UserController {
 
         var userName = principal.getUsername();
         UUID uuid = UUID.randomUUID();
-//        var id = principal.getUser().getId();
+        var uid = principal.getUser().getId();
 
         cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+        cdcBeans.subscribeToWriteAnnounce(uid, uuid, (c) -> handleAnnounce(c, uuid));
+        cdcBeans.subscribeToWriteFriend(uid, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        cdcBeans.subscribeToDeleteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
 
-        System.out.println("Current Logged in User is: " + userName);
         model.addAttribute("principal", principal);
         model.addAttribute("uuid", uuid);
 
@@ -320,13 +344,34 @@ public class UserController {
     }
 
 
+    private <T, R> void handleSocketSend(T object, String type, String location, Function<T, R> converter) {
+        var dto = converter.apply(object);
+        var response = new GenericResponse<>(type, dto);
+        simpMessagingTemplate.convertAndSend(location, response);
+
+    }
+
     private void handleComment(Comment comment, UUID uuid) {
         var dto = new CommentDTO(comment);
         var response = new GenericResponse<>("COMMENT", dto);
         simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
     }
+    private void handleEmote(Like like, UUID uuid) {
+        var dto = new LikeDTO(like);
+        var response = new GenericResponse<>("LIKE", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
 
+    private void handleAnnounce(Announce announce, UUID uuid) {
+        var dto = new AnnounceDTO(announce);
+        var response = new GenericResponse<>("NOTIFICATION", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
 
-
+    private void handleFriends(Announce announce, UUID uuid) {
+        var dto = new AnnounceDTO(announce);
+        var response = new GenericResponse<>("NOTIFICATION", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
 
 }

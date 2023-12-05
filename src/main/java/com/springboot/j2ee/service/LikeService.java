@@ -5,6 +5,7 @@ import com.springboot.j2ee.entity.Like;
 import com.springboot.j2ee.entity.Post;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LikeService {
     Like saveLike(LikeDTO likeDTO);
@@ -16,6 +17,6 @@ public interface LikeService {
 
     long getAllLikeByPostId(Post post);
 
-
+    Optional<Like> findLikeById(Long likeId);
 
 }

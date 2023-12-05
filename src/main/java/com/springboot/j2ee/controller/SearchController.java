@@ -1,11 +1,14 @@
 package com.springboot.j2ee.controller;
 
+import com.springboot.j2ee.beans.CDCBeans;
 import com.springboot.j2ee.config.CustomUser;
-import com.springboot.j2ee.dto.LikeDTO;
-import com.springboot.j2ee.dto.SearchHistoryDTO;
-import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.dto.*;
 import com.springboot.j2ee.entity.*;
 import com.springboot.j2ee.service.*;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
 
 @Controller
+@AllArgsConstructor
 public class SearchController {
     private UserService userService;
     private PostService postService;
@@ -26,18 +32,17 @@ public class SearchController {
     private final FriendService friendService;
     private final AnnounceService announceService;
 
-    public SearchController(UserService userService, PostService postService, SearchHistoryService searchHistoryService,
-    CommentService commentService, LikeService likeService, FriendService friendService,
-    AnnounceService announceService)
-    {
-        this.userService = userService;
-        this.postService = postService;
-        this.searchHistoryService = searchHistoryService;
-        this.commentService = commentService;
-        this.likeService = likeService;
-        this.friendService = friendService;
-        this.announceService = announceService;
-    }
+    @Autowired
+    @Qualifier("cdcBeans")
+    private CDCBeans cdcBeans;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    private static final String messageSocket = "/topic/general/";
+
+
+
     @GetMapping("search")
     public String index(@RequestParam("filter") String filter, Model model,@AuthenticationPrincipal CustomUser principal){
         String userName = principal.getUsername();
@@ -119,6 +124,51 @@ public class SearchController {
         model.addAttribute("filter",filter);
         model.addAttribute("users",users);
         model.addAttribute("str_user",str_user);
+
+        UUID uuid = UUID.randomUUID();
+        var uid = principal.getUser().getId();
+
+        cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+        cdcBeans.subscribeToWriteEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToRemoveEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToWriteAnnounce(uid, uuid, (c) -> handleAnnounce(c, uuid));
+        cdcBeans.subscribeToWriteFriend(uid, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        cdcBeans.subscribeToDeleteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+
+        model.addAttribute("principal", principal);
+        model.addAttribute("uuid", uuid);
+
         return "search";
+    }
+
+
+    private void handleComment(Comment comment, UUID uuid) {
+        var dto = new CommentDTO(comment);
+        var response = new GenericResponse<>("COMMENT", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+    private void handleEmote(Like like, UUID uuid) {
+        var dto = new LikeDTO(like);
+        var response = new GenericResponse<>("LIKE", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+    private void handleAnnounce(Announce announce, UUID uuid) {
+        var dto = new AnnounceDTO(announce);
+        var response = new GenericResponse<>("NOTIFICATION", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+    private void handleFriends(Announce announce, UUID uuid) {
+        var dto = new AnnounceDTO(announce);
+        var response = new GenericResponse<>("NOTIFICATION", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+
+    private <T, R> void handleSocketSend(T object, String type, String location, Function<T, R> converter) {
+        var dto = converter.apply(object);
+        var response = new GenericResponse<>(type, dto);
+        simpMessagingTemplate.convertAndSend(location, response);
+
     }
 }

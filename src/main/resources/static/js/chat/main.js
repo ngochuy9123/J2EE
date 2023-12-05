@@ -1,39 +1,3 @@
-// const conn = new WebSocket('ws://localhost:8080/chat');
-// function send(message) {
-//     conn.send(JSON.stringify(message));
-// }
-// configuration = null;
-// const peerConnection = new RTCPeerConnection(configuration);
-//
-// var dataChannel = peerConnection.createDataChannel("dataChannel", { reliable: true });
-// dataChannel.onerror = function(error) {
-//     console.log("Error:", error);
-// };
-// dataChannel.onclose = function() {
-//     console.log("Data channel is closed");
-// };
-//
-// peerConnection.createOffer(function(offer) {
-//     send({
-//         event : "offer",
-//         data : offer
-//     });
-//     peerConnection.setLocalDescription(offer);
-// }, function(error) {
-//     // Handle error here
-// });
-//
-// peerConnection.onicecandidate = function(event) {
-//     if (event.candidate) {
-//         peerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
-//         send({
-//             event : "candidate",
-//             data : event.candidate
-//         });
-//     }
-// };
-
-
 const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
 
@@ -86,10 +50,9 @@ const handleMessage = async (data) => {
     }
 
     const chatHistoryElem = document.getElementById("chatHistory");
-    chatHistoryElem.innerHTML += generateChatHtml(data);
+    chatHistoryElem.appendChild(generateChatHtml(data));
 
-    chatHistoryElem.scrollTo( 0, chatHistoryElem.scrollHeight )
-
+    scrollChatToEnd()
 }
 
 const handleRename = async (data) => {
@@ -263,16 +226,20 @@ const setChatPanel = async (id) => {
 
     console.log(messages)
 
-    let html = "";
+    let html = [];
     for (const datum of messages) {
-        html += generateChatHtml(datum)
+        html.push(generateChatHtml(datum))
     }
 
     const chatHistoryElem = document.getElementById("chatHistory");
-    chatHistoryElem.innerHTML = html;
-    const container = document.getElementById("chatHistoryContainer");
+    html.forEach(n => chatHistoryElem.appendChild(n))
     setMainChatPanel("FALSE")
 
+    scrollChatToEnd()
+}
+
+const scrollChatToEnd = () => {
+    const container = document.getElementById("chatHistoryContainer");
     container.scrollTo( 0, container.scrollHeight)
 }
 
@@ -300,27 +267,30 @@ const generateChatHtml = (data) => {
         content = data["message"]
     }
 
+    const returnNode = document.createElement("li")
+    returnNode.className = "clearfix"
+
+
+
 
     if (uId == id) {
-        return `
-            <li class="clearfix">
+         returnNode.innerHTML = `
                 <div class="message-data ">
                     <span class="message-data-time d-flex justify-content-end">${date}</span>
                 </div>
                 <div class="message other-message float-right"> ${content} </div>
-            </li>
             `
     }
     else {
-        return `
-           <li class="clearfix">
+         returnNode.innerHTML = `
                 <div class="message-data">
                     <span class="message-data-time">${date}</span>
                 </div>
                 <div class="message my-message">${content}</div>
-            </li>
         `
     }
+
+    return returnNode
 }
 
 const updateLifeLine = async () => {

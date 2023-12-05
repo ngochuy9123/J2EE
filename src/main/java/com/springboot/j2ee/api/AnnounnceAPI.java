@@ -1,11 +1,17 @@
 package com.springboot.j2ee.api;
 
+import com.springboot.j2ee.config.CustomUser;
+import com.springboot.j2ee.dto.AnnounceDTO;
+import com.springboot.j2ee.dto.GenericResponse;
+import com.springboot.j2ee.entity.Announce;
 import com.springboot.j2ee.service.AnnounceService;
 import com.springboot.j2ee.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class AnnounnceAPI {
@@ -28,6 +34,14 @@ public class AnnounnceAPI {
     public void changeStatusAnnounce(@RequestParam(name = "userId") long userId) {
         announceService.getAnnounceByIdUser(userId);
         announceService.changeToStatusSeen(userId);
+    }
+
+    @GetMapping("/api/notification")
+    public ResponseEntity<List<AnnounceDTO>> getAnnouncement(@AuthenticationPrincipal CustomUser user) {
+        List<Announce> announces = announceService.getAnnounceByIdUser(user.getUser().getId());
+        var announcesDtos = announces.stream().map(AnnounceDTO::new).toList();
+        return new ResponseEntity<>(announcesDtos, HttpStatus.OK);
+
     }
 
 }
