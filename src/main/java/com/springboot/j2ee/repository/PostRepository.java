@@ -23,6 +23,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value = "SELECT * FROM Post p WHERE p.content LIKE CONCAT('%',:filter, '%') and visible <> 0 order by p.created_at desc ", nativeQuery = true)
     List<Post> findPostByContent(@Param("filter") String filter);
 
+
 //    Lay tat ca bai post công khai
     @Query(value = "SELECT * FROM Post p WHERE p.content LIKE CONCAT('%',:filter, '%') and user_id <> :user_id and visible = 2 order by p.created_at desc ", nativeQuery = true)
     List<Post> getAllPublicPostOtherUser(@Param("user_id") long user_id, @Param("filter") String filter);
