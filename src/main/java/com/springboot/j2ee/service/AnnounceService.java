@@ -12,7 +12,7 @@ public interface AnnounceService {
     void removeAnnounce(AnnounceDTO announceDTO);
     List<Announce> getAnnounceByIdUser(long idUserTo);
 
-
+    Announce getAnnounceById(Long id);
 
 
 }

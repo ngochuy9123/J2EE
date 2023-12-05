@@ -173,6 +173,11 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+.rightSignUp {
+  display: none;
+}
+
 @media screen and (max-width: 768px) {
   .login .card{
     width: 90%;
@@ -184,7 +189,7 @@
 
   }
   .login .card .right h1{
-    color: black;
+    color: white;
   }
 }
 
@@ -202,7 +207,11 @@
     background-size: cover;
   }
   .login .card .right h1{
-    color:black;
+    color:white;
+  }
+
+  .rightSignUp {
+    display: block;
   }
 
 }

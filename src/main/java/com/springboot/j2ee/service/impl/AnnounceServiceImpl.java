@@ -104,4 +104,9 @@ public class AnnounceServiceImpl implements AnnounceService {
         return lstAnnounceNone;
     }
 
+    @Override
+    public Announce getAnnounceById(Long id) {
+        return announceRepository.findAnnounceById(id);
+    }
+
 }

@@ -1,13 +1,12 @@
 const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
+
+const host = new URL(location)
+
 let selectedId = 0;
 
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws/chat'
-});
-
-const stompClient2 = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws/chat'
+    brokerURL: `ws://${host.host}/ws/chat`
 });
 
 
@@ -17,6 +16,7 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe(`/topic/message/${id}/${uuid}`, async (message) => {
         await showMessage(message);
     });
+
 };
 
 stompClient.onWebSocketError = (error) => {
@@ -43,29 +43,92 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-
-async function showMessage(message) {
-    const data = JSON.parse(message.body)
-    console.log(data)
-    //
-    await updateLifeLine()
-
-
+const handleMessage = async (data) => {
     if (data['roomId'] != selectedId) {
         await updateTotalMissed(data['roomId'])
         return;
     }
 
     const chatHistoryElem = document.getElementById("chatHistory");
-    chatHistoryElem.innerHTML += generateChatHtml(data);
+    chatHistoryElem.appendChild(generateChatHtml(data));
 
-    chatHistoryElem.scrollTo( 0, chatHistoryElem.scrollHeight )
+    scrollChatToEnd()
+}
+
+const handleRename = async (data) => {
+    const { id, name } = data
+
+    const roomNameElem = document.getElementById("roomName")
+
+    if (selectedId == id) {
+        roomNameElem.innerText = name
+    }
+
+    const sideDiv = document.getElementById(`r${id}`)
+    if (sideDiv == null) {
+        await setupSidePanel()
+        return;
+    }
+
+    const sideName = sideDiv.querySelector("div.name")
+    sideName.innerText = name
+
+
+};
+
+const handlePhoto = async (data) => {
+    const { id, roomAvatar } = data
+
+    const roomImgElem = document.getElementById("groupAvatar")
+
+    if (selectedId == id) {
+        roomImgElem.src = roomAvatar
+    }
+
+    const sideDiv = document.getElementById(`r${id}`)
+    if (sideDiv == null) {
+        await setupSidePanel()
+        return;
+    }
+
+    const sidePhoto = sideDiv.querySelector("img")
+    sidePhoto.src = roomAvatar
+
+
+};
+
+async function showMessage(message) {
+    const resp = JSON.parse(message.body)
+    console.log(resp)
+    //
+    await updateLifeLine()
+
+    const data = resp["data"]
+
+
+    switch (resp["type"]) {
+        case "MESSAGE":
+            await handleMessage(data)
+            break;
+        case "RENAME":
+            await handleRename(data)
+            break;
+        case "PHOTO":
+            await handlePhoto(data)
+            break
+    }
+
+
 
 }
 
 const updateTotalMissed = async (roomId) => {
     const total = await getTotalMissedMessages(roomId);
     const div = document.getElementById(`missed${roomId}`);
+    if (div == null) {
+        setupSidePanel();
+        return;
+    }
 
     let missedDiv= "";
     if (total !== 0) {
@@ -75,6 +138,19 @@ const updateTotalMissed = async (roomId) => {
     div.innerHTML = missedDiv
 }
 
+const getDiffTime = (date) => {
+    const now = Date.now();
+    const diffInDays = (now - date) / (1000 * 60 * 60 * 24) | 0;
+    const diffInHours = (now - date) / (1000 * 60 * 60) | 0;
+
+    let showDate = "";
+    if (diffInDays !== 0) {
+        return diffInDays + " ngày"
+    }
+    else {
+        return diffInHours + " giờ"
+    }
+}
 
 const setupSidePanel = async () => {
     const resp = await fetch("/rooms");
@@ -85,23 +161,7 @@ const setupSidePanel = async () => {
     let html = ``;
 
     for (const datum of data) {
-        const now = Date.now();
-        const diffInDays = (now - new Date(datum[
-            'lastUpdated'
-            ])) / (1000 * 60 * 60 * 24) | 0;
-
-        const diffInHours = (now - new Date(datum[
-            'lastUpdated'
-            ])) / (1000 * 60 * 60) | 0;
-
-
-        let showDate = "";
-        if (diffInDays != 0) {
-            showDate = diffInDays + " ngày"
-        }
-        else {
-            showDate = diffInHours + " giờ"
-        }
+        const showDate = getDiffTime(new Date(datum['lastUpdated']))
         const missedMessage = await getTotalMissedMessages(datum['id'])
         let missedDiv= "";
         if (missedMessage !== 0) {
@@ -110,8 +170,8 @@ const setupSidePanel = async () => {
         
         console.log(datum)
         html += `
-            <li class="clearfix d-flex" id="r${datum['id']}" onclick="setChatPanel(${datum['id']})">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+            <li class="clearfix d-flex" id="r${datum['id']}">
+                <img src="${datum['roomAvatar']}" alt="avatar">
                 <div class="about d-flex justify-content-between" style="width: 80%">
                 <div>
                     <div class="name">${datum['name']}</div>
@@ -126,6 +186,11 @@ const setupSidePanel = async () => {
         document.getElementById("roomList").innerHTML = html;
 
     }
+
+    for (const datum of data) {
+        const elem = document.getElementById(`r${datum['id']}`);
+        elem.addEventListener("click",()=> setChatPanel(datum['id']))
+    }
 }
 
 const getTotalMissedMessages = async (roomId) => {
@@ -135,9 +200,22 @@ const getTotalMissedMessages = async (roomId) => {
 
 
 
-const setChatPanel = async (roomId) => {
-    const resp = await fetch(`/room/${roomId}`)
-    const data = await resp.json();
+const setChatPanel = async (id) => {
+
+    const roomResp = await fetch(`/api/roomInfo/${id}`)
+    const room = await roomResp.json()
+
+    const roomId = room['id']
+    const roomImg = room['roomAvatar']
+
+    const messageResp = await fetch(`/api/roomMessage/${roomId}`)
+    const messages = await messageResp.json();
+
+    const groupImg = document.getElementById("groupAvatar");
+    groupImg.src = roomImg
+
+    const roomNameDiv = document.getElementById("roomName");
+    roomNameDiv.innerText = room["name"]
 
     selectedId = roomId;
 
@@ -146,45 +224,74 @@ const setChatPanel = async (roomId) => {
     await updateTotalMissed(roomId)
 
 
-    console.log(data)
+    console.log(messages)
 
-    let html = "";
-    for (const datum of data) {
-        html += generateChatHtml(datum)
+    let html = [];
+    for (const datum of messages) {
+        html.push(generateChatHtml(datum))
     }
 
     const chatHistoryElem = document.getElementById("chatHistory");
-    chatHistoryElem.innerHTML = html;
+    chatHistoryElem.innerHTML = "";
+    html.forEach(n => chatHistoryElem.appendChild(n))
+    setMainChatPanel("FALSE")
 
-    chatHistoryElem.scrollTo( 0, chatHistoryElem.scrollHeight )
-
+    scrollChatToEnd()
 }
+
+const scrollChatToEnd = () => {
+    const container = document.getElementById("chatHistoryContainer");
+    container.scrollTo( 0, container.scrollHeight)
+}
+
+const handleCall = () => {
+    const url = `/call/${selectedId}`
+    window.open(url, '_blank').focus();
+}
+
 
 const generateChatHtml = (data) => {
     const uId = data['userId']
+    const messageType = data['messageType']
     let html = "";
-    const date = new Date(data['timeSend']);
+    const date = getDiffTime(new Date(data['timeSend']));
+
+    let content;
+
+    if (messageType === "MESSAGE") {
+        content = data["message"]
+    }
+    else if (messageType === "PICTURE") {
+        content = `<img src="${data["message"]}" alt="user message" class="messageImage"  />`
+    }
+    else {
+        content = data["message"]
+    }
+
+    const returnNode = document.createElement("li")
+    returnNode.className = "clearfix"
+
+
+
 
     if (uId == id) {
-        return `
-            <li class="clearfix">
+         returnNode.innerHTML = `
                 <div class="message-data ">
                     <span class="message-data-time d-flex justify-content-end">${date}</span>
                 </div>
-                <div class="message other-message float-right"> ${data['message']} </div>
-            </li>
+                <div class="message other-message float-right"> ${content} </div>
             `
     }
     else {
-        return `
-           <li class="clearfix">
+         returnNode.innerHTML = `
                 <div class="message-data">
-                    <span class="message-data-time">${date.getUTCDate()}</span>
+                    <span class="message-data-time">${date}</span>
                 </div>
-                <div class="message my-message">${data['message']}</div>
-            </li>
+                <div class="message my-message">${content}</div>
         `
     }
+
+    return returnNode
 }
 
 const updateLifeLine = async () => {
@@ -207,10 +314,11 @@ const sendMessage = async (event) => {
         message : event.target[0].value,
         userId : id,
         roomId : selectedId,
-        timeSend : Date.now()
+        timeSend : Date.now(),
+        messageType : "NORMAL"
     };
 
-    const response = await fetch("/message", {
+    const response = await fetch("/api/message", {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "cors", // no-cors, *cors, same-origin
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -223,7 +331,64 @@ const sendMessage = async (event) => {
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
+
+    event.target[0].value = ""
+}
+
+
+const sendPhotoMessage = async () => {
+    if (selectedId === 0) {
+        return;
+    }
+    const data = {
+        message : "",
+        userId : id,
+        roomId : selectedId,
+        timeSend : Date.now(),
+        messageType : "PICTURE"
+    };
+
+    const fileElem = document.getElementById("sendPhotoInput")
+    const form = new FormData();
+    form.append("message", JSON.stringify(data))
+    form.append("value", fileElem.files[0])
+
+
+
+    const response = await fetch("/api/photoMessage", {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        body: form, // body data type must match "Content-Type" header
+    });
+
+    fileElem.value = ""
+}
+
+const setMainChatPanel = (value) => {
+    const main = document.getElementById("mainChat")
+    main.setAttribute("data-hide", value)
+}
+
+const hideChatPanel = () => {
+    setMainChatPanel("TRUE");
+}
+
+const setRoomName = (value) => {
+    const elem = document.getElementById("roomName")
+    elem.innerText = value
+}
+
+
+const setRoomImage = (value) => {
+    const elem = document.getElementById("groupAvatar")
+    const fr = new FileReader()
+    fr.readAsDataURL(value)
+
+    fr.onload = () => {
+        elem.src = fr.result;
+    }
+
 }
 
 connect();
 setupSidePanel();
+setMainChatPanel("TRUE");

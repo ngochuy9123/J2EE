@@ -17,5 +17,6 @@ public interface AnnounceRepository extends JpaRepository<Announce, Long> {
     public List<Announce> findByUserToOrderByCreateAtDesc(User userTo);
     public List<Announce> findByUserToAndUserFromAndPost(User userTo, User userFrom, Post post);
 
+    public Announce findAnnounceById(Long id);
 
 }

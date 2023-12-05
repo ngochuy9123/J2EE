@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LikeServiceImpl implements LikeService {
@@ -63,5 +64,10 @@ public class LikeServiceImpl implements LikeService {
     public long getAllLikeByPostId(Post post) {
 
         return likeRepository.countByPostEmote(post);
+    }
+
+    @Override
+    public Optional<Like> findLikeById(Long likeId) {
+        return likeRepository.findById(likeId);
     }
 }

@@ -13,25 +13,28 @@
     <div class="login">
       <div class="card">
         <div class="left">
-          <h1>Hello World.</h1>
+          <h1>Social Media</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            Nơi bạn kết nối và chia sẻ với mọi người trong mọi hoàn cảnh
           </p>
-          <span>Don't you have an account?</span>
+          <span>Không có tài khoản?</span>
           <a th:href="@{/register}">
-            <button>Register</button>
+            <button>Đăng ký</button>
           </a>
         </div>
         <div class="right">
-          <h1>Login</h1>
+          <h1>Đăng nhập</h1>
           <form id="loginForm" th:action="@{/userLogin}" method="post" onsubmit="return validateForm(event)">
-            <input type="text" placeholder="Username" id="username" name="username"/>
+            <input type="email" placeholder="Email" id="username" name="username" required/>
             <span id="usernameError" style="color: red;"></span>
             <input type="password" placeholder="Password" id="password" name="password"/>
             <span id="passwordError" style="color: red;"></span>
-            <button id="loginButton">Login</button>
+            <div style="display: flex; gap: 0.25rem">
+              <button id="loginButton">Đăng nhập</button>
+              <a href="/register" style="flex-grow: 1; " class="rightSignUp">
+                <button type="button" style="width: 100% ; background-color: white; color: black">Đăng ký</button>
+              </a>
+            </div>
 
           </form>
         </div>

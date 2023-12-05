@@ -1,3 +1,51 @@
+const generateFriendDropdownHtml = (friend) => {
+  return `
+    <li>
+      <a class="dropdown-item"
+        href="/profile?id=${friend['userId']}"></a>
+      <i class="user">
+      <img
+              src="${friend['avatar']}"
+              alt=""
+      />
+      <span class="detail-noti">  <strong th:text="${friend['email']}">
+      
+      
+      </strong>đã gửi cho bạn lời mời kết bạn
+      <div>${friend['email']}</div>
+      <div class="wrap-btn">
+      <input type="hidden" value="${friend['userId']}" class="accept-input"/>
+      <button onclick="acceptFriendRequest(this)" class="accept-btn">Accept</button>
+      <button onclick="declineFriendRequest(this)" class="dismiss-btn">Dismiss</button>
+      </div>
+      </span>
+      </i>
+    </li>
+  `
+}
+
+const generateFriendIconDiv = (total) => {
+  return total > 0
+      ? `<div class="notice-addfr"
+                         >${total}</div>`
+      : ""
+}
+
+const handleFriendSocket = async () => {
+  const resp = await fetch("/api/friendRequests")
+  const data = await resp.json()
+  const html = data.map(generateFriendDropdownHtml).join()
+  console.log(data)
+  console.log(html)
+
+  const friendsIconDiv = document.getElementById("friendIcon")
+  friendsIconDiv.innerHTML = generateFriendIconDiv(data.length)
+
+  const friendDropdown = document.getElementById("friendRequestList")
+  friendDropdown.innerHTML = html
+
+}
+
 // Search
 async function searchFriend() {
   var inputElement = document.querySelector('.search input');
@@ -122,22 +170,22 @@ function updateValue(fieldName, newValue) {
   document.querySelector(`.${fieldName}`).replaceWith(spanElement);
 }
 
-// Friends
-async function declineFriendRequest(id_user) {
-
-  console.log(id_user)
-  let data = new FormData
-  data.append("userToId",id_user)
-
-  const resp = await fetch("/declineFriendRequest",
-      {
-        method: "POST",
-        body: data
-      })
-  const data1 = await resp.text();
-  console.log(data1)
-
-}
+// // Friends
+// async function declineFriendRequest(id_user) {
+//
+//   console.log(id_user)
+//   let data = new FormData
+//   data.append("userToId",id_user)
+//
+//   const resp = await fetch("/declineFriendRequest",
+//       {
+//         method: "POST",
+//         body: data
+//       })
+//   const data1 = await resp.text();
+//   console.log(data1)
+//
+// }
 
 
 async function acceptFriendRequest(button) {
@@ -157,4 +205,21 @@ async function acceptFriendRequest(button) {
   if (status === 200){
     location.reload()
   }
+}
+
+
+async function declineFriendRequest(button) {
+  let hiddenInput = button.parentElement.querySelector('.accept-input');
+  let inputValue = hiddenInput.value;
+  let data = new FormData
+  data.append("userToId", inputValue)
+
+  const resp = await fetch("/declineFriendRequest",
+      {
+        method: "POST",
+        body: data
+      })
+  const data1 = await resp.text();
+  console.log(data1);
+
 }

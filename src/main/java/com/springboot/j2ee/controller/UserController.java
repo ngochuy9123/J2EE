@@ -1,15 +1,19 @@
 package com.springboot.j2ee.controller;
 
 
+import com.springboot.j2ee.beans.CDCBeans;
 import com.springboot.j2ee.config.CustomUser;
-import com.springboot.j2ee.dto.LikeDTO;
-import com.springboot.j2ee.dto.PostDTO;
-import com.springboot.j2ee.dto.UserDTO;
+import com.springboot.j2ee.dto.*;
 import com.springboot.j2ee.entity.*;
 import com.springboot.j2ee.enums.EFriendRequest;
 import com.springboot.j2ee.service.*;
+import com.springboot.j2ee.utils.FileUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -25,35 +29,49 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Function;
+
 
 @Controller
+@AllArgsConstructor
 public class UserController {
-
+    @Autowired
     private final UserService userService;
+
+    @Autowired
     private final EmailService emailService;
+
+    @Autowired
     private final PostService postService;
+
+    @Autowired
     private final FriendService friendService;
+
+    @Autowired
     private final LikeService likeService;
+
+    @Autowired
     private final CommentService commentService;
+
+    @Autowired
     private final UserInfoService userInfoService;
+
+    @Autowired
     private final AnnounceService announceService;
 
 
-    public static final String UPLOAD_DIRECTORY = "./src/main/resources/static/uploads/";
-    public static final String UPLOAD_DERECTORY_TARGET = "./target/classes/static/uploads/";
-    public static final String pathImg = "/uploads/";
+    @Autowired
+    private FileUtils fileUtils;
 
-    public UserController(UserService userService, EmailService emailService, PostService postService, FriendService friendService, LikeService likeService, CommentService commentService, UserInfoService userInfoService, AnnounceService announceService) {
-        this.userService = userService;
-        this.emailService = emailService;
-        this.postService = postService;
-        this.friendService = friendService;
-        this.likeService = likeService;
-        this.commentService = commentService;
-        this.userInfoService = userInfoService;
-        this.announceService = announceService;
-    }
+    @Autowired
+    @Qualifier("cdcBeans")
+    private CDCBeans cdcBeans;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    private static final String messageSocket = "/topic/general/";
 
 
     @GetMapping("home")
@@ -99,9 +117,29 @@ public class UserController {
         model.addAttribute("hashLiked",hashLiked);
 
         model.addAttribute("user",userService.getUserById(principal.getUser().getId()));
+        model.addAttribute("currentUser", principal.getUser());
         model.addAttribute("lst_friend_request",list_friend_request);
         model.addAttribute("hashLike",hashLike);
         model.addAttribute("posts",postService.getAllPost(principal.getUser().getId()));
+
+
+        //CDC / Socket
+//        var userName = principal.getUsername();
+        UUID uuid = UUID.randomUUID();
+        var id = principal.getUser().getId();
+
+        cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+        cdcBeans.subscribeToWriteEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToRemoveEmote(uuid, (c) -> handleEmote(c, uuid));
+        cdcBeans.subscribeToWriteAnnounce(id, uuid, (c) -> handleAnnounce(c, uuid));
+        cdcBeans.subscribeToWriteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        cdcBeans.subscribeToDeleteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        model.addAttribute("principal", principal);
+        model.addAttribute("uuid", uuid);
+
+
         return "index";
     }
 
@@ -132,7 +170,7 @@ public class UserController {
 
         boolean f = userService.checkEmail(registrationDTO.getEmail());
         if (f){
-            session.setAttribute("msgReg","Email Da Ton Tai");
+            session.setAttribute("msgReg","Email đã tồn tại");
         }
         else{
 
@@ -141,13 +179,13 @@ public class UserController {
             registrationDTO.setUsername(registrationDTO.getFirstName()+" "+registrationDTO.getLastName());
             User u = userService.save(registrationDTO);
             if (u==null){
-                session.setAttribute("msgReg","DANG KI THAT BAI");
+                session.setAttribute("msgReg","Đăng ký thất bại");
             }
             else{
 
                 userInfoService.addInfoUser(u);
 
-                session.setAttribute("msgReg","DANG KI THANH CONG");
+                session.setAttribute("msgReg","Đăng ký thành công");
                 session.setAttribute("email",registrationDTO.getEmail());
                 return "redirect:/verifyotp";
             }
@@ -169,7 +207,7 @@ public class UserController {
             session.setAttribute("msgReg","DANG KI THANH CONG");
         }
         else{
-            session.setAttribute("msgReg","Ban da nhap sai OTP hoac da qua thoi gian 5 phut");
+            session.setAttribute("msgReg","OTP không chính xác hoặc đã quá 5 phút");
         }
 
 
@@ -188,7 +226,7 @@ public class UserController {
             return "redirect:/VerifyOtp";
         }
         else{
-            System.out.println("Email khong ton tai trong he thong");
+            System.out.println("Email không tồn tại trong hệ thống");
         }
         return null;
     }
@@ -198,13 +236,9 @@ public class UserController {
     public String createPost(@AuthenticationPrincipal CustomUser principal,@ModelAttribute("post") PostDTO postDTO,Model model,@RequestParam(value = "image",required = false) MultipartFile file)throws IOException {
 
         if ( !file.isEmpty()){
-            String pathTemp = pathImg.concat(principal.getUsername());
-            pathTemp = pathTemp.concat("/");
-            pathTemp = pathTemp.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-            String fileNameAndPathTarget = saveImage(file,principal.getUsername());
-            String convertedPath = convertToUnixPath(fileNameAndPathTarget);
-            postDTO.setImageUrl(convertedPath);
+            String path = fileUtils.saveFile(file, "uploads", "users", principal.getUser().getEmail(), "posts");
+            postDTO.setImageUrl(path);
         }
 
         userService.createPost(postDTO,principal.getUsername());
@@ -215,47 +249,6 @@ public class UserController {
 
 
 
-    public String convertToUnixPath(String windowsPath) {
-        // Replace backslashes with forward slashes
-        String unixPath = windowsPath.replace("\\", "/");
-
-        // Remove the initial "."
-        if (unixPath.startsWith("./")) {
-            unixPath = unixPath.substring(2);
-        }
-        int startIndex = unixPath.indexOf("/uploads/");
-
-        // If "/uploads/" is found, extract the substring after it
-        if (startIndex != -1) {
-            return "/uploads/"+ unixPath.substring(startIndex + "/uploads/".length());
-        } else {
-            return null; // "/uploads/" not found in the path
-        }
-
-
-    }
-
-    public String saveImage(MultipartFile file,String email) throws IOException {
-        StringBuilder fileNames = new StringBuilder();
-
-        String uploadDirectory = UPLOAD_DIRECTORY.concat(email);
-        String uploadDirectoryTarget = UPLOAD_DERECTORY_TARGET.concat(email);
-
-        if (!Files.exists(Path.of(uploadDirectory))) {
-            Files.createDirectories(Path.of(uploadDirectory));
-        }
-        if (!Files.exists(Path.of(uploadDirectoryTarget))) {
-            Files.createDirectories(Path.of(uploadDirectoryTarget));
-        }
-
-        Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
-        Path fileNameAndPathTarget = Paths.get(uploadDirectoryTarget, file.getOriginalFilename());
-        fileNames.append(file.getOriginalFilename());
-        Files.write(fileNameAndPath, file.getBytes());
-
-        Files.write(fileNameAndPathTarget,file.getBytes());
-        return fileNameAndPathTarget.toString();
-    }
 
     @GetMapping("profile")
     public String showAnotherProfile(@RequestParam(name = "id", required = false, defaultValue = "-1") long id,Model model,@AuthenticationPrincipal CustomUser principal){
@@ -332,8 +325,50 @@ public class UserController {
         model.addAttribute("lsPost",lstPost);
         model.addAttribute("lst_friend_request",list_friend_request);
 
+
+        var userName = principal.getUsername();
+        UUID uuid = UUID.randomUUID();
+        var uid = principal.getUser().getId();
+
+        cdcBeans.subscribeToWriteComment(uuid, (c) -> handleComment(c, uuid));
+        cdcBeans.subscribeToWriteAnnounce(uid, uuid, (c) -> handleAnnounce(c, uuid));
+        cdcBeans.subscribeToWriteFriend(uid, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+        cdcBeans.subscribeToDeleteFriend(id, uuid, (c) -> handleSocketSend(c, "FRIENDS_REQUEST",messageSocket+ uuid,
+                FriendRequestDto::new));
+
+        model.addAttribute("principal", principal);
+        model.addAttribute("uuid", uuid);
+
+
         return "profile";
     }
+
+
+    private <T, R> void handleSocketSend(T object, String type, String location, Function<T, R> converter) {
+        var dto = converter.apply(object);
+        var response = new GenericResponse<>(type, dto);
+        simpMessagingTemplate.convertAndSend(location, response);
+
+    }
+
+    private void handleComment(Comment comment, UUID uuid) {
+        var dto = new CommentDTO(comment);
+        var response = new GenericResponse<>("COMMENT", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+    private void handleEmote(Like like, UUID uuid) {
+        var dto = new LikeDTO(like);
+        var response = new GenericResponse<>("LIKE", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+
+    private void handleAnnounce(Announce announce, UUID uuid) {
+        var dto = new AnnounceDTO(announce);
+        var response = new GenericResponse<>("NOTIFICATION", dto);
+        simpMessagingTemplate.convertAndSend(messageSocket+uuid, response);
+    }
+
 
 
 }
