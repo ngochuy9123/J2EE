@@ -308,8 +308,6 @@ public class UserController {
             List<Comment> lstComments = commentService.getCommentByPost(p.getId());
             hashComment.put(p.getId(), lstComments);
             hashSlgComment.put(p.getId(),lstComments.size());
-
-
         }
 
         List<Announce> lstAnnounce = announceService.getAnnounceByIdUser(principal.getUser().getId());
