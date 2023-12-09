@@ -93,6 +93,7 @@ async function showMoreComments(postId) {
         })
     if (resp1.ok) {
         let comments = await resp1.json();
+        console.log(123444);
         console.log(comments);
         if (comments.length > 0) {
             comments.forEach(item => {
@@ -144,7 +145,7 @@ async function showMoreComments(postId) {
             <!--                    So luot binh luan-->
             <div class="item" >
                 <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                12 Comments
+                ${comments.length} Comments
             </div>
         </div>
         <div class=" comments comments-modal" >
@@ -216,7 +217,7 @@ async function fetDataCommentModal(item){
         item.innerHTML = str_comment;
     }
 
-    await updateLike(item.parentElement.parentElement, post_id)
+    await updateLikeAndComment(item.parentElement.parentElement, post_id, comments.length)
 
 }
 
@@ -225,10 +226,6 @@ async function sendCommentInModal(button) {
     const commentInput = document.getElementById('cmt-modal-' + postId);
     const commentText = commentInput.value.trim();
     // Lấy giá trị từ các trường input
-
-    if (commentText.length === 0) {
-        return
-    }
 
     // Dữ liệu cần gửi
     var data = {
@@ -243,8 +240,10 @@ async function sendCommentInModal(button) {
 
     const data1 = await resp.text();
 
-
-    // await fetchAllCommentData(postId)
+    let post_container = document.getElementById("fetch-data-comment-" + postId);
+    let post_container_modal = document.getElementById("fetch-comment-modal-" + postId);
+    await fetDataComment(post_container);
+    await fetDataCommentModal(post_container_modal);
 
     commentInput.value = "";
 
@@ -621,6 +620,54 @@ const updateLike = async (container, post_id) => {
           <span id="slgLike+${post_id}">${slgLike} Likes</span>
 
         `;
+
+
+    info.setAttribute("onclick", `toggleLike(${post_id})`)
+    info.setAttribute("id", `item-${post_id}`)
+}
+
+const updateLikeAndComment = async (container, post_id, countComment) => {
+    let data = new FormData();
+    data.append("post_id", post_id);
+
+    // fetch like
+    let info = container.querySelectorAll(".item")[0];
+    let comm = container.querySelectorAll(".item")[1];
+
+    const respLike = await fetch("/countLikeIdPost",
+        {
+            method: "POST",
+            body: data
+        })
+
+    let slgLike = await respLike.text();
+
+    const respLiked = await fetch("/postLiked",
+        {
+            method: "POST",
+            body: data
+        })
+
+    let liked = await respLiked.json();
+    console.log(liked)
+
+    let htmlHeart = ""
+    if (liked) {
+        htmlHeart = `<span class="like-icon"><i class="fa-solid fa-heart red-heart"></i></span>`
+    } else {
+        htmlHeart = `<span class="like-icon"><i class="fa-regular fa-heart"></i></span>`
+    }
+
+    info.innerHTML = `
+          ` + htmlHeart + `
+          <span id="slgLike+${post_id}">${slgLike} Likes</span>
+
+        `;
+
+    comm.innerHTML = `
+    <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+    ${countComment} Comments
+    `;
 
     info.setAttribute("onclick", `toggleLike(${post_id})`)
     info.setAttribute("id", `item-${post_id}`)

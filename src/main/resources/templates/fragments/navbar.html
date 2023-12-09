@@ -15,7 +15,7 @@
                 <div class="search">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <form action="/search" method="get" class="form-search">
-                        <input type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()"
+                        <input th:value="${filter}" type="text" class="input" name="filter" placeholder="Search..." onkeyup="processChange()"
                                autocomplete="off"/>
                     </form>
                 </div>

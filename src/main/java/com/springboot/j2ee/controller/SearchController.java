@@ -45,6 +45,9 @@ public class SearchController {
 
     @GetMapping("search")
     public String index(@RequestParam("filter") String filter, Model model,@AuthenticationPrincipal CustomUser principal){
+        if(filter == ""){
+            return "redirect:/home";
+        }
         String userName = principal.getUsername();
 
         List<Friend> list_friend_request = friendService.displayFriendRequest(principal.getUser().getId());
