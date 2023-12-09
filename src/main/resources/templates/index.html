@@ -109,13 +109,13 @@
 
                                         <div id="upload-image">
                                             <i class="fa-regular fa-image"></i>
-                                            <span>Image</span>
+                                            <span>Hình ảnh/video</span>
                                             <input
                                                     type="file"
                                                     id="file-input"
                                                     name="image"
                                                     style="display: none"
-                                                    accept="image/*"
+                                                    accept="image/png, image/jpg, image/jpeg, image/gif, image/tiff, video/mp4, video/mkv"
                                                     onchange="handleFileUpload(this)"
                                                     class="form-control-file"
                                             />
@@ -194,7 +194,8 @@
                 <div class="content">
                     <p th:text="${post.getContent()}"></p>
                     <div th:if="${post.getImageUrl() != null}">
-                        <img th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" alt="Post Image">
+                        <img th:if="${post.isImage()}" th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" alt="Post Image">
+                        <video th:if="${post.isVideo()}" th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" autoplay controls style="width: 100%"></video>
                     </div>
                 </div>
                 <div class="info">

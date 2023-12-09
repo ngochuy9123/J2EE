@@ -202,7 +202,7 @@ const submitUserChange = async () => {
     })
 
     if (resp.ok) {
-        await setupSidePanel()
+        await setupAllSidePanel()
         userInNewRoom.splice(0)
     }
     
@@ -274,7 +274,7 @@ const saveRoom = async () => {
     })
 
     if (resp.ok) {
-        await setupSidePanel()
+        await setupAllSidePanel()
         userInNewRoom.splice(0)
     }
 }
@@ -293,7 +293,7 @@ const removeFromRoom = async () => {
     })
 
     if (resp.ok) {
-        await setupSidePanel()
+        await setupAllSidePanel()
         setMainChatPanel("TRUE")
     }
 }

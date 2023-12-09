@@ -571,6 +571,7 @@ width: 100%;
 }
 .group-information .location,
 .group-information .username-infor {
+  flex-grow: 1;
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
@@ -591,7 +592,7 @@ width: 100%;
 .location input,
 .username-infor input {
   padding: 20px;
-  border: none;
+  border: lightgray solid 1px;
   width: 80%;
   border-radius: 10px;
   font-size: 18px;

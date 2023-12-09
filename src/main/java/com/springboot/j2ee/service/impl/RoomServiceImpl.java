@@ -132,4 +132,9 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.save(room);
         return true;
     }
+
+    @Override
+    public List<Room> findRoomByName(String name) {
+        return roomRepository.findRoomsByNameContainingIgnoreCase(name);
+    }
 }

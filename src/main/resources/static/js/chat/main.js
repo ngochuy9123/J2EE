@@ -3,6 +3,7 @@ const uuid = document.getElementById("UUIDDiv").innerText;
 
 const host = new URL(location)
 
+
 let selectedId = 0;
 
 const stompClient = new StompJs.Client({
@@ -66,7 +67,7 @@ const handleRename = async (data) => {
 
     const sideDiv = document.getElementById(`r${id}`)
     if (sideDiv == null) {
-        await setupSidePanel()
+        await setupAllSidePanel()
         return;
     }
 
@@ -87,7 +88,7 @@ const handlePhoto = async (data) => {
 
     const sideDiv = document.getElementById(`r${id}`)
     if (sideDiv == null) {
-        await setupSidePanel()
+        await setupAllSidePanel()
         return;
     }
 
@@ -122,11 +123,12 @@ async function showMessage(message) {
 
 }
 
+
 const updateTotalMissed = async (roomId) => {
     const total = await getTotalMissedMessages(roomId);
     const div = document.getElementById(`missed${roomId}`);
-    if (div == null) {
-        setupSidePanel();
+    if (div == null && searchDiv.value === "") {
+        setupAllSidePanel();
         return;
     }
 
@@ -152,12 +154,16 @@ const getDiffTime = (date) => {
     }
 }
 
-const setupSidePanel = async () => {
+const setupAllSidePanel = async () => {
     const resp = await fetch("/rooms");
     const data = await resp.json();
 
     // console.log(data)
+    await setupSidePanel(data)
 
+}
+
+const setupSidePanel = async (data) => {
     let html = ``;
 
     for (const datum of data) {
@@ -167,7 +173,7 @@ const setupSidePanel = async () => {
         if (missedMessage !== 0) {
             missedDiv = `<div class="btn btn-warning">${missedMessage}</div>`
         }
-        
+
         console.log(datum)
         html += `
             <li class="clearfix d-flex" id="r${datum['id']}">
@@ -192,6 +198,7 @@ const setupSidePanel = async () => {
         elem.addEventListener("click",()=> setChatPanel(datum['id']))
     }
 }
+
 
 const getTotalMissedMessages = async (roomId) => {
     const resp = await fetch(`api/room/missed/${roomId}`)
@@ -249,6 +256,28 @@ const handleCall = () => {
     window.open(url, '_blank').focus();
 }
 
+const isImage = (path) => {
+    const imageExt = ['png', 'jpg', 'jpeg', 'gif', 'tiff']
+
+    const ext = getExt(path);
+    return imageExt.includes(ext);
+}
+
+const isVideo = (path) => {
+    const imageExt = ['mp4', 'mkv']
+
+    const ext = getExt(path);
+    return imageExt.includes(ext);
+}
+
+const getExt = (path) => {
+    const chunk = path.split(".")
+    if (chunk.length === 1) {
+        return path
+    }
+    else return chunk[chunk.length-1]
+
+}
 
 const generateChatHtml = (data) => {
     const uId = data['userId']
@@ -262,7 +291,13 @@ const generateChatHtml = (data) => {
         content = data["message"]
     }
     else if (messageType === "PICTURE") {
-        content = `<img src="${data["message"]}" alt="user message" class="messageImage"  />`
+        content = isImage(data["message"]) ?
+            `  <img src="${data["message"]}" alt="Post Image" class="messageImage" />
+    ` : content
+
+        content = isVideo(data["message"]) ?
+            `          <video src="${data["message"]}" autoplay controls class="messageImage"></video>
+    ` : content
     }
     else {
         content = data["message"]
@@ -390,5 +425,5 @@ const setRoomImage = (value) => {
 }
 
 connect();
-setupSidePanel();
+setupAllSidePanel();
 setMainChatPanel("TRUE");

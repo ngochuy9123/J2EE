@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Component
 public class FileUtils {
@@ -17,6 +19,9 @@ public class FileUtils {
 
     @Value("${file.targetAssetLocation}")
     private String TARGET_PATH;
+
+    private static final String[] imageExtension = {".png", ".jpg", ".jpeg", ".tiff", ".gif", ".webp"};
+    private static final String[] videoExtension = {".mp4", ".mkv"};
 
 
     private String relativeSaveFile(MultipartFile file, String fileName,String mainFolder, String... innerFolders) throws IOException {
@@ -59,11 +64,22 @@ public class FileUtils {
     }
 
     public String saveFileWithCustomName(MultipartFile file, String fileName, String... innerFolders) throws IOException {
-        var ext = getExtension(file.getOriginalFilename());
+        var ext = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
         var finalName = fileName + ext;
 
         relativeSaveFile(file, finalName, TARGET_PATH, innerFolders);
         return relativeSaveFile(file, finalName, ASSET_PATH, innerFolders);
+    }
+
+
+    public static boolean isImage(String path) {
+        final String ext = getExtension(path);
+        return Arrays.asList(imageExtension).contains(ext);
+    }
+
+    public static boolean isVideo(String path) {
+        final String ext = getExtension(path);
+        return Arrays.asList(videoExtension).contains(ext);
     }
 
 }

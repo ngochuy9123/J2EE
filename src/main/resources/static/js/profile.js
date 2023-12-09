@@ -1,6 +1,9 @@
 const id = document.getElementById("userIdDiv").innerText;
 const uuid = document.getElementById("UUIDDiv").innerText;
 
+var user;
+fetch("/api/currentUser").then(async resp => {user = await resp.json()});
+
 const host = new URL(location)
 
 const stompClient = new StompJs.Client({
@@ -325,10 +328,6 @@ const handleComment = async (postId) => {
 
 
 
-
-
-
-
   let avatar = document.getElementById("avatar").value
   let userId = document.getElementById("idUser").value
   let username = document.getElementById("username").value
@@ -497,21 +496,57 @@ async function seeMorePost(id_post) {
   console.log(post.content)
 }
 
+const getExt = (path) => {
+  const chunk = path.split(".")
+  if (chunk.length === 1) {
+    return path
+  }
+  else return chunk[chunk.length-1]
+
+}
+
+const isImage = (path) => {
+  const imageExt = ['png', 'jpg', 'jpeg', 'gif', 'tiff']
+
+  const ext = getExt(path);
+  return imageExt.includes(ext);
+}
+
+const isVideo = (path) => {
+  const imageExt = ['mp4', 'mkv']
+
+  const ext = getExt(path);
+  return imageExt.includes(ext);
+}
+
+
 async function showMoreComments(postInfo) {
 console.log("post",postInfo)
 
   const modalTitle = document.getElementById("modalTitle");
   const modalContent = document.getElementById("modalContent");
+
+  let postContentDiv = ""
+  if (postInfo.image !== "" ) {
+    postContentDiv = isImage(postInfo.image) ?
+        `  <img src="${postInfo.image}" alt="Post Image"/>
+    ` : postContentDiv
+
+    postContentDiv = isVideo(postInfo.image) ?
+        `          <video src="${postInfo.image}" autoplay controls style="width: 100%"></video>
+    ` : postContentDiv
+  }
+
   modalTitle.textContent = `This is ${postInfo.user.username} post`;
   modalContent.innerHTML = `
      <div class="post">
        <div class="container container-cmt">
          <div class="user">
            <div class="userInfo">
-             <img src="${postInfo.user.avatar}" alt="User Profile Pic">
+             <img src="${postInfo.user.avatar.startsWith("http") ? postInfo.user.avatar : "/"+postInfo.user.avatar}" alt="User Profile Pic">
              <div class="details">
                <a href="/profile/" style="text-decoration: none; color: inherit;">
-                 <span class="name">${postInfo.user.email}</span>
+                 <span class="name">${postInfo.user.username}</span>
                </a>
                <span class="date">${postInfo.created_at}</span>
              </div>
@@ -527,7 +562,7 @@ console.log("post",postInfo)
          <div class="content content-cmt">
            <p>${postInfo.content}</p>
            
-          ${postInfo.image !== "" ? `<img src="${postInfo.image}" alt="Post Image">` : ''}
+          ${postInfo.image !== "" ? postContentDiv : ''}
   
          </div>
          <div class="info">
@@ -547,7 +582,7 @@ console.log("post",postInfo)
               <!-- Comments section, replace with your comments -->
 
                 <div class="write">
-                  <img src="${postInfo.image}" alt="" />
+                  <img src="${user.avatar.startsWith("http") ? user.avatar : "/"+user.avatar}" alt="" />
                   <input type="text" placeholder="write a comment" id="cmtm${postInfo.id}" />
                   <button onclick="testCmt(this,1)" data-post-id="${postInfo.id}">Send</button>
                 </div>

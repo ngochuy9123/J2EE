@@ -21,6 +21,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -128,4 +130,27 @@ public class RoomAPI {
 
         return new ResponseEntity<>(new RoomDTO(room), HttpStatus.OK);
     }
+
+    @GetMapping("/api/findRooms/{name}")
+    public ResponseEntity<List<RoomDTO>> findRoom(@AuthenticationPrincipal CustomUser user, @PathVariable String name) {
+        var rooms = roomService.findRoomByName(name);
+        if (rooms == null) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        }
+
+        var roomsWithUser = rooms.stream().filter(r -> r.getParticipants().stream().
+                anyMatch(p -> Objects.equals(p.getId(), user.getUser().getId())));
+        var roomDtos = roomsWithUser.map(RoomDTO::new).toList();
+        return new ResponseEntity<>(roomDtos, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/findRooms/")
+    public ResponseEntity<List<RoomDTO>> getAllRoom(Principal principal)
+    {
+        var name = principal.getName();
+        var rooms = roomService.getAllRoomByUserName(name).stream().map(RoomDTO::new).toList();
+
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
 }

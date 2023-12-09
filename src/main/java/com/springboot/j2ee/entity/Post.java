@@ -2,6 +2,7 @@ package com.springboot.j2ee.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.j2ee.enums.EPostVisibility;
+import com.springboot.j2ee.utils.FileUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -113,7 +114,7 @@ public class Post {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+           return createdAt;
     }
 
     public String getCreatedFormat(){
@@ -134,5 +135,13 @@ public class Post {
         this.updatedAt = updatedAt;
     }
 
+
+    public boolean isImage() {
+        return FileUtils.isImage(imageUrl);
+    }
+
+    public boolean isVideo() {
+        return FileUtils.isVideo(imageUrl);
+    }
 
 }

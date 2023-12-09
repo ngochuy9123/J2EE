@@ -91,91 +91,111 @@ async function showMoreComments(postId) {
             method: "POST",
             body: data
         })
-    if (resp1.ok) {
-        let comments = await resp1.json();
-        console.log(comments);
-        if (comments.length > 0) {
-            comments.forEach(item => {
-                str_comment += `
-          <div class="comment">
-          <img src="${item.user_avatar}" alt="" />
-          <div class="info">
-            <span>${item.user_name}</span>
-            <p>${item.content}</p>
-          </div>
-          <span class="date">${formatTime(item.createdAt)}</span>
-        </div>
-          `;
-            });
+    if (!resp1.ok) {
+        return;
+    }
+
+
+
+
+    let mediaDiv = ""
+
+    const image = ["png", "jpg", "tiff", "gif", "jpeg"]
+
+
+    if (postInfo.image !== "") {
+        const parts = postInfo.image.split(".")
+        const extension = parts[parts.length-1]
+
+        if (image.includes(extension)) {
+            mediaDiv = `<img src="${postInfo.image}" alt="Post Image">`
         }
-        modalTitle.textContent = `This is ${userInfo.lastName}'s post`;
-        modalContent.innerHTML = `
-     <div class="post">
-       <div class="container container-cmt">
-         <div class="user">
-           <div class="userInfo">
-             <img src="${postInfo.user.avatar}" alt="User Profile Pic">
-             <div class="details">
-               <a href="/profile/" style="text-decoration: none; color: inherit;">
-                 <span class="name">${userInfo.username}</span>
-               </a>
-               <span class="date">${postInfo.createAtFormat}</span>
-             </div>
-           </div>
-           <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             <span>...</span>
-           </div>
-           <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i>Delete</a></li>
-             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
-           </ul>
-         </div>
-         <div class="content content-cmt">
-           <p>${postInfo.content}</p>
-           
-          ${postInfo.image !== "" ? `<img src="${postInfo.image}" alt="Post Image">` : ''}
-  
-         </div>
-         <div class="info">
-            <div class="item">
-                <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
-                <span>1 like</span>
-            </div>
-            <!--                    So luot binh luan-->
-            <div class="item" >
-                <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                ${comments.length} Comments
-            </div>
-        </div>
-        <div class=" comments comments-modal" >
-              <!-- Comments section, replace with your comments -->
-
-                <div class="write">
-                    <a href="/profile"><img src="${userInfo.avatar}" alt=""></a>
-                    <input type="text" spellcheck="false" placeholder="write a comment" id="cmt-modal-${postId}">
-                    <button onclick="sendCommentInModal(this)" data-post-id="${postId}">Send</button>
-                </div>
-
-                <div class="container-post-modal" id="fetch-comment-modal-${postId}">
-                 <div class="comments">
-                 ${str_comment}
-                 </div>
-                </div>
-            </div>
-          </div>
-        </div>
-     </div>
-   `;
-
-
-        const modal = document.getElementById("modalComment");
-        const modalInstance = new bootstrap.Modal(modal);
-        modalInstance.show();
-
-        let containerPost = document.querySelector(".container-post-modal");
-        await fetDataCommentModal(containerPost);
+        else {
+            mediaDiv = `<video src="${postInfo.image}" controls autoplay style="width: 100%">`
+        }
 
     }
+
+
+    let comments = await resp1.json();
+    console.log(comments);
+    if (comments.length > 0) {
+        comments.forEach(item => {
+            str_comment += `
+      <div class="comment">
+      <img src="${item.user_avatar}" alt="" />
+      <div class="info">
+        <span>${item.user_name}</span>
+        <p>${item.content}</p>
+      </div>
+      <span class="date">${formatTime(item.createdAt)}</span>
+    </div>
+      `;
+        });
+    }
+    modalTitle.textContent = `This is ${userInfo.lastName}'s post`;
+    modalContent.innerHTML = `
+ <div class="post">
+   <div class="container container-cmt">
+     <div class="user">
+       <div class="userInfo">
+         <img src="${postInfo.user.avatar}" alt="User Profile Pic">
+         <div class="details">
+           <a href="/profile/" style="text-decoration: none; color: inherit;">
+             <span class="name">${userInfo.username}</span>
+           </a>
+           <span class="date">${postInfo.createAtFormat}</span>
+         </div>
+       </div>
+       <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         <span>...</span>
+       </div>
+       <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
+         <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i>Delete</a></li>
+         <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a></li>
+       </ul>
+     </div>
+     <div class="content content-cmt">
+       <p>${postInfo.content}</p>
+       
+      ${mediaDiv}
+
+     </div>
+     <div class="info">
+        <div class="item">
+            <span class="like-icon"><i class="fa-regular fa-heart"></i></span>
+            <span>1 like</span>
+        </div>
+        <!--                    So luot binh luan-->
+        <div class="item" >
+            <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
+                ${comments.length} Comments
+        </div>
+    </div>
+    <div class=" comments comments-modal" >
+          <!-- Comments section, replace with your comments -->
+
+            <div class="write">
+                <a href="/profile"><img src="${userInfo.avatar}" alt=""></a>
+                <input type="text" spellcheck="false" placeholder="write a comment" id="cmt-modal-${postId}">
+                <button onclick="sendCommentInModal(this)" data-post-id="${postId}">Send</button>
+            </div>
+
+            <div class="container-post-modal" id="fetch-comment-modal-${postId}">
+             <div class="comments">
+             ${str_comment}
+             </div>
+            </div>
+        </div>
+      </div>
+    </div>
+ </div>
+`;
+    const modal = document.getElementById("modalComment");
+    const modalInstance = new bootstrap.Modal(modal);
+    modalInstance.show();
+    let containerPost = document.querySelector(".container-post-modal");
+    await fetDataCommentModal(containerPost);
 }
 
 async function fetDataCommentModal(item){
@@ -472,9 +492,8 @@ function handleFileUpload(input) {
             reader.onload = function (e) {
                 const image = new Image();
                 image.onload = function () {
-                    // Chỉnh kích thước của hình ảnh thành 50x50 pixels
-                    image.width = 120;
-                    image.height = 150;
+                    image.setAttribute("style", "width: 100%;")
+                    imageContainer.innerHTML = "";
                     imageContainer.appendChild(image);
                 }
                 image.src = e.target.result;

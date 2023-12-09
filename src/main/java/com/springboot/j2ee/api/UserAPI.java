@@ -94,4 +94,10 @@ public class UserAPI {
         UserDTO userDTO = new UserDTO(user);
         return userDTO;
     }
+
+    @GetMapping("/api/currentUser")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal CustomUser principal) {
+        return new ResponseEntity<>(new UserDTO(principal.getUser()), HttpStatus.OK);
+    }
+
 }

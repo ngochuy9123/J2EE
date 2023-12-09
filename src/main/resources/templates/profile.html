@@ -258,7 +258,8 @@
                     <div class="content">
                         <p th:text="${post.getContent()}"></p>
                         <div th:if="${post.getImageUrl()!=null}">
-                            <img th:src="${post.getImageUrl()}" alt="Post Image">
+                            <img th:if="${post.isImage()}" th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" alt="Post Image">
+                            <video th:if="${post.isVideo()}" th:id="'userImage'+${user.getId()}" th:src=" ''+ ${post.getImageUrl()}" autoplay controls style="width: 100%"></video>
                         </div>
                     </div>
                     <div class="info">
