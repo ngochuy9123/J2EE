@@ -204,7 +204,7 @@ public class UserController {
     @PostMapping("confrimOTP")
     public String confirmOTP(@RequestParam String otp, @RequestParam String email, Model model,HttpSession session){
         if (userService.checkOTP(email,otp)){
-            session.setAttribute("msgReg","DANG KI THANH CONG");
+            session.setAttribute("msgReg","Đăng ký thành công");
         }
         else{
             session.setAttribute("msgReg","OTP không chính xác hoặc đã quá 5 phút");
