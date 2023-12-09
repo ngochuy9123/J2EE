@@ -641,4 +641,29 @@ async function deletePost(idPost) {
   });
   let http = resp.status
   console.log(http)
+  if (http ===200){
+    let p = document.getElementById(`docInfot5${idPost}`)
+    if (p) {
+      // Set the display property to none
+      p.style.display = "none";
+    }
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: "Xóa bài viết thành công"
+    });
+
+
+
+  }
 }

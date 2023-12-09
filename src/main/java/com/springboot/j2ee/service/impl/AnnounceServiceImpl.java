@@ -109,4 +109,20 @@ public class AnnounceServiceImpl implements AnnounceService {
         return announceRepository.findAnnounceById(id);
     }
 
+    @Override
+    public List<Announce> findByIdPost(Post post) {
+        return announceRepository.findByPost(post);
+    }
+
+    @Override
+    public void deleteAnnounceByIdPost(Long idPost) {
+        Post post = postRepository.findById(idPost).get();
+        List<Announce> dstb = findByIdPost(post);
+        for (Announce a:dstb
+             ) {
+            announceRepository.deleteById(a.getId());
+        }
+
+    }
+
 }

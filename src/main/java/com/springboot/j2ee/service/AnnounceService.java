@@ -2,6 +2,7 @@ package com.springboot.j2ee.service;
 
 import com.springboot.j2ee.dto.AnnounceDTO;
 import com.springboot.j2ee.entity.Announce;
+import com.springboot.j2ee.entity.Post;
 import com.springboot.j2ee.entity.User;
 
 import java.util.List;
@@ -14,5 +15,7 @@ public interface AnnounceService {
 
     Announce getAnnounceById(Long id);
 
+    List<Announce> findByIdPost(Post post);
+    void deleteAnnounceByIdPost(Long idPost);
 
 }

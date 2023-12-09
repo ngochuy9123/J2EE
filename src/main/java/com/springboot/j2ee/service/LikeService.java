@@ -19,4 +19,6 @@ public interface LikeService {
 
     Optional<Like> findLikeById(Long likeId);
 
+    void deleteLikeByPost(Long idPost);
+
 }

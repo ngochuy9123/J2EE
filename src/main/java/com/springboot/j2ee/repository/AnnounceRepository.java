@@ -19,4 +19,8 @@ public interface AnnounceRepository extends JpaRepository<Announce, Long> {
 
     public Announce findAnnounceById(Long id);
 
+    List<Announce> findByPost(Post post);
+
+    void deleteById(Long id);
+
 }
