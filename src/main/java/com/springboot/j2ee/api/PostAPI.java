@@ -1,15 +1,8 @@
 package com.springboot.j2ee.api;
 
 import com.springboot.j2ee.config.CustomUser;
-import com.springboot.j2ee.dto.LikeDTO;
 import com.springboot.j2ee.dto.PostInfoDTO;
-import com.springboot.j2ee.entity.Post;
-import com.springboot.j2ee.service.CommentService;
-import com.springboot.j2ee.service.LikeService;
-import com.springboot.j2ee.service.PostService;
-import com.springboot.j2ee.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.springboot.j2ee.service.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +12,15 @@ public class PostAPI {
     private final UserService userService;
     private final CommentService commentService;
     private final LikeService likeService;
+    private final AnnounceService announceService;
 
 
-    public PostAPI(PostService postService, UserService userService, CommentService commentService, LikeService likeService) {
+    public PostAPI(PostService postService, UserService userService, CommentService commentService, LikeService likeService, AnnounceService announceService) {
         this.postService = postService;
         this.userService = userService;
         this.commentService = commentService;
         this.likeService = likeService;
+        this.announceService = announceService;
     }
 
 
@@ -38,7 +33,14 @@ public class PostAPI {
     @PostMapping("deletePost")
     public void deletePost(@RequestParam Long idPost,@AuthenticationPrincipal CustomUser principal){
         PostInfoDTO postInfoDTO = postService.getOnePost(idPost,principal.getUser().getId());
-        postService.deletePostById(idPost);
+        commentService.deleteCommentByIdPost(idPost);
+        likeService.deleteLikeByPost(idPost);
+        announceService.deleteAnnounceByIdPost(idPost);
+        deleteP(idPost);
+    }
+
+    public void deleteP(long id){
+        postService.deletePostById(id);
     }
 
 

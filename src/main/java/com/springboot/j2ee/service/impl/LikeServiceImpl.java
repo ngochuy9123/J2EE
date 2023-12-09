@@ -70,4 +70,15 @@ public class LikeServiceImpl implements LikeService {
     public Optional<Like> findLikeById(Long likeId) {
         return likeRepository.findById(likeId);
     }
+
+    @Override
+    public void deleteLikeByPost(Long idPost) {
+        Post post = postRepository.findById(idPost).get();
+        List<Like> dsLike = getAllEmoteByPostID(post);
+        for (Like like: dsLike
+             ) {
+            likeRepository.deleteById(like.getId());
+        }
+
+    }
 }

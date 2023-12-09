@@ -114,7 +114,7 @@
                                     class="sendFriendRequestBtn edit-profile">Xóa lời mời
                             </button>
                             <div style="display: flex ; justify-content: space-between; width: 200px"   >
-                            <button data-bs-toggle="modal" th:if="${friend_request == 'RECEIVE'}" onclick="acceptFriendRequest(this)"
+                            <button data-bs-toggle="modal" th:if="${friend_request == 'RECEIVE'}"  th:onclick="'javascript:acceptFriendRequest(\''+ ${user.getId()} +'\');'"
                                     class="sendFriendRequestBtn edit-profile">Chấp nhận
                             </button>
 

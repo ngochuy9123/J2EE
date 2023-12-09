@@ -188,8 +188,8 @@ function updateValue(fieldName, newValue) {
 // }
 
 
-async function acceptFriendRequest(button) {
-  let inputValue = button.previousElementSibling.value;
+async function acceptFriendRequest(inputValue) {
+  // let inputValue = button.previousElementSibling.value;
   let data = new FormData
   data.append("userToId",inputValue)
 
