@@ -170,9 +170,24 @@ document.getElementById('save_changes').addEventListener('click', async function
       })
 
   if (resp.status === 200){
-    alert("thay doi thanh cong")
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: "Cập nhật thông tin cá nhân thành công"
+    });
   }
-
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+  await delay(3000);
   location.reload()
 });
 

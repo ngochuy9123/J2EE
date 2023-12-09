@@ -28,6 +28,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <script th:inline="javascript">
@@ -68,19 +69,14 @@
             <div class="profileContainer">
                 <div class="uInfo">
                     <div class="left">
-                        <a href="http://facebook.com"
-                        ><i class="fa-brands fa-facebook"></i
-                        ></a>
-                        <a href="http://facebook.com"
-                        ><i class="fa-brands fa-instagram"></i
-                        ></a>
-                        <a href="http://facebook.com"
+                        <a th:if="${user.getUserInfo().getTwitter() }!= ''" th:href="${user.getUserInfo().getTwitter()}"
                         ><i class="fa-brands fa-twitter"></i
                         ></a>
-                        <a href="http://facebook.com"
-                        ><i class="fa-brands fa-linkedin"></i
+                        <a th:if="${user.getUserInfo().getInstagram() }!= ''" th:href="${user.getUserInfo().getInstagram()}"
+                        ><i class="fa-brands fa-instagram"></i
                         ></a>
-                        <a href="http://facebook.com"
+
+                        <a th:if="${user.getUserInfo().getGithub() }!= ''" th:href="${user.getUserInfo().getGithub()}"
                         ><i class="fa-brands fa-github"></i
                         ></a>
                     </div>
@@ -181,7 +177,7 @@
 
                                                     <span class="otherlink">
 
-                    
+
                   <span class="location"><span>Github: </span><input name="github" th:value="${infoUser.getGithub()}"/></span>
 
                 </span>

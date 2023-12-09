@@ -108,23 +108,36 @@
         <div class="dropdown">
             <div class="avatar-user" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
                  aria-expanded="false">
-                <div class="user">
+                <div class="user" th:if="${currentUser}==null">
                     <img
                             th:src="${user.getAvatar()}"
                             alt=""
                     />
-
+                </div>
+                <div class="user" th:if="${currentUser}!=null">
+                    <img
+                            th:src="${currentUser.getAvatar()}"
+                            alt=""
+                    />
                 </div>
             </div>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownTrigger">
                 <li><a class="dropdown-item" href="profile">
 
-                    <i class="user">
+                    <i th:if="${currentUser}==null" class="user">
                         <img
                                 th:src="${user.getAvatar()}"
                                 alt=""
                         />
                         <span th:text="${user.getUsername()}"></span>
+                    </i>
+
+                    <i th:if="${currentUser}!=null" class="user">
+                        <img
+                                th:src="${currentUser.getAvatar()}"
+                                alt=""
+                        />
+                        <span th:text="${currentUser.getUsername()}"></span>
                     </i>
                 </a></li>
                 <hr>

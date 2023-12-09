@@ -35,5 +35,11 @@ public class PostAPI {
         return postInfoDTO;
     }
 
+    @PostMapping("deletePost")
+    public void deletePost(@RequestParam Long idPost,@AuthenticationPrincipal CustomUser principal){
+        PostInfoDTO postInfoDTO = postService.getOnePost(idPost,principal.getUser().getId());
+
+    }
+
 
 }
