@@ -48,10 +48,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     public void addInfoUser(User user) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserInfo(user);
-        userInfo.setGithub("Chua co thong tin github");
-        userInfo.setTwitter("Chua co thong tin twitter");
-        userInfo.setInstagram("Chua co thong tin instagram");
-        userInfo.setLocation("Chua co thong tin location");
+        userInfo.setGithub("");
+        userInfo.setTwitter("");
+        userInfo.setInstagram("");
+        userInfo.setLocation("");
         userInfoRepository.save(userInfo);
     }
 
