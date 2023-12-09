@@ -15,6 +15,9 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post,Long> {
     List<Post> findByOrderByCreatedAtDesc();
     Optional<Post> findById(Long id);
+
+    void deleteById(Long id);
+
     List<Post> findByUserOrderByCreatedAtDesc(User user);
 
     List<Post> findByUserAndVisibleOrderByCreatedAtDesc(User user, EPostVisibility visibility);

@@ -23,4 +23,6 @@ public interface PostService {
 
     List<Post> getAllPostForProfile(Long idUser, Long idCurrentUser);
 
+    void deletePostById(Long id);
+
 }
