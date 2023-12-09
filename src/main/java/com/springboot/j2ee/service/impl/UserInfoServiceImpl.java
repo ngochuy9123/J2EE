@@ -34,7 +34,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserInfo userInfo = userInfoRepository.findByUserInfo(userRepository.findById(userInfoDTO.getIdUser()).get());
 
         userInfo.setGithub(userInfoDTO.getGithub());
-        userInfo.setTwitter(userInfo.getTwitter());
+        userInfo.setTwitter(userInfoDTO.getTwitter());
         userInfo.setLocation(userInfoDTO.getLocation());
         userInfo.setInstagram(userInfoDTO.getInstagram());
 

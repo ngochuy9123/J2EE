@@ -144,7 +144,7 @@ async function showMoreComments(postId) {
             <!--                    So luot binh luan-->
             <div class="item" >
                 <span class="comment-icon"><i class="fa-regular fa-comment-dots"></i></span>
-                12 Comments
+                ${comments.length} Comments
             </div>
         </div>
         <div class=" comments comments-modal" >

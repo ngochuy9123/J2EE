@@ -319,11 +319,10 @@
 
                         </div>
 
-                        <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'"
-                           th:if="${hashComment.get(post.getId()).size()}>2"
-                            th:id="'seeMore'+${post.getId()}"
 
-                        >SEE MORE</a>
+                        <div th:onclick="'seeMorePost('  + ${post.getId()} +  ');'"
+                             th:if="${hashComment.get(post.getId()).size()}>2"
+                             th:id="'seeMore'+${post.getId()}" class="more-cmt">More Comments</div>
                         <a th:if="${hashComment.get(post.getId()).size()}<2"
                            th:id="'seeMore'+${post.getId()}"
                         ></a>
