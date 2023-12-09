@@ -484,13 +484,16 @@ async function getPost(id_post) {
         method: "POST",
         body: data
       })
+
   return await resp.json();
 
 }
 
 async function seeMorePost(id_post) {
   let post = await getPost(id_post)
+  console.log(post)
   showMoreComments(post);
+
   console.log(post.content)
 }
 
@@ -593,3 +596,14 @@ function like(){
   console.log("like")
 }
 
+
+async function deletePost(idPost) {
+  let data = new FormData();
+  data.append('idPost', idPost);
+  const resp = await fetch("/deletePost", {
+    method: "POST",
+    body: data
+  });
+  let http = resp.status
+  console.log(http)
+}

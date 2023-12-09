@@ -246,14 +246,13 @@
                                 <span class="date" th:text="${post.getCreatedFormat()}"></span>
                             </div>
                         </div>
-                        <div class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
+                        <div th:if="${isCurrentUser}" class="more-icon" id="dropdownTrigger" data-bs-toggle="dropdown" aria-haspopup="true"
                              aria-expanded="false">
                             <span>...</span>
                         </div>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownTrigger">
-                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-eye-slash"></i>Hide Post</a>
-                            </li>
+                        <ul  class="dropdown-menu" aria-labelledby="dropdownTrigger">
+                            <li ><a class="dropdown-item" th:onclick="'javascript:deletePost(\''+ ${post.getId()} +'\');'"><i class="fa-solid fa-trash"></i></i>Delete</a></li>
+
                         </ul>
                     </div>
                     <div class="content">
@@ -319,10 +318,15 @@
 
                         </div>
 
+                        <a th:onclick="'seeMorePost('  + ${post.getId()} +  ');'"
+                           th:if="${hashComment.get(post.getId()).size()}>2"
+                            th:id="'seeMore'+${post.getId()}"
 
+                        >SEE MORE</a>
                         <div th:onclick="'seeMorePost('  + ${post.getId()} +  ');'"
                              th:if="${hashComment.get(post.getId()).size()}>2"
                              th:id="'seeMore'+${post.getId()}" class="more-cmt">More Comments</div>
+
                         <a th:if="${hashComment.get(post.getId()).size()}<2"
                            th:id="'seeMore'+${post.getId()}"
                         ></a>
